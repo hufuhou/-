@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.hpxx.mapper.HpGoodsMapper">
+    
+    <resultMap type="HpGoods" id="HpGoodsResult">
+        <result property="gId"    column="g_id"    />
+        <result property="gtId"    column="gt_id"    />
+        <result property="gCode"    column="g_code"    />
+        <result property="gName"    column="g_name"    />
+        <result property="gUnit"    column="g_unit"    />
+        <result property="sort"    column="sort"    />
+        <result property="status"    column="status"    />
+        <result property="specCode"    column="spec_code"    />
+        <result property="remark"    column="remark"    />
+        <result property="orPrice"    column="or_price"    />
+        <result property="wrPrice"    column="wr_price"    />
+        <result property="hasShelfLife"    column="has_shelf_life"    />
+        <result property="warningDays"    column="warning_days"    />
+        <result property="itemLimit"    column="item_limit"    />
+        <result property="lowerLimit"    column="lower_limit"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="isDelte"    column="is_delte"    />
+        <result property="qualityG"    column="quality_g"    />
+    </resultMap>
+
+    <sql id="selectHpGoodsVo">
+        select g_id, gt_id, g_code, g_name, g_unit, sort, status, spec_code, remark, or_price, wr_price, has_shelf_life, warning_days, item_limit, lower_limit, create_by, create_time, is_delte, quality_g from hp_goods
+    </sql>
+
+    <select id="selectHpGoodsList" parameterType="HpGoods" resultMap="HpGoodsResult">
+        <include refid="selectHpGoodsVo"/>
+        <where>  
+            <if test="gtId != null "> and gt_id = #{gtId}</if>
+            <if test="gCode != null  and gCode != ''"> and g_code = #{gCode}</if>
+            <if test="gName != null  and gName != ''"> and g_name like concat('%', #{gName}, '%')</if>
+            <if test="gUnit != null "> and g_unit = #{gUnit}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectHpGoodsByGId" parameterType="Long" resultMap="HpGoodsResult">
+        <include refid="selectHpGoodsVo"/>
+        where g_id = #{gId}
+    </select>
+        
+    <insert id="insertHpGoods" parameterType="HpGoods" useGeneratedKeys="true" keyProperty="gId">
+        insert into hp_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gtId != null">gt_id,</if>
+            <if test="gCode != null and gCode != ''">g_code,</if>
+            <if test="gName != null and gName != ''">g_name,</if>
+            <if test="gUnit != null">g_unit,</if>
+            <if test="sort != null">sort,</if>
+            <if test="status != null">status,</if>
+            <if test="specCode != null and specCode != ''">spec_code,</if>
+            <if test="remark != null">remark,</if>
+            <if test="orPrice != null">or_price,</if>
+            <if test="wrPrice != null">wr_price,</if>
+            <if test="hasShelfLife != null">has_shelf_life,</if>
+            <if test="warningDays != null">warning_days,</if>
+            <if test="itemLimit != null">item_limit,</if>
+            <if test="lowerLimit != null">lower_limit,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+            <if test="qualityG != null and qualityG != ''">quality_g,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gtId != null">#{gtId},</if>
+            <if test="gCode != null and gCode != ''">#{gCode},</if>
+            <if test="gName != null and gName != ''">#{gName},</if>
+            <if test="gUnit != null">#{gUnit},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="status != null">#{status},</if>
+            <if test="specCode != null and specCode != ''">#{specCode},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="orPrice != null">#{orPrice},</if>
+            <if test="wrPrice != null">#{wrPrice},</if>
+            <if test="hasShelfLife != null">#{hasShelfLife},</if>
+            <if test="warningDays != null">#{warningDays},</if>
+            <if test="itemLimit != null">#{itemLimit},</if>
+            <if test="lowerLimit != null">#{lowerLimit},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+            <if test="qualityG != null and qualityG != ''">#{qualityG},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHpGoods" parameterType="HpGoods">
+        update hp_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="gtId != null">gt_id = #{gtId},</if>
+            <if test="gCode != null and gCode != ''">g_code = #{gCode},</if>
+            <if test="gName != null and gName != ''">g_name = #{gName},</if>
+            <if test="gUnit != null">g_unit = #{gUnit},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="specCode != null and specCode != ''">spec_code = #{specCode},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="orPrice != null">or_price = #{orPrice},</if>
+            <if test="wrPrice != null">wr_price = #{wrPrice},</if>
+            <if test="hasShelfLife != null">has_shelf_life = #{hasShelfLife},</if>
+            <if test="warningDays != null">warning_days = #{warningDays},</if>
+            <if test="itemLimit != null">item_limit = #{itemLimit},</if>
+            <if test="lowerLimit != null">lower_limit = #{lowerLimit},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+            <if test="qualityG != null and qualityG != ''">quality_g = #{qualityG},</if>
+        </trim>
+        where g_id = #{gId}
+    </update>
+
+    <delete id="deleteHpGoodsByGId" parameterType="Long">
+        delete from hp_goods where g_id = #{gId}
+    </delete>
+
+    <delete id="deleteHpGoodsByGIds" parameterType="String">
+        delete from hp_goods where g_id in 
+        <foreach item="gId" collection="array" open="(" separator="," close=")">
+            #{gId}
+        </foreach>
+    </delete>
+</mapper>
