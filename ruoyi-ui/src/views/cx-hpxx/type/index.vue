@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="108px">
+      <el-form-item label="货品类型编码" prop="gtCode">
+        <el-input
+          v-model="queryParams.gtCode"
+          placeholder="请输入货品类型编码"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="货品类型名称" prop="gtName">
         <el-input
           v-model="queryParams.gtName"
@@ -19,20 +27,20 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建人" prop="createBy">
+      <el-form-item label="操作人" prop="createBy">
         <el-input
           v-model="queryParams.createBy"
-          placeholder="请输入创建人"
+          placeholder="请输入操作人"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
+      <el-form-item label="操作时间" prop="createTime">
         <el-date-picker clearable
           v-model="queryParams.createTime"
           type="date"
           value-format="yyyy-MM-dd"
-          placeholder="选择创建时间">
+          placeholder="选择操作时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -72,7 +80,7 @@
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column label="货品类型编码" prop="gtCode" width="250"/>
+      <el-table-column label="货品类型编码" prop="gtCode" width="228px"/>
       <el-table-column label="货品类型名称" align="center" prop="gtName" />
       <el-table-column label="排序" align="center" prop="sort" />
       <el-table-column label="货品状态" align="center" prop="status">
@@ -81,8 +89,9 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="创建人" align="center" prop="createBy" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="父级类型" align="center" prop="parentId" />
+      <el-table-column label="操作人" align="center" prop="createBy" />
+      <el-table-column label="操作时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
@@ -116,9 +125,12 @@
 
     <!-- 添加或修改货品类型对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-form-item label="货品类型编码" prop="gtCode">
-          <el-input v-model="form.gtCode" placeholder="请输入货品类型编码" :disabled="true" />
+          <el-input v-model="form.gtCode" placeholder="自动获取系统编码" :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="父级类型" prop="parentId">
+          <treeselect v-model="form.parentId" :options="typeOptions" :normalizer="normalizer" placeholder="请选择父级类型" />
         </el-form-item>
         <el-form-item label="货品类型名称" prop="gtName">
           <el-input v-model="form.gtName" placeholder="请输入货品类型名称" />
@@ -137,9 +149,6 @@
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-        <el-form-item label="父级类型" prop="parent">
-          <treeselect v-model="form.parent" :options="typeOptions" :normalizer="normalizer" placeholder="请选择父级类型" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -181,6 +190,7 @@ export default {
       refreshTable: true,
       // 查询参数
       queryParams: {
+        gtCode: null,
         gtName: null,
         status: null,
         createBy: null,
@@ -190,9 +200,6 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        // gtCode: [
-        //   { required: true, message: "货品类型编码不能为空", trigger: "blur" }
-        // ],
         gtName: [
           { required: true, message: "货品类型名称不能为空", trigger: "blur" }
         ],
@@ -202,14 +209,11 @@ export default {
         status: [
           { required: true, message: "货品状态不能为空", trigger: "change" }
         ],
-        parent: [
-          { required: true, message: "父级类型不能为空", trigger: "change" }
-        ],
         createBy: [
-          { required: true, message: "创建人不能为空", trigger: "blur" }
+          { required: true, message: "操作人不能为空", trigger: "blur" }
         ],
         createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+          { required: true, message: "操作时间不能为空", trigger: "blur" }
         ],
       }
     };
@@ -222,7 +226,7 @@ export default {
     getList() {
       this.loading = true;
       listType(this.queryParams).then(response => {
-        this.typeList = this.handleTree(response.data, "gtId", "parent");
+        this.typeList = this.handleTree(response.data, "gtId", "parentId");
         this.loading = false;
       });
     },
@@ -242,7 +246,7 @@ export default {
       listType().then(response => {
         this.typeOptions = [];
         const data = { gtId: 0, gtName: '顶级节点', children: [] };
-        data.children = this.handleTree(response.data, "gtId", "parent");
+        data.children = this.handleTree(response.data, "gtId", "parentId");
         this.typeOptions.push(data);
       });
     },
@@ -260,7 +264,7 @@ export default {
         sort: null,
         status: null,
         remark: null,
-        parent: null,
+        parentId: null,
         createBy: null,
         createTime: null,
         isDelte: null
@@ -281,9 +285,9 @@ export default {
       this.reset();
       this.getTreeselect();
       if (row != null && row.gtId) {
-        this.form.parent = row.gtId;
+        this.form.parentId = row.gtId;
       } else {
-        this.form.parent = 0;
+        this.form.parentId = 0;
       }
       this.open = true;
       this.title = "添加货品类型";
@@ -301,7 +305,7 @@ export default {
       this.reset();
       this.getTreeselect();
       if (row != null) {
-        this.form.parent = row.gtId;
+        this.form.parentId = row.gtId;
       }
       getType(row.gtId).then(response => {
         this.form = response.data;

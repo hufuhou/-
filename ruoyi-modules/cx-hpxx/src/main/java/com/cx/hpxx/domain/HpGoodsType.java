@@ -9,7 +9,7 @@ import com.ruoyi.common.core.web.domain.TreeEntity;
  * 货品类型对象 hp_goods_type
  * 
  * @author hfh
- * @date 2023-11-23
+ * @date 2023-11-27
  */
 public class HpGoodsType extends TreeEntity
 {
@@ -33,10 +33,6 @@ public class HpGoodsType extends TreeEntity
     /** 货品状态 */
     @Excel(name = "货品状态")
     private Integer status;
-
-    /** 父级类型 */
-    @Excel(name = "父级类型")
-    private String parent;
 
     /** 是否删除 */
     private Integer isDelte;
@@ -86,15 +82,6 @@ public class HpGoodsType extends TreeEntity
     {
         return status;
     }
-    public void setParent(String parent) 
-    {
-        this.parent = parent;
-    }
-
-    public String getParent() 
-    {
-        return parent;
-    }
     public void setIsDelte(Integer isDelte) 
     {
         this.isDelte = isDelte;
@@ -114,7 +101,7 @@ public class HpGoodsType extends TreeEntity
             .append("sort", getSort())
             .append("status", getStatus())
             .append("remark", getRemark())
-            .append("parent", getParent())
+            .append("parentId", getParentId())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("isDelte", getIsDelte())

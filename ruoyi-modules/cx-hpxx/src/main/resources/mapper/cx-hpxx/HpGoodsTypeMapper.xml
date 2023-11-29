@@ -11,19 +11,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sort"    column="sort"    />
         <result property="status"    column="status"    />
         <result property="remark"    column="remark"    />
-        <result property="parent"    column="parent"    />
+        <result property="parentId"    column="parent_id"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="isDelte"    column="is_delte"    />
     </resultMap>
 
     <sql id="selectHpGoodsTypeVo">
-        select gt_id, gt_code, gt_name, sort, status, remark, parent, create_by, create_time, is_delte from hp_goods_type
+        select gt_id, gt_code, gt_name, sort, status, remark, parent_id, create_by, create_time, is_delte from hp_goods_type
     </sql>
 
     <select id="selectHpGoodsTypeList" parameterType="HpGoodsType" resultMap="HpGoodsTypeResult">
         <include refid="selectHpGoodsTypeVo"/>
         <where>  
+            <if test="gtCode != null  and gtCode != ''"> and gt_code = #{gtCode}</if>
             <if test="gtName != null  and gtName != ''"> and gt_name like concat('%', #{gtName}, '%')</if>
             <if test="status != null "> and status = #{status}</if>
             <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
@@ -35,6 +36,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectHpGoodsTypeVo"/>
         where gt_id = #{gtId}
     </select>
+    <select id="getHpGoodsTypeByGtCode" resultMap="HpGoodsTypeResult">
+        select gt_code from hp_goods_type order by gt_id desc limit 1;
+    </select>
         
     <insert id="insertHpGoodsType" parameterType="HpGoodsType" useGeneratedKeys="true" keyProperty="gtId">
         insert into hp_goods_type
@@ -44,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sort != null">sort,</if>
             <if test="status != null">status,</if>
             <if test="remark != null">remark,</if>
-            <if test="parent != null and parent != ''">parent,</if>
+            <if test="parentId != null">parent_id,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="isDelte != null">is_delte,</if>
@@ -55,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sort != null">#{sort},</if>
             <if test="status != null">#{status},</if>
             <if test="remark != null">#{remark},</if>
-            <if test="parent != null and parent != ''">#{parent},</if>
+            <if test="parentId != null">#{parentId},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="isDelte != null">#{isDelte},</if>
@@ -70,7 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sort != null">sort = #{sort},</if>
             <if test="status != null">status = #{status},</if>
             <if test="remark != null">remark = #{remark},</if>
-            <if test="parent != null and parent != ''">parent = #{parent},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
             <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="isDelte != null">is_delte = #{isDelte},</if>

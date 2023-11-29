@@ -45,6 +45,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectHpGoodsVo"/>
         where g_id = #{gId}
     </select>
+    <select id="getHpGoodsByGCode" resultMap="HpGoodsResult">
+        select g_code from hp_goods order by g_id desc limit 1;
+    </select>
         
     <insert id="insertHpGoods" parameterType="HpGoods" useGeneratedKeys="true" keyProperty="gId">
         insert into hp_goods

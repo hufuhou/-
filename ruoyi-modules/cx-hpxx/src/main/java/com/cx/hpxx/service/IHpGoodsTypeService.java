@@ -7,7 +7,7 @@ import com.cx.hpxx.domain.HpGoodsType;
  * 货品类型Service接口
  * 
  * @author hfh
- * @date 2023-11-23
+ * @date 2023-11-27
  */
 public interface IHpGoodsTypeService 
 {
@@ -26,7 +26,11 @@ public interface IHpGoodsTypeService
      * @return 货品类型集合
      */
     public List<HpGoodsType> selectHpGoodsTypeList(HpGoodsType hpGoodsType);
-
+    /**
+     * 获取最新的货品类型编码
+     * @return
+     */
+    public HpGoodsType getHpGoodsTypeByGtCode();
     /**
      * 新增货品类型
      * 

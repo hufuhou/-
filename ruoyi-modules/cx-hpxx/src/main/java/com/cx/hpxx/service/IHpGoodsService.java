@@ -26,7 +26,11 @@ public interface IHpGoodsService
      * @return 货品信息集合
      */
     public List<HpGoods> selectHpGoodsList(HpGoods hpGoods);
-
+    /**
+     * 获取最新的货品编码
+     * @return
+     */
+    public HpGoods getHpGoodsByGCode();
     /**
      * 新增货品信息
      * 

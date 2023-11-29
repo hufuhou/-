@@ -81,8 +81,6 @@ public class HpGoodsController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody HpGoods hpGoods)
     {
-        NumberGenerator num=new NumberGenerator("hpxx");
-        hpGoods.setgCode(String.valueOf(num.generateNumber()));
         return toAjax(hpGoodsService.insertHpGoods(hpGoods));
     }
 
