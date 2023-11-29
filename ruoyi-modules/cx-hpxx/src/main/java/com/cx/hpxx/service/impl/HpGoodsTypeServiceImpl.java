@@ -2,7 +2,7 @@ package com.cx.hpxx.service.impl;
 
 import java.util.List;
 
-import com.cx.hpxx.NumberGenerator;
+import com.cx.hpxx.unit.NumberGenerator;
 import com.ruoyi.common.core.utils.DateUtils;
 import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
