@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.units.mapper.SupplierMapper">
+
+    <resultMap type="Supplier" id="SupplierResult">
+        <result property="sId"    column="s_id"    />
+        <result property="fId"    column="f_id"    />
+        <result property="sCode"    column="s_code"    />
+        <result property="sName"    column="s_name"    />
+        <result property="industry"    column="industry"    />
+        <result property="supplierType"    column="supplier_type"    />
+        <result property="contactPerson"    column="contact_person"    />
+        <result property="contactNumber"    column="contact_number"    />
+        <result property="email"    column="email"    />
+        <result property="principalId"    column="principal_id"    />
+        <result property="status"    column="status"    />
+        <result property="sAddress"    column="s_address"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelete"    column="is_delete"    />
+
+    </resultMap>
+
+    <resultMap id="SupplierFinanceResult" type="Supplier" extends="SupplierResult">
+        <collection property="finance" notNullColumn="sub_f_id" resultMap="FinanceResult" />
+    </resultMap>
+
+    <resultMap type="Finance" id="FinanceResult">
+        <result property="fId"    column="sub_f_id"    />
+        <result property="sCode"    column="sub_s_code"    />
+        <result property="cId"    column="sub_c_id"    />
+        <result property="accountName"    column="sub_account_name"    />
+        <result property="tiNumber"    column="sub_ti_Number"    />
+        <result property="bankAccount"    column="sub_bank_account"    />
+        <result property="bankDeposit"    column="sub_bank_deposit"    />
+        <result property="aobAddress"    column="sub_aob_address"    />
+    </resultMap>
+
+    <sql id="selectSupplierVo">
+        select a.s_id, a.f_id, a.s_code, a.s_name, a.industry, a.supplier_type, a.contact_person, a.contact_number, a.email, a.principal_id, a.status, a.s_address, a.remark, a.create_by, a.create_time, a.update_by, a.update_time, a.is_delete,
+               b.f_id as sub_f_id, b.s_code as sub_s_code, b.c_id as sub_c_id, b.account_name as sub_account_name, b.ti_Number as sub_ti_Number, b.bank_account as sub_bank_account, b.bank_deposit as sub_bank_deposit, b.aob_address as sub_aob_address
+        from wldw_supplier a
+                 left join finance b on b.s_code = a.s_code
+    </sql>
+
+    <select id="selectSupplierList" parameterType="Supplier" resultMap="SupplierFinanceResult">
+        <include refid="selectSupplierVo"/>
+        <where>
+            <if test="sName != null  and sName != ''"> and s_name like concat('%', #{sName}, '%') or s_code like concat('%', #{sName}, '%')</if>
+            <if test="industry != null  and industry != ''"> and industry = #{industry}</if>
+            <if test="principalId != null "> and principal_id = #{principalId}</if>
+            <if test="status != null "> and status = #{status}</if>
+            and is_delete=0
+        </where>
+    </select>
+
+    <select id="selectSupplierBySId" parameterType="Long" resultMap="SupplierFinanceResult">
+        select a.s_id, a.f_id, a.s_code, a.s_name, a.industry, a.supplier_type, a.contact_person, a.contact_number, a.email, a.principal_id, a.status, a.s_address, a.remark, a.create_by, a.create_time, a.update_by, a.update_time, a.is_delete,
+               b.f_id as sub_f_id, b.s_code as sub_s_code, b.c_id as sub_c_id, b.account_name as sub_account_name, b.ti_Number as sub_ti_Number, b.bank_account as sub_bank_account, b.bank_deposit as sub_bank_deposit, b.aob_address as sub_aob_address
+        from wldw_supplier a
+                 left join finance b on b.s_code = a.s_code
+        where a.s_id = #{sId}
+    </select>
+
+    <insert id="insertSupplier" parameterType="Supplier">
+        insert into wldw_supplier
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sCode != null and sCode != ''">s_code,</if>
+            <if test="sName != null and sName != ''">s_name,</if>
+            <if test="industry != null and industry != ''">industry,</if>
+            <if test="supplierType != null and supplierType != ''">supplier_type,</if>
+            <if test="contactPerson != null and contactPerson != ''">contact_person,</if>
+            <if test="contactNumber != null and contactNumber != ''">contact_number,</if>
+            <if test="email != null">email,</if>
+            <if test="principalId != null">principal_id,</if>
+            <if test="sAddress != null and sAddress != ''">s_address,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sCode != null and sCode != ''">#{sCode},</if>
+            <if test="sName != null and sName != ''">#{sName},</if>
+            <if test="industry != null and industry != ''">#{industry},</if>
+            <if test="supplierType != null and supplierType != ''">#{supplierType},</if>
+            <if test="contactPerson != null and contactPerson != ''">#{contactPerson},</if>
+            <if test="contactNumber != null and contactNumber != ''">#{contactNumber},</if>
+            <if test="email != null">#{email},</if>
+            <if test="principalId != null">#{principalId},</if>
+            <if test="sAddress != null and sAddress != ''">#{sAddress},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSupplier" parameterType="Supplier">
+        update wldw_supplier
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sName != null and sName != ''">s_name = #{sName},</if>
+            <if test="industry != null and industry != ''">industry = #{industry},</if>
+            <if test="supplierType != null and supplierType != ''">supplier_type = #{supplierType},</if>
+            <if test="contactPerson != null and contactPerson != ''">contact_person = #{contactPerson},</if>
+            <if test="contactNumber != null and contactNumber != ''">contact_number = #{contactNumber},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="principalId != null">principal_id = #{principalId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="sAddress != null and sAddress != ''">s_address = #{sAddress},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where s_id = #{sId}
+    </update>
+    <update id="updateFinance" parameterType="Finance">
+        update finance
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountName != null and accountName != ''">account_name = #{accountName},</if>
+            <if test="tiNumber != null and tiNumber != ''">ti_Number = #{tiNumber},</if>
+            <if test="bankAccount != null and bankAccount != ''">bank_account = #{bankAccount},</if>
+            <if test="bankDeposit != null and bankDeposit != ''">bank_deposit = #{bankDeposit},</if>
+            <if test="aobAddress != null and aobAddress != ''">aob_address = #{aobAddress},</if>
+        </trim>
+        where s_code = #{sCode}
+    </update>
+
+    <delete id="deleteSupplierBySId" parameterType="Long">
+        delete from wldw_supplier where s_id = #{sId}
+    </delete>
+
+    <delete id="deleteSupplierBySIds" parameterType="String">
+        delete from wldw_supplier where s_id in
+        <foreach item="sId" collection="array" open="(" separator="," close=")">
+            #{sId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteFinanceBySCodes" parameterType="String">
+        delete from finance where s_code in
+        <foreach item="sCode" collection="array" open="(" separator="," close=")">
+            #{sCode}
+        </foreach>
+    </delete>
+
+    <delete id="deleteFinanceBySCode" parameterType="Long">
+        delete from finance where s_code = #{sCode}
+    </delete>
+
+    <insert id="addFinance" parameterType="Finance">
+        insert into finance(s_code,account_name, ti_Number, bank_account, bank_deposit, aob_address) values
+        (#{sCode}, #{accountName}, #{tiNumber}, #{bankAccount}, #{bankDeposit}, #{aobAddress})
+    </insert>
+
+    <select id="getSupplierCode" resultMap="SupplierResult">
+        select * from wldw_supplier order by s_id desc limit 1;
+    </select>
+</mapper>
