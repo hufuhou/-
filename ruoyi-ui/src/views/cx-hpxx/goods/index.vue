@@ -1,15 +1,8 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="货品类型" prop="gtId">
-        <el-select v-model="queryParams.gtId" placeholder="请选择类型" clearable>
-          <el-option
-            v-for="item in goodsType"
-            :key="item.gtId"
-            :label="item.gtName"
-            :value="item.gtId"
-          />
-        </el-select>
+      <el-form-item label="货品类型" prop="gtId" >
+          <treeselect v-model="queryParams.gtId" :options="goodsType1" :normalizer="normalizer" placeholder="请选择类型"  style="width: 205px"/>
       </el-form-item>
       <el-form-item label="货品编码" prop="gCode" >
         <el-input
@@ -172,19 +165,12 @@
 
     <!-- 添加或修改货品信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="货品类型" prop="gtId">
-          <el-select v-model="form.gtId" placeholder="请选择类型" clearable>
-            <el-option
-              v-for="item in goodsType"
-              :key="item.gtId"
-              :label="item.gtName"
-              :value="item.gtId"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form ref="form" :model="form" :rules="rules" label-width="99px">
         <el-form-item label="货品编码" prop="gCode" >
-          <el-input v-model="form.gCode" placeholder="请输入货品编码" :disabled="true" />
+          <el-input v-model="form.gCode" placeholder="自动获取系统编码" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="货品类型" prop="gtId" >
+          <treeselect v-model="form.gtId" :options="goodsType1" :normalizer="normalizer" placeholder="请选择类型"  style="width: 205px"/>
         </el-form-item>
         <el-form-item label="货品名称" prop="gName">
           <el-input v-model="form.gName" placeholder="请输入货品名称" />
@@ -203,20 +189,16 @@
           <el-input v-model="form.sort" placeholder="请输入排序" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-select v-model="form.status" placeholder="请选择状态">
-            <el-option
+          <el-radio-group v-model="form.status">
+            <el-radio
               v-for="dict in dict.type.goods_states"
               :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
+              :label="parseInt(dict.value)"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="规格型号" prop="specCode">
           <el-input v-model="form.specCode" placeholder="请输入规格型号" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
         <el-form-item label="出库参考价" prop="orPrice">
           <el-input v-model="form.orPrice" placeholder="请输入出库参考价" />
@@ -234,6 +216,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="保质期" prop="qualityG" v-if="showQualityG">
+          <el-input v-model="form.qualityG" placeholder="请输入保质期" />
+        </el-form-item>
         <el-form-item label="预警天数" prop="warningDays">
           <el-input v-model="form.warningDays" placeholder="请输入预警天数" />
         </el-form-item>
@@ -243,8 +228,8 @@
         <el-form-item label="货品下限" prop="lowerLimit">
           <el-input v-model="form.lowerLimit" placeholder="请输入货品下限" />
         </el-form-item>
-        <el-form-item label="保质期" prop="qualityG" v-if="showQualityG">
-          <el-input v-model="form.qualityG" placeholder="请输入保质期" />
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -257,10 +242,13 @@
 
 <script>
 import { listGoods, getGoods, delGoods, addGoods, updateGoods ,listType} from "@/api/cx-hpxx/goods";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Goods",
   dicts: ['has_shelf_life', 'g_unit', 'goods_states'],
+  components: { Treeselect },
   data() {
     return {
       // 默认显示 "保质期" 文本框
@@ -344,8 +332,19 @@ export default {
     /** 查询货品类型列表 */
     getType() {
       listType().then(response => {
-        this.goodsType = this.handleTree(response.data, "gtId");
+        this.goodsType = this.handleTree(response.data);
       });
+    },
+    /** 转换类型数据结构 */
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.gtId,
+        label: node.gtName,
+        children: node.children
+      };
     },
     /** 保质期 */
     handleShelfLifeChange() {

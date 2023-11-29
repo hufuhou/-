@@ -96,7 +96,7 @@ public class SupplierServiceImpl implements ISupplierService {
      */
     @Transactional
     @Override
-    public int deleteSupplierBySIds(Long[] sIds,String[] sCodes) {
+    public int deleteSupplierBySIds(Long[] sIds, String[] sCodes) {
         supplierMapper.deleteFinanceBySCodes(sCodes);
         return supplierMapper.deleteSupplierBySIds(sIds);
     }
@@ -109,7 +109,7 @@ public class SupplierServiceImpl implements ISupplierService {
      */
     @Transactional
     @Override
-    public int deleteSupplierBySId(Long sId,String sCode) {
+    public int deleteSupplierBySId(Long sId, String sCode) {
         supplierMapper.deleteFinanceBySCode(sCode);
         return supplierMapper.deleteSupplierBySId(sId);
     }

@@ -95,7 +95,7 @@
 
     <el-table v-loading="loading" :data="supplierList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="id" align="center" prop="sId"/>
+<!--      <el-table-column label="id" align="center" prop="sId"/>-->
       <el-table-column label="供应商编码" align="center" prop="sCode" width="180"/>
       <el-table-column label="供应商" align="center" prop="sName"/>
       <el-table-column label="所属行业" align="center" prop="industry">
@@ -169,6 +169,9 @@
     <!-- 添加或修改供应商列表对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="供应商编码" prop="sCode">
+          <el-input v-model="form.sCode" placeholder="自动获取系统编码" :disabled="true"/>
+        </el-form-item>
         <el-form-item label="供应商名称" prop="sName">
           <el-input v-model="form.sName" placeholder="请输入供应商名称"/>
         </el-form-item>
@@ -397,7 +400,7 @@ export default {
   created() {
     this.getList();
     this.getBuyer();
-    this.getSupplierCode();
+    //this.getSupplierCode();
   },
   methods: {
     /** 查询进货人 */
@@ -465,6 +468,7 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.getSupplierCode();
       this.reset();
       this.open = true;
       this.title = "添加供应商列表";
@@ -483,11 +487,10 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.$refs["form2"].validate(valid => {
-        this.form.sCode = this.code
-        this.form2.sCode = this.code
         if (valid) {
           if (this.form.sId != null) {
             updateSupplier(this.form).then(response => {
+              this.form2.sCode = this.form.sCode
               updateFinance(this.form2).then(response => {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
@@ -495,12 +498,13 @@ export default {
               })
             });
           } else {
+            this.form.sCode = this.code
+            this.form2.sCode = this.code
             addFinance(this.form2).then(response => {
               addSupplier(this.form).then(response => {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
                 this.getList();
-                this.getSupplierCode();
               })
             });
           }

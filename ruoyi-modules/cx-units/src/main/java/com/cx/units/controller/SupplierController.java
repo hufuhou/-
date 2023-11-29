@@ -93,6 +93,7 @@ public class SupplierController extends BaseController {
      */
     @PutMapping("/updateFinance")
     public AjaxResult edit(@RequestBody Finance finance) {
+        System.out.println(supplierService.updateFinance(finance));
         return toAjax(supplierService.updateFinance(finance));
     }
 

@@ -1,6 +1,8 @@
 package com.cx.hpxx.service.impl;
 
 import java.util.List;
+
+import com.cx.hpxx.NumberGenerator;
 import com.ruoyi.common.core.utils.DateUtils;
 import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,11 @@ public class HpGoodsServiceImpl implements IHpGoodsService
         return hpGoodsMapper.selectHpGoodsList(hpGoods);
     }
 
+    @Override
+    public HpGoods getHpGoodsByGCode() {
+        return hpGoodsMapper.getHpGoodsByGCode();
+    }
+
     /**
      * 新增货品信息
      * 
@@ -56,6 +63,13 @@ public class HpGoodsServiceImpl implements IHpGoodsService
     {
         hpGoods.setCreateBy(SecurityUtils.getUsername());
         hpGoods.setCreateTime(DateUtils.getNowDate());
+        NumberGenerator num=new NumberGenerator("HPXX");
+        HpGoods hpGoods1=hpGoodsMapper.getHpGoodsByGCode();
+        String code=null;
+        if (hpGoods1!=null){
+            code=hpGoods1.getgCode();
+        }
+        hpGoods.setgCode(String.valueOf(num.generateNumber(code)));
         return hpGoodsMapper.insertHpGoods(hpGoods);
     }
 

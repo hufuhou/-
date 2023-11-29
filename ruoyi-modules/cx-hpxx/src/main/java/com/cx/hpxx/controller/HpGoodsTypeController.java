@@ -22,13 +22,12 @@ import com.cx.hpxx.service.IHpGoodsTypeService;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
-import org.yaml.snakeyaml.serializer.NumberAnchorGenerator;
 
 /**
  * 货品类型Controller
  * 
  * @author hfh
- * @date 2023-11-23
+ * @date 2023-11-27
  */
 @RestController
 @RequestMapping("/type")
@@ -36,6 +35,7 @@ public class HpGoodsTypeController extends BaseController
 {
     @Autowired
     private IHpGoodsTypeService hpGoodsTypeService;
+
     /**
      * 查询货品类型列表
      */
@@ -78,8 +78,6 @@ public class HpGoodsTypeController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody HpGoodsType hpGoodsType)
     {
-        NumberGenerator num=new NumberGenerator("hplx");
-        hpGoodsType.setGtCode(String.valueOf(num.generateNumber()));
         return toAjax(hpGoodsTypeService.insertHpGoodsType(hpGoodsType));
     }
 

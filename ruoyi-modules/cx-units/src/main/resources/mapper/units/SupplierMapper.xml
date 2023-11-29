@@ -115,6 +115,7 @@
         </trim>
         where s_id = #{sId}
     </update>
+
     <update id="updateFinance" parameterType="Finance">
         update finance
         <trim prefix="SET" suffixOverrides=",">
