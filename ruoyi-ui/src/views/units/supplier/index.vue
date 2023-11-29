@@ -95,7 +95,7 @@
 
     <el-table v-loading="loading" :data="supplierList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="id" align="center" prop="sId"/>
+<!--      <el-table-column label="id" align="center" prop="sId"/>-->
       <el-table-column label="供应商编码" align="center" prop="sCode" width="180"/>
       <el-table-column label="供应商" align="center" prop="sName"/>
       <el-table-column label="所属行业" align="center" prop="industry">
