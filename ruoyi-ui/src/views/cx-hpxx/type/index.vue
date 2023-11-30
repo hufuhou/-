@@ -37,14 +37,14 @@
       </el-form-item>
       <el-form-item label="操作时间" prop="createTime">
         <el-date-picker clearable
-          v-model="queryParams.createTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择操作时间">
+                        v-model="queryParams.createTime"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="选择操作时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
-	    <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -58,7 +58,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['cx-hpxx:type:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -67,7 +68,8 @@
           icon="el-icon-sort"
           size="mini"
           @click="toggleExpandAll"
-        >展开/折叠</el-button>
+        >展开/折叠
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -81,16 +83,16 @@
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       <el-table-column label="货品类型编码" prop="gtCode" width="228px"/>
-      <el-table-column label="货品类型名称" align="center" prop="gtName" />
-      <el-table-column label="排序" align="center" prop="sort" />
+      <el-table-column label="货品类型名称" align="center" prop="gtName"/>
+      <el-table-column label="排序" align="center" prop="sort"/>
       <el-table-column label="货品状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.goods_states" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="父级类型" align="center" prop="parentId" />
-      <el-table-column label="操作人" align="center" prop="createBy" />
+      <el-table-column label="备注" align="center" prop="remark"/>
+      <el-table-column label="父级类型" align="center" prop="parentId"/>
+      <el-table-column label="操作人" align="center" prop="createBy"/>
       <el-table-column label="操作时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
@@ -104,21 +106,24 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['cx-hpxx:type:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-plus"
             @click="handleAdd(scope.row)"
             v-hasPermi="['cx-hpxx:type:add']"
-          >新增</el-button>
+          >新增
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['cx-hpxx:type:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -130,13 +135,14 @@
           <el-input v-model="form.gtCode" placeholder="自动获取系统编码" :disabled="true"/>
         </el-form-item>
         <el-form-item label="父级类型" prop="parentId">
-          <treeselect v-model="form.parentId" :options="typeOptions" :normalizer="normalizer" placeholder="请选择父级类型" />
+          <treeselect v-model="form.parentId" :options="typeOptions" :normalizer="normalizer"
+                      placeholder="请选择父级类型"/>
         </el-form-item>
         <el-form-item label="货品类型名称" prop="gtName">
-          <el-input v-model="form.gtName" placeholder="请输入货品类型名称" />
+          <el-input v-model="form.gtName" placeholder="请输入货品类型名称"/>
         </el-form-item>
         <el-form-item label="排序" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入排序" />
+          <el-input v-model="form.sort" placeholder="请输入排序"/>
         </el-form-item>
         <el-form-item label="货品状态" prop="status">
           <el-radio-group v-model="form.status">
@@ -144,11 +150,12 @@
               v-for="dict in dict.type.goods_states"
               :key="dict.value"
               :label="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
+            >{{ dict.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+          <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -160,9 +167,26 @@
 </template>
 
 <script>
-import { listType, getType, delType, addType, updateType } from "@/api/cx-hpxx/type";
+import {listType, getType, delType, addType, updateType, listGoods} from "@/api/cx-hpxx/type";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+
+// 检查货品类型是否存在关联的货品信息
+function checkGoodsExist(gtId) {
+  return new Promise((resolve, reject) => {
+    // 根据货品类型ID查询相关的货品信息
+    listGoods(gtId)
+      .then(response => {
+       const goodsList = response.rows.filter(goods => goods.gtId === gtId);
+        const exists = goodsList.length > 0;
+        resolve({ exists, goodsList });
+      })
+      .catch(error => {
+        console.error(error);
+        reject(error);
+      });
+  });
+}
 
 export default {
   name: "Type",
@@ -201,19 +225,19 @@ export default {
       // 表单校验
       rules: {
         gtName: [
-          { required: true, message: "货品类型名称不能为空", trigger: "blur" }
+          {required: true, message: "货品类型名称不能为空", trigger: "blur"}
         ],
         sort: [
-          { required: true, message: "排序不能为空", trigger: "blur" }
+          {required: true, message: "排序不能为空", trigger: "blur"}
         ],
         status: [
-          { required: true, message: "货品状态不能为空", trigger: "change" }
+          {required: true, message: "货品状态不能为空", trigger: "change"}
         ],
         createBy: [
-          { required: true, message: "操作人不能为空", trigger: "blur" }
+          {required: true, message: "操作人不能为空", trigger: "blur"}
         ],
         createTime: [
-          { required: true, message: "操作时间不能为空", trigger: "blur" }
+          {required: true, message: "操作时间不能为空", trigger: "blur"}
         ],
       }
     };
@@ -241,11 +265,11 @@ export default {
         children: node.children
       };
     },
-	/** 查询货品类型下拉树结构 */
+    /** 查询货品类型下拉树结构 */
     getTreeselect() {
       listType().then(response => {
         this.typeOptions = [];
-        const data = { gtId: 0, gtName: '顶级节点', children: [] };
+        const data = {gtId: 0, gtName: '顶级节点', children: []};
         data.children = this.handleTree(response.data, "gtId", "parentId");
         this.typeOptions.push(data);
       });
@@ -334,14 +358,39 @@ export default {
       });
     },
     /** 删除按钮操作 */
+    // handleDelete(row) {
+    //   this.$modal.confirm('是否确认删除货品类型编号为"' + row.gtId + '"的数据项？').then(function() {
+    //     return delType(row.gtId);
+    //   }).then(() => {
+    //     this.getList();
+    //     this.$modal.msgSuccess("删除成功");
+    //   }).catch(() => {});
+    // }
     handleDelete(row) {
-      this.$modal.confirm('是否确认删除货品类型编号为"' + row.gtId + '"的数据项？').then(function() {
-        return delType(row.gtId);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
-    }
+      // 先检查货品类型是否有关联的货品信息
+      checkGoodsExist(row.gtId)
+        .then(response => {
+          if (response.exists) {
+            // 货品类型有关联的货品信息，提示用户先删除货品
+            this.$modal.alert('该货品类型下存在货品信息，请先删除相关货品。');
+          } else {
+            // 货品类型没有关联的货品信息，确认删除操作
+            this.$modal.confirm('是否确认删除货品类型为"' + row.gtName + '"的数据项？')
+              .then(() => {
+                return delType(row.gtId);
+              })
+              .then(() => {
+                this.getList();
+                this.$modal.msgSuccess('删除成功');
+              })
+              .catch(() => {
+              });
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
   }
 };
 </script>

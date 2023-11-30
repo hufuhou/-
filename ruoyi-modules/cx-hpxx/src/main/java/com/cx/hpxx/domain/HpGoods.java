@@ -46,6 +46,10 @@ public class HpGoods extends BaseEntity
     @Excel(name = "规格型号")
     private String specCode;
 
+    /** 供应商 */
+    @Excel(name = "供应商")
+    private Long sId;
+
     /** 出库参考价 */
     @Excel(name = "出库参考价")
     private Long orPrice;
@@ -127,19 +131,29 @@ public class HpGoods extends BaseEntity
         this.sort = sort;
     }
 
-    public Long getSort() 
+    public Long getSort()
     {
         return sort;
     }
-    public void setStatus(Integer status) 
+
+    public void setStatus(Integer status)
     {
         this.status = status;
     }
 
-    public Integer getStatus() 
+    public Long getsId() {
+        return sId;
+    }
+
+    public void setsId(Long sId) {
+        this.sId = sId;
+    }
+
+    public Integer getStatus()
     {
         return status;
     }
+
     public void setSpecCode(String specCode) 
     {
         this.specCode = specCode;
@@ -233,6 +247,7 @@ public class HpGoods extends BaseEntity
             .append("sort", getSort())
             .append("status", getStatus())
             .append("specCode", getSpecCode())
+            .append("sId", getsId())
             .append("remark", getRemark())
             .append("orPrice", getOrPrice())
             .append("wrPrice", getWrPrice())

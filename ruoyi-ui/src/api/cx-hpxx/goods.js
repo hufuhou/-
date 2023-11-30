@@ -16,6 +16,14 @@ export function listType(query) {
     params: query
   })
 }
+// 查询供应商列表列表
+export function listSupplier(query) {
+  return request({
+    url: '/units/supplier/list',
+    method: 'get',
+    params: query
+  })
+}
 // 查询货品信息详细
 export function getGoods(gId) {
   return request({

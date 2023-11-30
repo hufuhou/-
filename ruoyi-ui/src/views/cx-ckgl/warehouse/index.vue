@@ -185,16 +185,6 @@
         <el-form-item label="排序" prop="sort">
           <el-input v-model="form.sort" placeholder="请输入排序" />
         </el-form-item>
-<!--        <el-form-item label="状态" prop="wStatus">-->
-<!--          <el-select v-model="form.wStatus" placeholder="请选择状态">-->
-<!--            <el-option-->
-<!--              v-for="dict in dict.type.w_status"-->
-<!--              :key="dict.value"-->
-<!--              :label="dict.label"-->
-<!--              :value="parseInt(dict.value)"-->
-<!--            ></el-option>-->
-<!--          </el-select>-->
-<!--        </el-form-item>-->
         <el-form-item label="状态" prop="wStatus">
           <el-radio-group v-model="form.wStatus">
             <el-radio
@@ -236,6 +226,23 @@
 import { listWarehouse, getWarehouse, delWarehouse, addWarehouse, updateWarehouse,listDept,listUser,listLocation } from "@/api/cx-ckgl/warehouse";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+
+// 检查货品类型是否存在关联的货品信息
+function checkKwExist(wId) {
+  return new Promise((resolve, reject) => {
+    // 根据货品类型ID查询相关的货品信息
+    listLocation(wId)
+      .then(response => {
+        const kWList = response.rows.filter(Location => Location.wId === wId);
+        const exists = kWList.length > 0;
+        resolve({ exists, kWList });
+      })
+      .catch(error => {
+        console.error(error);
+        reject(error);
+      });
+  });
+}
 
 export default {
   name: "Warehouse",
@@ -451,15 +458,40 @@ export default {
       });
     },
     /** 删除按钮操作 */
+    // handleDelete(row) {
+    //   const wIds = row.wId || this.ids;
+    //   this.$modal.confirm('是否确认删除仓库管理编号为"' + wIds + '"的数据项？').then(function () {
+    //     return delWarehouse(wIds);
+    //   }).then(() => {
+    //     this.getList();
+    //     this.$modal.msgSuccess("删除成功");
+    //   }).catch(() => {
+    //   });
+    // },
     handleDelete(row) {
-      const wIds = row.wId || this.ids;
-      this.$modal.confirm('是否确认删除仓库管理编号为"' + wIds + '"的数据项？').then(function () {
-        return delWarehouse(wIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {
-      });
+      // 先检查仓库是否有关联的库位信息
+      checkKwExist(row.wId)
+        .then(response => {
+          if (response.exists) {
+            // 仓库有关联的库位信息，提示用户先删除库位
+            this.$modal.alert('该仓库下存在库位信息，请先删除相关库位信息。');
+          } else {
+            // 仓库没有关联的库位信息，确认删除操作
+            this.$modal.confirm('是否确认删除仓库"' + row.wName + '"的数据项？')
+              .then(() => {
+                return delWarehouse(row.wId);
+              })
+              .then(() => {
+                this.getList();
+                this.$modal.msgSuccess('删除成功');
+              })
+              .catch(() => {
+              });
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
     /** 导出按钮操作 */
     handleExport() {

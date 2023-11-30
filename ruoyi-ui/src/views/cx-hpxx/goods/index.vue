@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="货品类型" prop="gtId" >
-          <treeselect v-model="queryParams.gtId" :options="goodsType1" :normalizer="normalizer" placeholder="请选择类型"  style="width: 205px"/>
+          <treeselect v-model="queryParams.gtId" :options="typeOptions" :normalizer="normalizer" placeholder="请选择类型"  style="width: 205px"/>
       </el-form-item>
       <el-form-item label="货品编码" prop="gCode" >
         <el-input
@@ -117,6 +117,15 @@
         </template>
       </el-table-column>
       <el-table-column label="规格型号" align="center" prop="specCode" />
+      <el-table-column label="供应商" align="center" prop="sId" >
+        <template slot-scope="scope">
+          <span v-for="item in supplierList">
+            <template v-if="scope.row.sId===item.sId">
+              {{item.sName}}
+            </template>
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="出库参考价" align="center" prop="orPrice" width="85"/>
       <el-table-column label="入库参考价" align="center" prop="wrPrice" width="85"/>
@@ -170,7 +179,7 @@
           <el-input v-model="form.gCode" placeholder="自动获取系统编码" :disabled="true" />
         </el-form-item>
         <el-form-item label="货品类型" prop="gtId" >
-          <treeselect v-model="form.gtId" :options="goodsType1" :normalizer="normalizer" placeholder="请选择类型"  style="width: 205px"/>
+          <treeselect v-model="form.gtId" :options="typeOptions" :normalizer="normalizer" placeholder="请选择类型"  style="width: 205px"/>
         </el-form-item>
         <el-form-item label="货品名称" prop="gName">
           <el-input v-model="form.gName" placeholder="请输入货品名称" />
@@ -199,6 +208,16 @@
         </el-form-item>
         <el-form-item label="规格型号" prop="specCode">
           <el-input v-model="form.specCode" placeholder="请输入规格型号" />
+        </el-form-item>
+        <el-form-item label="供应商" prop="sId">
+          <el-select v-model="form.sId" placeholder="请选择供应商" >
+            <el-option
+              v-for="dict in supplierList"
+              :key="dict.sId"
+              :label="dict.sName"
+              :value="dict.sId"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="出库参考价" prop="orPrice">
           <el-input v-model="form.orPrice" placeholder="请输入出库参考价" />
@@ -241,7 +260,7 @@
 </template>
 
 <script>
-import { listGoods, getGoods, delGoods, addGoods, updateGoods ,listType} from "@/api/cx-hpxx/goods";
+import { listGoods, getGoods, delGoods, addGoods, updateGoods ,listType,listSupplier} from "@/api/cx-hpxx/goods";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -268,6 +287,9 @@ export default {
       // 货品信息表格数据
       goodsList: [],
       goodsType: [],
+      typeOptions:[],
+      //供应商
+      supplierList:[],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -291,6 +313,9 @@ export default {
         ],
         gName: [
           { required: true, message: "货品名称不能为空", trigger: "blur" }
+        ],
+        sId: [
+          { required: true, message: "供应商不能为空", trigger: "blur" }
         ],
         gUnit: [
           { required: true, message: "单位不能为空", trigger: "change" }
@@ -319,6 +344,7 @@ export default {
   created() {
     this.getList();
     this.getType();
+    this.getSupplier();
   },
   methods: {
     /** 查询货品信息列表 */
@@ -333,6 +359,10 @@ export default {
     getType() {
       listType().then(response => {
         this.goodsType = this.handleTree(response.data);
+        this.typeOptions = [];
+        const data = { gtId: 0, gtName: '顶级节点', children: [] };
+        data.children = this.handleTree(response.data, "gtId", "parentId");
+        this.typeOptions.push(data);
       });
     },
     /** 转换类型数据结构 */
@@ -345,6 +375,12 @@ export default {
         label: node.gtName,
         children: node.children
       };
+    },
+    /** 查询供应商列表列表 */
+    getSupplier() {
+      listSupplier().then(response => {
+        this.supplierList = response.rows;
+      });
     },
     /** 保质期 */
     handleShelfLifeChange() {
@@ -370,6 +406,7 @@ export default {
         sort: null,
         status: null,
         specCode: null,
+        sId: null,
         remark: null,
         orPrice: null,
         wrPrice: null,
@@ -439,7 +476,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const gIds = row.gId || this.ids;
-      this.$modal.confirm('是否确认删除货品信息编号为"' + gIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除货品"' + row.gName + '"的数据项？').then(function() {
         return delGoods(gIds);
       }).then(() => {
         this.getList();

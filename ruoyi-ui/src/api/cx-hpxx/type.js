@@ -16,7 +16,14 @@ export function getType(gtId) {
     method: 'get'
   })
 }
-
+// 查询货品信息列表
+export function listGoods(query) {
+  return request({
+    url: '/cx-hpxx/goods/list',
+    method: 'get',
+    params: query
+  })
+}
 // 新增货品类型
 export function addType(data) {
   return request({

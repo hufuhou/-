@@ -152,7 +152,6 @@
     <div class="table-container" style=" margin-top: 100px;">
     <el-table :data="[selectedWarehouse]" >
       <el-table-column label="仓库名称" align="center" prop="wName" />
-<!--      <el-table-column label="仓库编号" align="center" prop="wCode" width="230px"/>-->
       <el-table-column label="仓库编号" align="center" prop="wCode" width="230px">
         <template slot-scope="scope">
           <div class="copy-container">
@@ -397,7 +396,6 @@ export default {
     getWList() {
       listWarehouse().then(response => {
         this.warehouseList = response.rows;
-        console.info(this.warehouseList)
         if (this.warehouseList.length > 0) {
           this.selectedWarehouse = this.warehouseList[0];
         }
@@ -506,7 +504,7 @@ export default {
   /** 删除按钮操作 */
   handleDelete(row) {
     const slIds = row.slId || this.ids;
-    this.$modal.confirm('是否确认删除仓库详情编号为"' + slIds + '"的数据项？').then(function () {
+    this.$modal.confirm('是否确认删除库位"' + row.slName + '"的数据项？').then(function () {
       return delLocation(slIds);
     }).then(() => {
       this.getList();
