@@ -1,6 +1,6 @@
 # Tomcat
 server:
-  port: 9232
+  port: 9231
 
 # Spring
 spring: 

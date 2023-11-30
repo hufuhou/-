@@ -122,7 +122,7 @@
       </el-table-column>
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.supplier_status" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.status_list" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="供应商地址" align="center" prop="sAddress" width="250"/>
@@ -168,7 +168,7 @@
 
     <!-- 添加或修改供应商列表对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="95px">
         <el-form-item label="供应商编码" prop="sCode">
           <el-input v-model="form.sCode" placeholder="自动获取系统编码" :disabled="true"/>
         </el-form-item>
@@ -222,45 +222,6 @@
         </el-form-item>
       </el-form>
       <el-divider content-position="center">财务信息</el-divider>
-
-      <!--      <el-row :gutter="10" class="mb8">-->
-      <!--        <el-col :span="1.5">-->
-      <!--          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddFinance">添加</el-button>-->
-      <!--        </el-col>-->
-      <!--        <el-col :span="1.5">-->
-      <!--          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteFinance">删除</el-button>-->
-      <!--        </el-col>-->
-      <!--      </el-row>-->
-      <!--      <el-table :data="financeList" :row-class-name="rowFinanceIndex" @selection-change="handleFinanceSelectionChange"-->
-      <!--                ref="finance">-->
-      <!--        <el-table-column type="selection" width="50" align="center"/>-->
-      <!--        <el-table-column label="帐户名称" prop="accountName" width="150">-->
-      <!--          <template slot-scope="scope">-->
-      <!--            <el-input v-model="scope.row.accountName" placeholder="请输入帐户名称"/>-->
-      <!--          </template>-->
-      <!--        </el-table-column>-->
-      <!--        <el-table-column label="纳税人识别号" prop="tiNumber" width="150">-->
-      <!--          <template slot-scope="scope">-->
-      <!--            <el-input v-model="scope.row.tiNumber" placeholder="请输入纳税人识别号"/>-->
-      <!--          </template>-->
-      <!--        </el-table-column>-->
-      <!--        <el-table-column label="银行账户" prop="bankAccount" width="150">-->
-      <!--          <template slot-scope="scope">-->
-      <!--            <el-input v-model="scope.row.bankAccount" placeholder="请输入银行账户"/>-->
-      <!--          </template>-->
-      <!--        </el-table-column>-->
-      <!--        <el-table-column label="开户银行" prop="bankDeposit" width="150">-->
-      <!--          <template slot-scope="scope">-->
-      <!--            <el-input v-model="scope.row.bankDeposit" placeholder="请输入开户银行"/>-->
-      <!--          </template>-->
-      <!--        </el-table-column>-->
-      <!--        <el-table-column label="开户行地址" prop="aobAddress" width="150">-->
-      <!--          <template slot-scope="scope">-->
-      <!--            <el-input v-model="scope.row.aobAddress" placeholder="请输入开户行地址"/>-->
-      <!--          </template>-->
-      <!--        </el-table-column>-->
-      <!--      </el-table>-->
-
       <el-form ref="form2" :model="form2" :rules="rules" label-width="100px">
         <el-form-item label="账户名称" prop="accountName">
           <el-input v-model="form2.accountName" placeholder="请输入账户名称"/>
@@ -301,7 +262,7 @@ import {listUser} from "@/api/system/user";
 
 export default {
   name: "Supplier",
-  dicts: ['industry_list', 'supplier_status', 'supplier_classification_list'],
+  dicts: ['industry_list', 'status_list', 'supplier_classification_list'],
   data() {
     return {
       // 遮罩层
@@ -534,6 +495,8 @@ export default {
         ...this.queryParams
       }, `supplier_${new Date().getTime()}.xlsx`)
     },
+
+    /**  获取编码 */
     getSupplierCode() {
       getCode().then(res => this.code = res.data.sCode)
     }
