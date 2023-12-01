@@ -1,12 +1,12 @@
 # Tomcat
 server:
-  port: 9232
+  port: 9231
 
 # Spring
 spring: 
   application:
     # 应用名称
-    name: cx-hpxx
+    name: cx-ckgl
   profiles:
     # 环境配置
     active: dev
