@@ -95,7 +95,7 @@
 
     <el-table v-loading="loading" :data="consumerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-<!--      <el-table-column label="客户ID" align="center" prop="cId"/>-->
+      <!--      <el-table-column label="客户ID" align="center" prop="cId"/>-->
       <el-table-column label="客户编码" align="center" prop="cCode" width="160"/>
       <el-table-column label="客户名称" align="center" prop="cName"/>
       <el-table-column label="所属行业" align="center" prop="industry">
@@ -306,6 +306,7 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      fIds: [],
       // 子表选中数据
       checkedFinance: [],
       // 非单个禁用
@@ -483,7 +484,7 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.cId != null) {
-            updateConsumer(this.form,this.form2).then(response => {
+            updateConsumer(this.form, this.form2).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
@@ -502,8 +503,9 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const cIds = row.cId || this.ids;
+      const fIds = row.fId || this.fIds;
       this.$modal.confirm('是否确认删除客户编号为"' + cIds + '"的数据项？').then(function () {
-        return delConsumer(cIds);
+        return delConsumer(cIds, fIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

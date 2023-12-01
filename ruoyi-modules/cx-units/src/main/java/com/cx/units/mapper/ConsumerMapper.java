@@ -64,10 +64,10 @@ public interface ConsumerMapper
     /**
      * 批量删除财务
      * 
-     * @param cIds 需要删除的数据主键集合
+     * @param fIds 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteFinanceByFIds(Long[] cIds);
+    public int deleteFinanceByFIds(Long[] fIds);
     
     /**
      * 新增财务
