@@ -92,7 +92,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="goodsList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="sortedDataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="货品类型" align="center" prop="gtId" >
         <template slot-scope="scope">
@@ -267,6 +267,11 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   name: "Goods",
   dicts: ['has_shelf_life', 'g_unit', 'goods_states'],
+  computed: {
+    sortedDataList() {
+      return this.goodsList.slice().sort((a, b) => a.sort - b.sort);
+    }
+  },
   components: { Treeselect },
   data() {
     return {
