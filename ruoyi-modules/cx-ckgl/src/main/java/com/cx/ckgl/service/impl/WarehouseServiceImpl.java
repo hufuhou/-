@@ -88,6 +88,67 @@ public class WarehouseServiceImpl implements IWarehouseService
     }
 
     /**
+     * 启用仓管
+     *
+     * @param wId 仓库管理主键
+     * @return 结果
+     */
+    @Override
+    public int enableWarehouse(Long wId) {
+        return warehouseMapper.enableWarehouse(wId);
+    }
+    /**
+     * 批量启用仓管
+     *
+     * @param wIds 需要启用的数据主键集合
+     * @return 结果
+     */
+    @Override
+    public int enablesWarehouse(Long[] wIds) {
+        return warehouseMapper.enablesWarehouse(wIds);
+    }
+    /**
+     * 停用仓管
+     *
+     * @param wId 仓库管理主键
+     * @return 结果
+     */
+    @Override
+    public int deactivateWarehouse(Long wId) {
+        return warehouseMapper.deactivateWarehouse(wId);
+    }
+    /**
+     * 批量停用仓管
+     *
+     * @param wIds 需要停用的数据主键集合
+     * @return 结果
+     */
+    @Override
+    public int deactivatesWarehouse(Long[] wIds) {
+        return warehouseMapper.deactivatesWarehouse(wIds);
+    }
+    /**
+     * 锁定仓管
+     *
+     * @param wId 仓库管理主键
+     * @return 结果
+     */
+    @Override
+    public int lockWarehouse(Long wId) {
+        return warehouseMapper.lockWarehouse(wId);
+    }
+    /**
+     * 批量锁定仓管
+     *
+     * @param wIds 需要锁定的数据主键集合
+     * @return 结果
+     */
+    @Override
+    public int locksWarehouse(Long[] wIds) {
+        return warehouseMapper.locksWarehouse(wIds);
+    }
+
+    /**
      * 批量删除仓库管理
      * 
      * @param wIds 需要删除的仓库管理主键

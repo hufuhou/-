@@ -115,6 +115,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where w_id = #{wId}
     </update>
+    <update id="enableWarehouse" parameterType="Long">
+        update warehouse set w_status =0  where w_id = #{wId}
+    </update>
+
+    <update id="deactivateWarehouse" parameterType="Long">
+        update warehouse set w_status =1  where w_id = #{wId}
+    </update>
+
+    <update id="lockWarehouse" parameterType="Long">
+        update warehouse set w_status =2  where w_id = #{wId}
+    </update>
+
+    <update id="enablesWarehouse" parameterType="String">
+        update warehouse set w_status =0  where w_id in
+        <foreach item="wId" collection="array" open="(" separator="," close=")">
+            #{wId}
+        </foreach>
+    </update>
+
+    <update id="deactivatesWarehouse" parameterType="String">
+        update warehouse set w_status =1  where w_id in
+        <foreach item="wId" collection="array" open="(" separator="," close=")">
+            #{wId}
+        </foreach>
+    </update>
+
+    <update id="locksWarehouse" parameterType="String">
+        update warehouse set w_status =2  where w_id in
+        <foreach item="wId" collection="array" open="(" separator="," close=")">
+            #{wId}
+        </foreach>
+    </update>
 
     <delete id="deleteWarehouseByWId" parameterType="Long">
         delete from warehouse where w_id = #{wId}

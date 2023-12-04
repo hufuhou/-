@@ -46,6 +46,50 @@ public interface WarehouseMapper
      * @return 结果
      */
     public int updateWarehouse(Warehouse warehouse);
+    /**
+     * 启用仓管
+     *
+     * @param wId 仓库管理主键
+     * @return 结果
+     */
+    public int enableWarehouse(Long wId);
+    /**
+     * 批量启用仓管
+     *
+     * @param wIds 需要启用的数据主键集合
+     * @return 结果
+     */
+    public int enablesWarehouse(Long[] wIds);
+
+    /**
+     * 停用仓管
+     *
+     * @param wId 仓库管理主键
+     * @return 结果
+     */
+    public int deactivateWarehouse(Long wId);
+    /**
+     * 批量停用仓管
+     *
+     * @param wIds 需要停用的数据主键集合
+     * @return 结果
+     */
+    public int deactivatesWarehouse(Long[] wIds);
+
+    /**
+     * 锁定仓管
+     *
+     * @param wId 仓库管理主键
+     * @return 结果
+     */
+    public int lockWarehouse(Long wId);
+    /**
+     * 批量锁定仓管
+     *
+     * @param wIds 需要锁定的数据主键集合
+     * @return 结果
+     */
+    public int locksWarehouse(Long[] wIds);
 
     /**
      * 删除仓库管理

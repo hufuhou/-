@@ -66,3 +66,24 @@ export function delWarehouse(wId) {
   })
 
 }
+// 启用仓库
+export function enableWarehouse(wIds) {
+  return request({
+    url: '/cx-ckgl/warehouse/qy/' + wIds,
+    method: 'get'
+  })
+}
+// 停用仓库
+  export function deactivateWarehouse(wIds) {
+    return request({
+      url: '/cx-ckgl/warehouse/ty/' + wIds,
+      method: 'get'
+    })
+}
+// 锁定仓库
+export function lockWarehouse(wIds) {
+  return request({
+    url: '/cx-ckgl/warehouse/sd/' + wIds,
+    method: 'get'
+  })
+}

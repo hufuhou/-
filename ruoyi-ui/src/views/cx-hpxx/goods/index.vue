@@ -127,16 +127,16 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="出库参考价" align="center" prop="orPrice" width="85"/>
-      <el-table-column label="入库参考价" align="center" prop="wrPrice" width="85"/>
+      <el-table-column label="出库参考价/元" align="center" prop="orPrice" width="105"/>
+      <el-table-column label="入库参考价/元" align="center" prop="wrPrice" width="105"/>
       <el-table-column label="保质期管理" align="center" prop="hasShelfLife" width="85">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.has_shelf_life" :value="scope.row.hasShelfLife"/>
         </template>
       </el-table-column>
       <el-table-column label="预警天数" align="center" prop="warningDays" />
-      <el-table-column label="货品上限" align="center" prop="itemLimit" />
-      <el-table-column label="货品下限" align="center" prop="lowerLimit" />
+<!--      <el-table-column label="货品上限" align="center" prop="itemLimit" />-->
+<!--      <el-table-column label="货品下限" align="center" prop="lowerLimit" />-->
       <el-table-column label="创建人" align="center" prop="createBy" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
