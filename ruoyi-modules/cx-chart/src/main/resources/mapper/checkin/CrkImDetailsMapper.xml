@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.wms.mapper.CrkImDetailsMapper">
+
+    <resultMap type="CrkImDetails" id="CrkImDetailsResult">
+        <result property="imdId" column="imd_id"/>
+        <result property="inId" column="in_id"/>
+        <result property="inCode" column="in_code"/>
+        <result property="odId" column="od_id"/>
+        <result property="unit" column="unit"/>
+        <result property="quantityInStock" column="quantity_in_stock"/>
+        <result property="unstockedQuantity" column="unstocked_quantity"/>
+        <result property="slId" column="sl_id"/>
+        <result property="thisQuantity" column="this_quantity"/>
+        <result property="productionDate" column="production_date"/>
+        <result property="barcode" column="barcode"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+    </resultMap>
+
+    <!--  带用户名的resultMap  -->
+    <resultMap id="combinedResultMap" type="CrkImDetails">
+        <result property="imdId" column="imd_id"/>
+        <result property="inId" column="in_id"/>
+        <result property="inCode" column="in_code"/>
+        <result property="odId" column="od_id"/>
+        <result property="quantityInStock" column="quantity_in_stock"/>
+        <result property="unstockedQuantity" column="unstocked_quantity"/>
+        <result property="slId" column="sl_id"/>
+        <result property="thisQuantity" column="this_quantity"/>
+        <result property="productionDate" column="production_date"/>
+        <result property="barcode" column="barcode"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="create_user_name" column="create_user_name"/>
+        <result property="update_user_name" column="update_user_name"/>
+    </resultMap>
+
+    <sql id="selectCrkImDetailsVo">
+        select imd_id,
+               in_id,
+               in_code,
+               od_id,
+               quantity_in_stock,
+               unstocked_quantity,
+               sl_id,
+               this_quantity,
+               production_date,
+               barcode,
+               remark,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from crk_im_details
+    </sql>
+
+    <select id="findListWithUser" resultMap="combinedResultMap">
+        SELECT
+            crk_im_details.*,
+            sys_user.nick_name AS create_user_name,
+            sys_user2.nick_name AS update_user_name
+        FROM
+            crk_im_details
+                LEFT JOIN sys_user ON crk_im_details.create_by = sys_user.user_id
+                LEFT JOIN sys_user AS sys_user2 ON crk_im_details.update_by = sys_user2.user_id
+    </select>
+
+    <select id="selectCrkImDetailsList" parameterType="CrkImDetails" resultMap="CrkImDetailsResult">
+        <include refid="selectCrkImDetailsVo"/>
+        <where>
+            <if test="inId != null ">and in_id = #{inId}</if>
+            <if test="inCode != null  and inCode != ''">and in_code = #{inCode}</if>
+            <if test="odId != null  and odId != ''">and od_id = #{odId}</if>
+            <if test="unit != null  and unit != ''">and unit = #{unit}</if>
+            <if test="productionDate != null ">and production_date = #{productionDate}</if>
+            <if test="remark != null  and remark != ''">and remark = #{remark}</if>
+            <if test="createBy != null ">and create_by = #{createBy}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateBy != null ">and update_by = #{updateBy}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+        </where>
+    </select>
+
+    <select id="selectCrkImDetailsByImdId" parameterType="Long" resultMap="CrkImDetailsResult">
+        <include refid="selectCrkImDetailsVo"/>
+        where imd_id = #{imdId}
+    </select>
+
+    <insert id="insertCrkImDetails" parameterType="CrkImDetails">
+        insert into crk_im_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imdId != null">imd_id,</if>
+            <if test="inId != null">in_id,</if>
+            <if test="inCode != null and inCode != ''">in_code,</if>
+            <if test="odId != null and odId != ''">od_id,</if>
+            <if test="unit != null and unit != ''">unit,</if>
+            <if test="quantityInStock != null">quantity_in_stock,</if>
+            <if test="unstockedQuantity != null">unstocked_quantity,</if>
+            <if test="slId != null">sl_id,</if>
+            <if test="thisQuantity != null">this_quantity,</if>
+            <if test="productionDate != null">production_date,</if>
+            <if test="barcode != null and barcode != ''">barcode,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imdId != null">#{imdId},</if>
+            <if test="inId != null">#{inId},</if>
+            <if test="inCode != null and inCode != ''">#{inCode},</if>
+            <if test="odId != null and odId != ''">#{odId},</if>
+            <if test="unit != null and unit != ''">#{unit},</if>
+            <if test="quantityInStock != null">#{quantityInStock},</if>
+            <if test="unstockedQuantity != null">#{unstockedQuantity},</if>
+            <if test="slId != null">#{slId},</if>
+            <if test="thisQuantity != null">#{thisQuantity},</if>
+            <if test="productionDate != null">#{productionDate},</if>
+            <if test="barcode != null and barcode != ''">#{barcode},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCrkImDetails" parameterType="CrkImDetails">
+        update crk_im_details
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="inId != null">in_id = #{inId},</if>
+            <if test="inCode != null and inCode != ''">in_code = #{inCode},</if>
+            <if test="odId != null and odId != ''">od_id = #{odId},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="quantityInStock != null">quantity_in_stock = #{quantityInStock},</if>
+            <if test="unstockedQuantity != null">unstocked_quantity = #{unstockedQuantity},</if>
+            <if test="slId != null">sl_id = #{slId},</if>
+            <if test="thisQuantity != null">this_quantity = #{thisQuantity},</if>
+            <if test="productionDate != null">production_date = #{productionDate},</if>
+            <if test="barcode != null and barcode != ''">barcode = #{barcode},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where imd_id = #{imdId}
+    </update>
+
+    <delete id="deleteCrkImDetailsByImdId" parameterType="Long">
+        delete
+        from crk_im_details
+        where imd_id = #{imdId}
+    </delete>
+
+    <delete id="deleteCrkImDetailsByImdIds" parameterType="String">
+        delete from crk_im_details where imd_id in
+        <foreach item="imdId" collection="array" open="(" separator="," close=")">
+            #{imdId}
+        </foreach>
+    </delete>
+
+    <select id="findCheckInNumber">
+        SELECT COUNT(*)
+        FROM crk_im_details
+        WHERE is_delte = 0;
+    </select>
+
+</mapper>

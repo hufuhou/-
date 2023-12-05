@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.wms.mapper.CrkOutDetailsMapper">
+
+    <resultMap type="CrkOutDetails" id="CrkOutDetailsResult">
+        <result property="omId" column="om_id"/>
+        <result property="outOutId" column="out_out_id"/>
+        <result property="outId" column="out_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="unit" column="unit"/>
+        <result property="itemQuantity" column="item_quantity"/>
+        <result property="quantityShipped" column="quantity_shipped"/>
+        <result property="undeliveredQuantity" column="undelivered_quantity"/>
+        <result property="currOutQuantity" column="curr_out_quantity"/>
+        <result property="batchNumber" column="batch_number"/>
+        <result property="remark" column="remark"/>
+        <result property="barcode" column="barcode"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+    </resultMap>
+
+    <resultMap id="combinedResultMap" type="CrkOutDetails">
+        <id property="omId" column="om_id" />
+        <result property="outOutId" column="out_out_id"/>
+        <result property="outId" column="out_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="unit" column="unit"/>
+        <result property="itemQuantity" column="item_quantity"/>
+        <result property="quantityShipped" column="quantity_shipped"/>
+        <result property="undeliveredQuantity" column="undelivered_quantity"/>
+        <result property="currOutQuantity" column="curr_out_quantity"/>
+        <result property="batchNumber" column="batch_number"/>
+        <result property="remark" column="remark"/>
+        <result property="barcode" column="barcode"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="create_user_name" column="create_user_name"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="update_user_name" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+    </resultMap>
+
+    <select id="selectAllWithUser" resultMap="combinedResultMap">
+        SELECT
+            crk_out_details.*,
+            sys_user.nick_name AS create_user_name,
+            sys_user2.nick_name AS update_user_name
+        FROM
+            crk_out_details
+                LEFT JOIN
+            sys_user ON crk_out_details.create_by = sys_user.user_id
+                LEFT JOIN
+            sys_user AS sys_user2 ON crk_out_details.update_by = sys_user2.user_id
+    </select>
+
+    <sql id="selectCrkOutDetailsVo">
+        select om_id,
+               out_out_id,
+               out_id,
+               order_id,
+               unit,
+               item_quantity,
+               quantity_shipped,
+               undelivered_quantity,
+               curr_out_quantity,
+               batch_number,
+               remark,
+               barcode,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from crk_out_details
+    </sql>
+
+    <select id="selectCrkOutDetailsList" parameterType="CrkOutDetails" resultMap="CrkOutDetailsResult">
+        <include refid="selectCrkOutDetailsVo"/>
+        <where>
+            <if test="outOutId != null ">and out_out_id = #{outOutId}</if>
+            <if test="outId != null ">and out_id = #{outId}</if>
+            <if test="orderId != null ">and order_id = #{orderId}</if>
+            <if test="unit != null  and unit != ''">and unit = #{unit}</if>
+            <if test="itemQuantity != null ">and item_quantity = #{itemQuantity}</if>
+            <if test="quantityShipped != null ">and quantity_shipped = #{quantityShipped}</if>
+            <if test="undeliveredQuantity != null ">and undelivered_quantity = #{undeliveredQuantity}</if>
+            <if test="currOutQuantity != null ">and curr_out_quantity = #{currOutQuantity}</if>
+            <if test="batchNumber != null ">and batch_number = #{batchNumber}</if>
+            <if test="barcode != null  and barcode != ''">and barcode = #{barcode}</if>
+            <if test="isDelte != null ">and is_delte = #{isDelte}</if>
+        </where>
+    </select>
+
+    <select id="selectCrkOutDetailsByOmId" parameterType="Long" resultMap="CrkOutDetailsResult">
+        <include refid="selectCrkOutDetailsVo"/>
+        where om_id = #{omId}
+    </select>
+
+    <insert id="insertCrkOutDetails" parameterType="CrkOutDetails">
+        insert into crk_out_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="omId != null">om_id,</if>
+            <if test="outOutId != null">out_out_id,</if>
+            <if test="outId != null">out_id,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="unit != null and unit != ''">unit,</if>
+            <if test="itemQuantity != null">item_quantity,</if>
+            <if test="quantityShipped != null">quantity_shipped,</if>
+            <if test="undeliveredQuantity != null">undelivered_quantity,</if>
+            <if test="currOutQuantity != null">curr_out_quantity,</if>
+            <if test="batchNumber != null">batch_number,</if>
+            <if test="remark != null">remark,</if>
+            <if test="barcode != null and barcode != ''">barcode,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="omId != null">#{omId},</if>
+            <if test="outOutId != null">#{outOutId},</if>
+            <if test="outId != null">#{outId},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="unit != null and unit != ''">#{unit},</if>
+            <if test="itemQuantity != null">#{itemQuantity},</if>
+            <if test="quantityShipped != null">#{quantityShipped},</if>
+            <if test="undeliveredQuantity != null">#{undeliveredQuantity},</if>
+            <if test="currOutQuantity != null">#{currOutQuantity},</if>
+            <if test="batchNumber != null">#{batchNumber},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="barcode != null and barcode != ''">#{barcode},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCrkOutDetails" parameterType="CrkOutDetails">
+        update crk_out_details
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="outOutId != null">out_out_id = #{outOutId},</if>
+            <if test="outId != null">out_id = #{outId},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="itemQuantity != null">item_quantity = #{itemQuantity},</if>
+            <if test="quantityShipped != null">quantity_shipped = #{quantityShipped},</if>
+            <if test="undeliveredQuantity != null">undelivered_quantity = #{undeliveredQuantity},</if>
+            <if test="currOutQuantity != null">curr_out_quantity = #{currOutQuantity},</if>
+            <if test="batchNumber != null">batch_number = #{batchNumber},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="barcode != null and barcode != ''">barcode = #{barcode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where om_id = #{omId}
+    </update>
+
+    <delete id="deleteCrkOutDetailsByOmId" parameterType="Long">
+        delete
+        from crk_out_details
+        where om_id = #{omId}
+    </delete>
+
+    <delete id="deleteCrkOutDetailsByOmIds" parameterType="String">
+        delete from crk_out_details where om_id in
+        <foreach item="omId" collection="array" open="(" separator="," close=")">
+            #{omId}
+        </foreach>
+    </delete>
+
+    <select id="findCrkOutNumber">
+        SELECT COUNT(*) FROM crk_out_details WHERE is_delte = 0;
+    </select>
+</mapper>

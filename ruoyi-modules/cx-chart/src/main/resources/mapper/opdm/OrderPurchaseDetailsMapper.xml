@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.wms.mapper.OrderPurchaseDetailsMapper">
+
+    <resultMap type="OrderPurchaseDetails" id="OrderPurchaseDetailsResult">
+        <result property="pdId" column="pd_id"/>
+        <result property="poCode" column="po_code"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="purchaseQuantity" column="purchase_quantity"/>
+        <result property="money" column="money"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="create_user_name" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="update_user_name" column="update_user_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="goods_name" column="goods_name"/>
+    </resultMap>
+
+    <sql id="selectOrderPurchaseDetailsVo">
+        select pd_id,
+               po_code,
+               goods_id,
+               purchase_quantity,
+               money,
+               remark,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from order_purchase_details
+    </sql>
+
+    <select id="selectOrderPurchaseDetailsList" parameterType="OrderPurchaseDetails"
+            resultMap="OrderPurchaseDetailsResult">
+        <include refid="selectOrderPurchaseDetailsVo"/>
+        <where>
+            <if test="poCode != null  and poCode != ''">and po_code = #{poCode}</if>
+            <if test="goodsId != null ">and goods_id = #{goodsId}</if>
+            <if test="purchaseQuantity != null ">and purchase_quantity = #{purchaseQuantity}</if>
+            <if test="money != null ">and money = #{money}</if>
+            <if test="isDelte != null ">and is_delte = #{isDelte}</if>
+        </where>
+    </select>
+
+    <select id="selectOrderPurchaseDetailsByPdId" parameterType="Long" resultMap="OrderPurchaseDetailsResult">
+        <include refid="selectOrderPurchaseDetailsVo"/>
+        where pd_id = #{pdId}
+    </select>
+
+    <insert id="insertOrderPurchaseDetails" parameterType="OrderPurchaseDetails" useGeneratedKeys="true"
+            keyProperty="pdId">
+        insert into order_purchase_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="poCode != null and poCode != ''">po_code,</if>
+            <if test="goodsId != null">goods_id,</if>
+            <if test="purchaseQuantity != null">purchase_quantity,</if>
+            <if test="money != null">money,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="poCode != null and poCode != ''">#{poCode},</if>
+            <if test="goodsId != null">#{goodsId},</if>
+            <if test="purchaseQuantity != null">#{purchaseQuantity},</if>
+            <if test="money != null">#{money},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOrderPurchaseDetails" parameterType="OrderPurchaseDetails">
+        update order_purchase_details
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="poCode != null and poCode != ''">po_code = #{poCode},</if>
+            <if test="goodsId != null">goods_id = #{goodsId},</if>
+            <if test="purchaseQuantity != null">purchase_quantity = #{purchaseQuantity},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where pd_id = #{pdId}
+    </update>
+
+    <delete id="deleteOrderPurchaseDetailsByPdId" parameterType="Long">
+        delete
+        from order_purchase_details
+        where pd_id = #{pdId}
+    </delete>
+
+    <delete id="deleteOrderPurchaseDetailsByPdIds" parameterType="String">
+        delete from order_purchase_details where pd_id in
+        <foreach item="pdId" collection="array" open="(" separator="," close=")">
+            #{pdId}
+        </foreach>
+    </delete>
+
+    <select id="selectOrderPurchaseDetailsCount">
+        SELECT COUNT(*)
+        FROM `order_purchase_details`
+        WHERE is_delte = 0;
+    </select>
+
+    <select id="findWithUserAndGoodName" resultMap="OrderPurchaseDetailsResult">
+        SELECT
+            order_purchase_details.*,
+            sys_user.nick_name AS create_user_name,
+            sys_user2.nick_name AS update_user_name,
+            hp_goods.g_name AS goods_name
+        FROM
+            order_purchase_details
+                LEFT JOIN sys_user ON order_purchase_details.create_by = sys_user.user_id
+                LEFT JOIN sys_user AS sys_user2 ON order_purchase_details.update_by = sys_user2.user_id
+                LEFT JOIN hp_goods ON order_purchase_details.goods_id = hp_goods.g_id
+    </select>
+</mapper>
