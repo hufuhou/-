@@ -18,7 +18,6 @@
         <module>cx-order</module>
         <module>cx-units</module>
         <module>cx-hpxx</module>
-        <module>cx-crkgl</module>
     </modules>
 
     <artifactId>ruoyi-modules</artifactId>
