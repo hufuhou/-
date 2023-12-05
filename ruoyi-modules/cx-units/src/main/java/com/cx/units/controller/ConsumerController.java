@@ -101,9 +101,9 @@ public class ConsumerController extends BaseController {
      */
     @RequiresPermissions("units:consumer:remove")
     @Log(title = "客户", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{cIds}")
-    public AjaxResult remove(@PathVariable Long[] cIds) {
-        return toAjax(consumerService.deleteConsumerByCIds(cIds));
+    @DeleteMapping("/{cIds}/{fIds}")
+    public AjaxResult remove(@PathVariable Long[] cIds,@PathVariable Long[] fIds) {
+        return toAjax(consumerService.deleteConsumerByCIds(cIds,fIds));
     }
 
     /**

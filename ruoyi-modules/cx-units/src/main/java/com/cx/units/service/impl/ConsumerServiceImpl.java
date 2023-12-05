@@ -97,8 +97,8 @@ public class ConsumerServiceImpl implements IConsumerService {
      */
     @Transactional
     @Override
-    public int deleteConsumerByCIds(Long[] cIds) {
-        consumerMapper.deleteFinanceByFIds(cIds);
+    public int deleteConsumerByCIds(Long[] cIds,Long[] fIds) {
+        consumerMapper.deleteFinanceByFIds(fIds);
         return consumerMapper.deleteConsumerByCIds(cIds);
     }
 

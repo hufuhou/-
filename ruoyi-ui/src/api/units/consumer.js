@@ -30,7 +30,7 @@ export function addConsumer(data, data2) {
 }
 
 // 修改客户
-export function updateConsumer(data,data2) {
+export function updateConsumer(data, data2) {
   return request({
     url: '/units/consumer',
     method: 'put',
@@ -42,9 +42,9 @@ export function updateConsumer(data,data2) {
 }
 
 // 删除客户
-export function delConsumer(cId) {
+export function delConsumer(cId, fId) {
   return request({
-    url: '/units/consumer/' + cId,
+    url: '/units/consumer/' + cId + '/' + fId,
     method: 'delete'
   })
 }

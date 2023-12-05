@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.ckgl.mapper.TjStorageLocationMapper">
+    
+    <resultMap type="TjStorageLocation" id="TjStorageLocationResult">
+        <result property="slId"    column="sl_id"    />
+        <result property="wId"    column="w_id"    />
+        <result property="slCode"    column="sl_code"    />
+        <result property="slName"    column="sl_name"    />
+        <result property="locationCapacity"    column="location_capacity"    />
+        <result property="positionManager"    column="position_manager"    />
+        <result property="sort"    column="sort"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelte"    column="is_delte"    />
+    </resultMap>
+
+    <sql id="selectTjStorageLocationVo">
+        select sl_id, w_id, sl_code, sl_name, location_capacity, position_manager, sort, status, remark, create_by, create_time, update_by, update_time, is_delte from tj_storage_location
+    </sql>
+
+    <select id="selectTjStorageLocationList" parameterType="TjStorageLocation" resultMap="TjStorageLocationResult">
+        <include refid="selectTjStorageLocationVo"/>
+        <where>  
+            <if test="wId != null "> and w_id = #{wId}</if>
+            <if test="slCode != null  and slCode != ''"> and sl_code = #{slCode}</if>
+            <if test="slName != null  and slName != ''"> and sl_name like concat('%', #{slName}, '%')</if>
+            <if test="positionManager != null "> and position_manager = #{positionManager}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectTjStorageLocationBySlId" parameterType="Long" resultMap="TjStorageLocationResult">
+        <include refid="selectTjStorageLocationVo"/>
+        where sl_id = #{slId}
+    </select>
+    <select id="getTjStorageLocationBySlCode" resultMap="TjStorageLocationResult">
+        select sl_code from tj_storage_location order by sl_id desc limit 1;
+    </select>
+        
+    <insert id="insertTjStorageLocation" parameterType="TjStorageLocation">
+        insert into tj_storage_location
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="slId != null">sl_id,</if>
+            <if test="wId != null">w_id,</if>
+            <if test="slCode != null">sl_code,</if>
+            <if test="slName != null and slName != ''">sl_name,</if>
+            <if test="locationCapacity != null">location_capacity,</if>
+            <if test="positionManager != null">position_manager,</if>
+            <if test="sort != null">sort,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="slId != null">#{slId},</if>
+            <if test="wId != null">#{wId},</if>
+            <if test="slCode != null">#{slCode},</if>
+            <if test="slName != null and slName != ''">#{slName},</if>
+            <if test="locationCapacity != null">#{locationCapacity},</if>
+            <if test="positionManager != null">#{positionManager},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTjStorageLocation" parameterType="TjStorageLocation">
+        update tj_storage_location
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="wId != null">w_id = #{wId},</if>
+            <if test="slCode != null">sl_code = #{slCode},</if>
+            <if test="slName != null and slName != ''">sl_name = #{slName},</if>
+            <if test="locationCapacity != null">location_capacity = #{locationCapacity},</if>
+            <if test="positionManager != null">position_manager = #{positionManager},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where sl_id = #{slId}
+    </update>
+
+    <delete id="deleteTjStorageLocationBySlId" parameterType="Long">
+        delete from tj_storage_location where sl_id = #{slId}
+    </delete>
+
+    <delete id="deleteTjStorageLocationBySlIds" parameterType="String">
+        delete from tj_storage_location where sl_id in 
+        <foreach item="slId" collection="array" open="(" separator="," close=")">
+            #{slId}
+        </foreach>
+    </delete>
+</mapper>

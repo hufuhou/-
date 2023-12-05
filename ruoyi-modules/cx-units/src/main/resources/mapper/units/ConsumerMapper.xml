@@ -166,8 +166,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <insert id="insertFinance" useGeneratedKeys="true" keyProperty="fId">
-        insert into finance( f_id, s_code, c_id, account_name, ti_Number, bank_account, bank_deposit, aob_address) values
-        ( #{fId}, #{sCode}, #{cId}, #{accountName}, #{tiNumber}, #{bankAccount}, #{bankDeposit}, #{aobAddress})
+        insert into finance(s_code, c_id, account_name, ti_Number, bank_account, bank_deposit, aob_address) values
+        (#{sCode}, #{cId}, #{accountName}, #{tiNumber}, #{bankAccount}, #{bankDeposit}, #{aobAddress})
     </insert>
 
     <select id="getConsumerCode" resultMap="ConsumerResult">

@@ -14,9 +14,14 @@
         <module>ruoyi-job</module>
         <module>ruoyi-file</module>
         <module>cx-hpxx</module>
+        <module>cx-ckgl</module>
+        <module>cx-order</module>
+        <module>cx-hpxx</module>
         <module>cx-chart</module>
         <module>cx-hpxx</module>
         <module>cx-units</module>
+        <module>cx-hpxx</module>
+        <module>cx-ledger</module>
     </modules>
     <artifactId>ruoyi-modules</artifactId>
     <packaging>pom</packaging>

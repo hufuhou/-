@@ -3,7 +3,7 @@ server:
   port: 9305
 
 # Spring
-spring:
+spring: 
   application:
     # 应用名称
     name: cx-units
@@ -23,7 +23,3 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-
-mybatis:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

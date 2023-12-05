@@ -51,7 +51,7 @@ public interface IConsumerService
      * @param cIds 需要删除的客户主键集合
      * @return 结果
      */
-    public int deleteConsumerByCIds(Long[] cIds);
+    public int deleteConsumerByCIds(Long[] cIds,Long[] fIds);
 
     /**
      * 删除客户信息
