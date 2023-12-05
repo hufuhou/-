@@ -3,6 +3,7 @@ package com.cx.units.mapper;
 import java.util.List;
 import com.cx.units.domain.Supplier;
 import com.cx.units.domain.Finance;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 供应商列表Mapper接口
@@ -10,6 +11,7 @@ import com.cx.units.domain.Finance;
  * @author 刘志昂
  * @date 2023-11-24
  */
+@Mapper
 public interface SupplierMapper 
 {
     /**

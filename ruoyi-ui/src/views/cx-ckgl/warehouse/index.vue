@@ -38,7 +38,8 @@
         </el-select>
       </el-form-item>
       <el-form-item label="仓管部门" prop="warehouseMD">
-        <treeselect v-model="queryParams.warehouseMD" :options="deptOptions" :normalizer="normalizer" placeholder="选择部门" style="width: 205px"/>
+        <treeselect v-model="queryParams.warehouseMD" :options="deptOptions" :normalizer="normalizer"
+                    placeholder="选择部门" style="width: 205px"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -55,7 +56,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['cx-ckgl:warehouse:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -66,7 +68,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['cx-ckgl:warehouse:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -77,46 +80,83 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['cx-ckgl:warehouse:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
+          type="info"
           plain
-          icon="el-icon-download"
+          icon="el-icon-open"
           size="mini"
-          @click="handleExport"
-          v-hasPermi="['cx-ckgl:warehouse:export']"
-        >导出</el-button>
+          :disabled="enable"
+          @click="handleEnable"
+          v-hasPermi="['cx-ckgl:warehouse:enable']"
+        >启用
+        </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="el-icon-turn-off"
+          size="mini"
+          :disabled="deactivate"
+          @click="handleDeactivate"
+          v-hasPermi="['cx-ckgl:warehouse:deactivate']"
+        >停用
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="el-icon-lock"
+          size="mini"
+          :disabled="lock"
+          @click="handleLock"
+          v-hasPermi="['cx-ckgl:warehouse:lock']"
+        >锁定
+        </el-button>
+      </el-col>
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="warning"-->
+      <!--          plain-->
+      <!--          icon="el-icon-download"-->
+      <!--          size="mini"-->
+      <!--          @click="handleExport"-->
+      <!--          v-hasPermi="['cx-ckgl:warehouse:export']"-->
+      <!--        >导出</el-button>-->
+      <!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="warehouseList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="仓库编号" align="center" prop="wCode" width="250px"/>
-      <el-table-column label="仓库名称" align="center" prop="wName" />
-      <el-table-column label="仓库容量/m³" align="center" prop="wCapacity" />
+      <el-table-column label="仓库名称" align="center" prop="wName"/>
+      <el-table-column label="仓库容量/m³" align="center" prop="wCapacity"/>
       <el-table-column label="状态" align="center" prop="wStatus">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.w_status" :value="scope.row.wStatus"/>
         </template>
       </el-table-column>
       <el-table-column label="仓库地址" align="center" prop="wAddress" width="300px"/>
-      <el-table-column label="仓管部门" align="center" prop="warehouseMD" >
+      <el-table-column label="仓管部门" align="center" prop="warehouseMD">
         <template slot-scope="scope">
           <span v-for="item in deptList">
             <template v-if="scope.row.warehouseMD===item.deptId">
-              {{item.deptName}}
+              {{ item.deptName }}
             </template>
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="仓库主管" align="center" prop="wSupervisor" >
+      <el-table-column label="仓库主管" align="center" prop="wSupervisor">
         <template slot-scope="scope">
           <span v-for="item in userList1">
             <template v-if="scope.row.wSupervisor===item.userId">
-              {{item.nickName}}
+              {{ item.nickName }}
             </template>
           </span>
         </template>
@@ -128,11 +168,11 @@
     </span>
         </template>
       </el-table-column>
-      <el-table-column label="操作人" align="center" prop="createBy" >
+      <el-table-column label="操作人" align="center" prop="createBy">
         <template slot-scope="scope">
           <span v-for="item in userList1">
             <template v-if="parseInt(scope.row.createBy)===item.userId">
-              {{item.userName}}
+              {{ item.userName }}
             </template>
           </span>
         </template>
@@ -150,14 +190,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['cx-ckgl:warehouse:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['cx-ckgl:warehouse:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -174,16 +216,16 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="仓库编号" prop="wCode">
-          <el-input v-model="form.wCode" placeholder="自动获取系统编码" :disabled="true" />
+          <el-input v-model="form.wCode" placeholder="自动获取系统编码" :disabled="true"/>
         </el-form-item>
         <el-form-item label="仓库名称" prop="wName">
-          <el-input v-model="form.wName" placeholder="请输入仓库名称" />
+          <el-input v-model="form.wName" placeholder="请输入仓库名称"/>
         </el-form-item>
         <el-form-item label="仓库容量/m³" prop="wCapacity" label-width="100px">
-          <el-input v-model="form.wCapacity" placeholder="请输入仓库容量" />
+          <el-input v-model="form.wCapacity" placeholder="请输入仓库容量"/>
         </el-form-item>
         <el-form-item label="排序" prop="sort">
-          <el-input v-model="form.sort" placeholder="请输入排序" />
+          <el-input v-model="form.sort" placeholder="请输入排序"/>
         </el-form-item>
         <el-form-item label="状态" prop="wStatus">
           <el-radio-group v-model="form.wStatus">
@@ -191,17 +233,19 @@
               v-for="dict in dict.type.w_status"
               :key="dict.value"
               :label="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
+            >{{ dict.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="仓库地址" prop="wAddress">
-          <el-input v-model="form.wAddress" placeholder="请输入仓库地址" />
+          <el-input v-model="form.wAddress" placeholder="请输入仓库地址"/>
         </el-form-item>
-       <el-form-item label="仓管部门" prop="warehouseMD">
-           <treeselect v-model="form.warehouseMD" :options="deptOptions" :normalizer="normalizer" placeholder="选择部门" />
-       </el-form-item>
+        <el-form-item label="仓管部门" prop="warehouseMD">
+          <treeselect v-model="form.warehouseMD" :options="deptOptions" :normalizer="normalizer"
+                      placeholder="选择部门"/>
+        </el-form-item>
         <el-form-item label="仓库主管" prop="wSupervisor">
-          <el-select v-model="form.wSupervisor" placeholder="请选择主管" >
+          <el-select v-model="form.wSupervisor" placeholder="请选择主管">
             <el-option
               v-for="dict in userList"
               :key="dict.userId"
@@ -211,7 +255,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+          <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -223,9 +267,23 @@
 </template>
 
 <script>
-import { listWarehouse, getWarehouse, delWarehouse, addWarehouse, updateWarehouse,listDept,listUser,listLocation } from "@/api/cx-ckgl/warehouse";
+import {
+  listWarehouse,
+  getWarehouse,
+  delWarehouse,
+  addWarehouse,
+  updateWarehouse,
+  listDept,
+  listUser,
+  listLocation,
+  enableWarehouse,
+  deactivateWarehouse,
+  lockWarehouse
+} from "@/api/cx-ckgl/warehouse";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+
+
 
 // 检查货品类型是否存在关联的货品信息
 function checkKwExist(wId) {
@@ -235,7 +293,7 @@ function checkKwExist(wId) {
       .then(response => {
         const kWList = response.rows.filter(Location => Location.wId === wId);
         const exists = kWList.length > 0;
-        resolve({ exists, kWList });
+        resolve({exists, kWList});
       })
       .catch(error => {
         console.error(error);
@@ -247,17 +305,21 @@ function checkKwExist(wId) {
 export default {
   name: "Warehouse",
   dicts: ['w_status'],
-  components: { Treeselect },
+  components: {Treeselect},
   data() {
     return {
       // 遮罩层
       loading: true,
       // 选中数组
       ids: [],
+      names: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
       multiple: true,
+      enable: true,
+      deactivate: true,
+      lock: true,
       // 显示搜索条件
       showSearch: true,
       // 总条数
@@ -272,7 +334,7 @@ export default {
       userList: [],
       userList1: [],
       //库位
-      locationList:[],
+      locationList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -294,25 +356,25 @@ export default {
       // 表单校验
       rules: {
         wName: [
-          { required: true, message: "仓库名称不能为空", trigger: "blur" }
+          {required: true, message: "仓库名称不能为空", trigger: "blur"}
         ],
         wCapacity: [
-          { required: true, message: "仓库容量不能为空", trigger: "blur" }
+          {required: true, message: "仓库容量不能为空", trigger: "blur"}
         ],
         wStatus: [
-          { required: true, message: "状态不能为空", trigger: "change" }
+          {required: true, message: "状态不能为空", trigger: "change"}
         ],
         wSupervisor: [
-          { required: true, message: "仓库主管不能为空", trigger: "blur" }
+          {required: true, message: "仓库主管不能为空", trigger: "blur"}
         ],
         createBy: [
-          { required: true, message: "操作人不能为空", trigger: "blur" }
+          {required: true, message: "操作人不能为空", trigger: "blur"}
         ],
         createTime: [
-          { required: true, message: "操作时间不能为空", trigger: "blur" }
+          {required: true, message: "操作时间不能为空", trigger: "blur"}
         ],
         warehouseMD: [
-          { required: true, message: "仓管部门不能为空", trigger: "blur" }
+          {required: true, message: "仓管部门不能为空", trigger: "blur"}
         ]
       },
     };
@@ -349,7 +411,7 @@ export default {
     getUserList() {
       listUser().then(response => {
         this.userList = response.rows.filter(user => user.deptId === 201);
-        this.userList1= response.rows;
+        this.userList1 = response.rows;
       });
     },
     /** 查询仓库详情列表 */
@@ -418,8 +480,12 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.wId)
+      this.names=selection.map(item=> item.wName)
       this.single = selection.length !== 1
       this.multiple = !selection.length
+      this.enable = !selection.length
+      this.deactivate = !selection.length
+      this.lock = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -471,15 +537,17 @@ export default {
     handleDelete(row) {
       // 先检查仓库是否有关联的库位信息
       checkKwExist(row.wId)
+      const wIds = row.wId || this.ids;
+      const wName = row.wName || this.names
         .then(response => {
           if (response.exists) {
             // 仓库有关联的库位信息，提示用户先删除库位
             this.$modal.alert('该仓库下存在库位信息，请先删除相关库位信息。');
           } else {
             // 仓库没有关联的库位信息，确认删除操作
-            this.$modal.confirm('是否确认删除仓库"' + row.wName + '"的数据项？')
+            this.$modal.confirm('是否确认删除仓库"' + wName + '"的数据项？')
               .then(() => {
-                return delWarehouse(row.wId);
+                return delWarehouse(wIds);
               })
               .then(() => {
                 this.getList();
@@ -498,6 +566,42 @@ export default {
       this.download('cx-ckgl/warehouse/export', {
         ...this.queryParams
       }, `warehouse_${new Date().getTime()}.xlsx`)
+    },
+    /** 启动按钮操作 */
+    handleEnable(row) {
+      const wIds = row.wId || this.ids;
+      const wName = row.wName || this.names;
+      this.$modal.confirm('是否启用仓库为"' + wName + '"的数据项？').then(function () {
+        return enableWarehouse(wIds);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("启用成功");
+      }).catch(() => {
+      });
+    },
+    /** 启动按钮操作 */
+    handleDeactivate(row) {
+      const wIds = row.wId || this.ids;
+      const wName = row.wName || this.names;
+      this.$modal.confirm('是否停用仓库为"' + wName + '"的数据项？').then(function () {
+        return deactivateWarehouse(wIds);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("停用成功");
+      }).catch(() => {
+      });
+    },
+    /** 启动按钮操作 */
+    handleLock(row) {
+      const wIds = row.wId || this.ids;
+      const wName = row.wName || this.names;
+      this.$modal.confirm('是否锁定仓库为"' + wName + '"的数据项？').then(function () {
+        return lockWarehouse(wIds);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("锁定成功");
+      }).catch(() => {
+      });
     },
   }
 };

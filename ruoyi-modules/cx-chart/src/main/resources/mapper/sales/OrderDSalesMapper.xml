@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.wms.mapper.OrderDSalesMapper">
+
+    <resultMap type="OrderDSales" id="OrderDSalesResult">
+        <result property="sdId" column="sd_id"/>
+        <result property="srdId" column="srd_id"/>
+        <result property="sId" column="s_id"/>
+        <result property="sCode" column="s_code"/>
+        <result property="goodsNumber" column="goods_number"/>
+        <result property="specCode" column="spec_code"/>
+        <result property="unit" column="unit"/>
+        <result property="goodsType" column="goods_type"/>
+        <result property="purchaseQuantity" column="purchase_quantity"/>
+        <result property="aiStock" column="ai_stock"/>
+        <result property="suPrice" column="su_price"/>
+        <result property="salesAmount" column="sales_amount"/>
+        <result property="salesVolume" column="sales_volume"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+    </resultMap>
+
+    <!--  带用户名的resultMap  -->
+    <resultMap id="combinedResultMap" type="OrderDSales">
+        <result property="sdId" column="sd_id"/>
+        <result property="srdId" column="srd_id"/>
+        <result property="sId" column="s_id"/>
+        <result property="sCode" column="s_code"/>
+        <result property="goodsNumber" column="goods_number"/>
+        <result property="specCode" column="spec_code"/>
+        <result property="unit" column="unit"/>
+        <result property="goodsType" column="goods_type"/>
+        <result property="purchaseQuantity" column="purchase_quantity"/>
+        <result property="aiStock" column="ai_stock"/>
+        <result property="suPrice" column="su_price"/>
+        <result property="salesAmount" column="sales_amount"/>
+        <result property="salesVolume" column="sales_volume"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="create_user_name" column="create_user_name"/>
+        <result property="update_user_name" column="update_user_name"/>
+    </resultMap>
+
+    <select id="findListWithUser" resultMap="combinedResultMap">
+        SELECT order_d_sales.*,
+               sys_user.nick_name  AS create_user_name,
+               sys_user2.nick_name AS update_user_name
+        FROM order_d_sales
+                 LEFT JOIN sys_user ON order_d_sales.create_by = sys_user.user_id
+                 LEFT JOIN sys_user AS sys_user2 ON order_d_sales.update_by = sys_user2.user_id
+    </select>
+
+    <sql id="selectOrderDSalesVo">
+        select sd_id,
+               srd_id,
+               s_id,
+               s_code,
+               goods_number,
+               spec_code,
+               unit,
+               goods_type,
+               purchase_quantity,
+               ai_stock,
+               su_price,
+               sales_amount,
+               sales_volume,
+               remark,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from order_d_sales
+    </sql>
+
+    <select id="selectOrderDSalesList" parameterType="OrderDSales" resultMap="OrderDSalesResult">
+        <include refid="selectOrderDSalesVo"/>
+        <where>
+            <if test="sId != null ">and s_id = #{sId}</if>
+            <if test="sCode != null  and sCode != ''">and s_code = #{sCode}</if>
+            <if test="goodsNumber != null  and goodsNumber != ''">and goods_number = #{goodsNumber}</if>
+            <if test="unit != null  and unit != ''">and unit = #{unit}</if>
+            <if test="goodsType != null  and goodsType != ''">and goods_type = #{goodsType}</if>
+        </where>
+    </select>
+
+    <select id="selectOrderDSalesBySdId" parameterType="Long" resultMap="OrderDSalesResult">
+        <include refid="selectOrderDSalesVo"/>
+        where sd_id = #{sdId}
+    </select>
+
+    <insert id="insertOrderDSales" parameterType="OrderDSales">
+        insert into order_d_sales
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sdId != null">sd_id,</if>
+            <if test="srdId != null">srd_id,</if>
+            <if test="sId != null">s_id,</if>
+            <if test="sCode != null and sCode != ''">s_code,</if>
+            <if test="goodsNumber != null and goodsNumber != ''">goods_number,</if>
+            <if test="specCode != null and specCode != ''">spec_code,</if>
+            <if test="unit != null and unit != ''">unit,</if>
+            <if test="goodsType != null and goodsType != ''">goods_type,</if>
+            <if test="purchaseQuantity != null">purchase_quantity,</if>
+            <if test="aiStock != null">ai_stock,</if>
+            <if test="suPrice != null">su_price,</if>
+            <if test="salesAmount != null">sales_amount,</if>
+            <if test="salesVolume != null">sales_volume,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sdId != null">#{sdId},</if>
+            <if test="srdId != null">#{srdId},</if>
+            <if test="sId != null">#{sId},</if>
+            <if test="sCode != null and sCode != ''">#{sCode},</if>
+            <if test="goodsNumber != null and goodsNumber != ''">#{goodsNumber},</if>
+            <if test="specCode != null and specCode != ''">#{specCode},</if>
+            <if test="unit != null and unit != ''">#{unit},</if>
+            <if test="goodsType != null and goodsType != ''">#{goodsType},</if>
+            <if test="purchaseQuantity != null">#{purchaseQuantity},</if>
+            <if test="aiStock != null">#{aiStock},</if>
+            <if test="suPrice != null">#{suPrice},</if>
+            <if test="salesAmount != null">#{salesAmount},</if>
+            <if test="salesVolume != null">#{salesVolume},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOrderDSales" parameterType="OrderDSales">
+        update order_d_sales
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="srdId != null">srd_id = #{srdId},</if>
+            <if test="sId != null">s_id = #{sId},</if>
+            <if test="sCode != null and sCode != ''">s_code = #{sCode},</if>
+            <if test="goodsNumber != null and goodsNumber != ''">goods_number = #{goodsNumber},</if>
+            <if test="specCode != null and specCode != ''">spec_code = #{specCode},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="goodsType != null and goodsType != ''">goods_type = #{goodsType},</if>
+            <if test="purchaseQuantity != null">purchase_quantity = #{purchaseQuantity},</if>
+            <if test="aiStock != null">ai_stock = #{aiStock},</if>
+            <if test="suPrice != null">su_price = #{suPrice},</if>
+            <if test="salesAmount != null">sales_amount = #{salesAmount},</if>
+            <if test="salesVolume != null">sales_volume = #{salesVolume},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where sd_id = #{sdId}
+    </update>
+
+    <delete id="deleteOrderDSalesBySdId" parameterType="Long">
+        delete
+        from order_d_sales
+        where sd_id = #{sdId}
+    </delete>
+
+    <delete id="deleteOrderDSalesBySdIds" parameterType="String">
+        delete from order_d_sales where sd_id in
+        <foreach item="sdId" collection="array" open="(" separator="," close=")">
+            #{sdId}
+        </foreach>
+    </delete>
+
+    <select id="findOrderSalesNumber">
+        select count(*)
+        from order_d_sales
+        where is_delte = 0
+    </select>
+
+    <select id="sumSaleAmount">
+        SELECT SUM(sales_amount)
+        FROM `order_d_sales`
+        WHERE is_delte = 0
+    </select>
+</mapper>

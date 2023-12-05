@@ -31,7 +31,6 @@ public class Consumer extends BaseEntity {
      */
     @Excel(name = "客户编码")
     private String cCode;
-
     /**
      * 客户名称
      */

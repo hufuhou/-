@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.ledger.mapper.TzWarningInformationMapper">
+    
+    <resultMap type="TzWarningInformation" id="TzWarningInformationResult">
+        <result property="alertId"    column="alert_id"    />
+        <result property="alertDays"    column="alert_days"    />
+        <result property="alertNotifier"    column="alert_notifier"    />
+        <result property="warning"    column="warning"    />
+        <result property="warningInformation"    column="warning_information"    />
+    </resultMap>
+
+    <sql id="selectTzWarningInformationVo">
+        select alert_id, alert_days, alert_notifier, warning, warning_information from tz_warning_information
+    </sql>
+
+    <select id="selectTzWarningInformationList" parameterType="TzWarningInformation" resultMap="TzWarningInformationResult">
+        <include refid="selectTzWarningInformationVo"/>
+        <where>  
+            <if test="alertDays != null "> and alert_days = #{alertDays}</if>
+            <if test="alertNotifier != null "> and alert_notifier = #{alertNotifier}</if>
+            <if test="warning != null "> and warning = #{warning}</if>
+            <if test="warningInformation != null  and warningInformation != ''"> and warning_information = #{warningInformation}</if>
+        </where>
+    </select>
+    
+    <select id="selectTzWarningInformationByAlertId" parameterType="Long" resultMap="TzWarningInformationResult">
+        <include refid="selectTzWarningInformationVo"/>
+        where alert_id = #{alertId}
+    </select>
+        
+    <insert id="insertTzWarningInformation" parameterType="TzWarningInformation">
+        insert into tz_warning_information
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alertId != null">alert_id,</if>
+            <if test="alertDays != null">alert_days,</if>
+            <if test="alertNotifier != null">alert_notifier,</if>
+            <if test="warning != null">warning,</if>
+            <if test="warningInformation != null">warning_information,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="alertId != null">#{alertId},</if>
+            <if test="alertDays != null">#{alertDays},</if>
+            <if test="alertNotifier != null">#{alertNotifier},</if>
+            <if test="warning != null">#{warning},</if>
+            <if test="warningInformation != null">#{warningInformation},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTzWarningInformation" parameterType="TzWarningInformation">
+        update tz_warning_information
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="alertDays != null">alert_days = #{alertDays},</if>
+            <if test="alertNotifier != null">alert_notifier = #{alertNotifier},</if>
+            <if test="warning != null">warning = #{warning},</if>
+            <if test="warningInformation != null">warning_information = #{warningInformation},</if>
+        </trim>
+        where alert_id = #{alertId}
+    </update>
+
+    <delete id="deleteTzWarningInformationByAlertId" parameterType="Long">
+        delete from tz_warning_information where alert_id = #{alertId}
+    </delete>
+
+    <delete id="deleteTzWarningInformationByAlertIds" parameterType="String">
+        delete from tz_warning_information where alert_id in 
+        <foreach item="alertId" collection="array" open="(" separator="," close=")">
+            #{alertId}
+        </foreach>
+    </delete>
+</mapper>

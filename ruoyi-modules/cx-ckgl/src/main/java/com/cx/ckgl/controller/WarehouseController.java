@@ -3,6 +3,8 @@ package com.cx.ckgl.controller;
 import java.util.List;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -90,6 +92,36 @@ public class WarehouseController extends BaseController
     public AjaxResult edit(@RequestBody Warehouse warehouse)
     {
         return toAjax(warehouseService.updateWarehouse(warehouse));
+    }
+
+    /**
+     * 启用仓库
+     */
+    @RequiresPermissions("cx-ckgl:warehouse:enable")
+    @GetMapping("/qy/{wIds}")
+    public AjaxResult enable(@PathVariable Long[] wIds)
+    {
+        return toAjax(warehouseService.enablesWarehouse(wIds));
+    }
+
+    /**
+     * 停用仓库
+     */
+    @RequiresPermissions("cx-ckgl:warehouse:deactivate")
+    @GetMapping("/ty/{wIds}")
+    public AjaxResult deactivate(@PathVariable Long[] wIds)
+    {
+        return toAjax(warehouseService.deactivatesWarehouse(wIds));
+    }
+
+    /**
+     * 锁定仓库
+     */
+    @RequiresPermissions("cx-ckgl:warehouse:lock")
+    @GetMapping("/sd/{wIds}")
+    public AjaxResult lock(@PathVariable Long[] wIds)
+    {
+        return toAjax(warehouseService.locksWarehouse(wIds));
     }
 
     /**

@@ -102,6 +102,7 @@ public class SupplierServiceImpl implements ISupplierService {
     }
 
     /**
+     *
      * 删除供应商列表信息
      *
      * @param sId 供应商列表主键
@@ -158,11 +159,15 @@ public class SupplierServiceImpl implements ISupplierService {
             lastThreeDigits = matcher.group();
         }
         // 将提取的数字转换为整数并加1
-        int incrementedNumber = Integer.parseInt(lastThreeDigits) + 1;
-
+        int incrementedNumber = 0;
+        if (lastThreeDigits != null) {
+            incrementedNumber = Integer.parseInt(lastThreeDigits) + 1;
+        }
         // 格式化为与原数字相同长度的字符串
-        String formattedIncrementedNumber = String.format("%0" + lastThreeDigits.length() + "d", incrementedNumber);
-
+        String formattedIncrementedNumber = null;
+        if (lastThreeDigits != null) {
+            formattedIncrementedNumber = String.format("%0" + lastThreeDigits.length() + "d", incrementedNumber);
+        }
         // 输出结果
         String resultString = prefix + timestamp + formattedIncrementedNumber;
         System.out.println(resultString);

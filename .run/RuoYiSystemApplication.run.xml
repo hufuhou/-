@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RuoYiSystemApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" folderName="若依微服务一键启动" nameIsGenerated="true">
+    <module name="ruoyi-modules-system" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.ruoyi.system.RuoYiSystemApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
