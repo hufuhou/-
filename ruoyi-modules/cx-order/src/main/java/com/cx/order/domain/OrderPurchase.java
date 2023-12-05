@@ -10,7 +10,7 @@ import com.ruoyi.common.core.web.domain.BaseEntity;
 /**
  * 进货订单对象 order_purchase_order
  * 
- * @author 刘志昂
+ * @author LZA
  * @date 2023-11-20
  */
 public class OrderPurchase extends BaseEntity

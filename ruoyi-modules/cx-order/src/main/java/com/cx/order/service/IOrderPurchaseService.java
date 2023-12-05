@@ -6,7 +6,7 @@ import com.cx.order.domain.OrderPurchase;
 /**
  * 进货订单Service接口
  * 
- * @author 刘志昂
+ * @author LZA
  * @date 2023-11-20
  */
 public interface IOrderPurchaseService 

@@ -1,53 +1,69 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cx.order.mapper.OrderPurchaseMapper">
-    
+
     <resultMap type="OrderPurchase" id="OrderPurchaseResult">
-        <result property="poId"    column="po_id"    />
-        <result property="poCode"    column="po_code"    />
-        <result property="status"    column="status"    />
-        <result property="purchaseDate"    column="purchase_date"    />
-        <result property="sId"    column="s_id"    />
-        <result property="contactPerson"    column="contact_person"    />
-        <result property="contactDetails"    column="contact_details"    />
-        <result property="purchaserId"    column="purchaser_id"    />
-        <result property="remark"    column="remark"    />
-        <result property="reviewer"    column="reviewer"    />
-        <result property="reviewerDate"    column="reviewer_date"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="isDelte"    column="is_delte"    />
+        <result property="poId" column="po_id"/>
+        <result property="poCode" column="po_code"/>
+        <result property="status" column="status"/>
+        <result property="purchaseDate" column="purchase_date"/>
+        <result property="sId" column="s_id"/>
+        <result property="contactPerson" column="contact_person"/>
+        <result property="contactDetails" column="contact_details"/>
+        <result property="purchaserId" column="purchaser_id"/>
+        <result property="remark" column="remark"/>
+        <result property="reviewer" column="reviewer"/>
+        <result property="reviewerDate" column="reviewer_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
     </resultMap>
 
     <sql id="selectOrderPurchaseVo">
-        select po_id, po_code, status, purchase_date, s_id, contact_person, contact_details, purchaser_id, remark, reviewer, reviewer_date, create_by, create_time, update_by, update_time, is_delte from order_purchase_order
+        select po_id,
+               po_code,
+               status,
+               purchase_date,
+               s_id,
+               contact_person,
+               contact_details,
+               purchaser_id,
+               remark,
+               reviewer,
+               reviewer_date,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from order_purchase_order
     </sql>
 
     <select id="selectOrderPurchaseList" parameterType="OrderPurchase" resultMap="OrderPurchaseResult">
         <include refid="selectOrderPurchaseVo"/>
-        <where>  
-            <if test="poCode != null  and poCode != ''"> and po_code = #{poCode}</if>
-            <if test="status != null "> and status = #{status}</if>
-            <if test="purchaseDate != null "> and purchase_date = #{purchaseDate}</if>
-            <if test="sId != null "> and s_id = #{sId}</if>
-            <if test="contactPerson != null  and contactPerson != ''"> and contact_person = #{contactPerson}</if>
-            <if test="contactDetails != null  and contactDetails != ''"> and contact_details = #{contactDetails}</if>
-            <if test="purchaserId != null "> and purchaser_id = #{purchaserId}</if>
-            <if test="reviewer != null  and reviewer != ''"> and reviewer = #{reviewer}</if>
-            <if test="reviewerDate != null "> and reviewer_date = #{reviewerDate}</if>
-            <if test="isDelte != null "> and is_delte = #{isDelte}</if>
+        <where>
+            <if test="poCode != null  and poCode != ''">and po_code = #{poCode}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="purchaseDate != null ">and purchase_date = #{purchaseDate}</if>
+            <if test="sId != null ">and s_id = #{sId}</if>
+            <if test="contactPerson != null  and contactPerson != ''">and contact_person = #{contactPerson}</if>
+            <if test="contactDetails != null  and contactDetails != ''">and contact_details = #{contactDetails}</if>
+            <if test="purchaserId != null ">and purchaser_id = #{purchaserId}</if>
+            <if test="reviewer != null  and reviewer != ''">and reviewer = #{reviewer}</if>
+            <if test="reviewerDate != null ">and reviewer_date = #{reviewerDate}</if>
+            <if test="isDelte != null ">and is_delte = #{isDelte}</if>
         </where>
     </select>
-    
+
     <select id="selectOrderPurchaseByPoId" parameterType="Long" resultMap="OrderPurchaseResult">
         <include refid="selectOrderPurchaseVo"/>
         where po_id = #{poId}
     </select>
-        
+
     <insert id="insertOrderPurchase" parameterType="OrderPurchase">
         insert into order_purchase_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -67,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="isDelte != null">is_delte,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="poId != null">#{poId},</if>
             <if test="poCode != null and poCode != ''">#{poCode},</if>
@@ -85,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="isDelte != null">#{isDelte},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateOrderPurchase" parameterType="OrderPurchase">
@@ -111,11 +127,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteOrderPurchaseByPoId" parameterType="Long">
-        delete from order_purchase_order where po_id = #{poId}
+        delete
+        from order_purchase_order
+        where po_id = #{poId}
     </delete>
 
     <delete id="deleteOrderPurchaseByPoIds" parameterType="String">
-        delete from order_purchase_order where po_id in 
+        delete from order_purchase_order where po_id in
         <foreach item="poId" collection="array" open="(" separator="," close=")">
             #{poId}
         </foreach>
