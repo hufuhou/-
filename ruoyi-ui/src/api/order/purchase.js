@@ -43,3 +43,12 @@ export function delPurchase(poId) {
   })
 }
 
+//预准备产品数据
+export function preProduct(data) {
+  return request({
+    url: '/order/purchase/preData',
+    method: 'post',
+    data: data
+  })
+}
+

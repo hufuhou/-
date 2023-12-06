@@ -186,66 +186,212 @@
     />
 
     <!-- 添加或修改进货订单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="进货单号" prop="poCode">
-          <el-input v-model="form.poCode" placeholder="请输入进货单号"/>
-        </el-form-item>
-        <el-form-item label="单据状态" prop="status">
-          <el-select v-model="form.status" placeholder="请选择单据状态">
-            <el-option
-              v-for="dict in dict.type.order_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="进货日期" prop="purchaseDate">
-          <el-date-picker clearable
-                          v-model="form.purchaseDate"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择进货日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="供应商" prop="sId">
-          <el-select v-model="queryParams.sId2" placeholder="请选择供应商" clearable @change="supplierChange">
-            <el-option
-              v-for="item in supplierList"
-              :key="item.sId"
-              :label="item.sName"
-              :value="item.sId"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="联系人" prop="contactPerson">
-          <el-input v-model="form.contactPerson" placeholder="请输入联系人" readonly/>
-        </el-form-item>
-        <el-form-item label="联系方式" prop="contactNumber">
-          <el-input v-model="form.contactNumber" placeholder="请输入联系方式" readonly/>
-        </el-form-item>
-        <el-form-item label="进货人" prop="purchaserId">
-          <el-input v-model="form.purchaserId" placeholder="请输入进货人"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="进货单号" prop="poCode">
+              <el-input v-model="form.poCode" placeholder="自动获取系统编码" :disabled="true"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="进货日期" prop="purchaseDate">
+              <el-date-picker clearable
+                              v-model="form.purchaseDate"
+                              type="date"
+                              value-format="yyyy-MM-dd"
+                              style="width: 200px"
+                              placeholder="请选择进货日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="供应商" prop="sId">
+              <el-select v-model="queryParams.sId2" placeholder="请选择供应商" clearable @change="supplierChange">
+                <el-option
+                  v-for="item in supplierList"
+                  :key="item.sId"
+                  :label="item.sName"
+                  :value="item.sId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系人" prop="contactPerson">
+              <el-input v-model="form.contactPerson" placeholder="请输入联系人" :disabled="true"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="联系方式" prop="contactNumber">
+              <el-input v-model="form.contactNumber" placeholder="请输入联系方式" :disabled="true"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="进货部门" prop="deptId">
+              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择进货部门"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="进货人" prop="purchaserId">
+              <el-input v-model="form.purchaserId" placeholder="请输入进货人"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注"/>
-        </el-form-item>
-        <el-form-item label="审核人" prop="reviewer">
-          <el-input v-model="form.reviewer" placeholder="请输入审核人"/>
-        </el-form-item>
-        <el-form-item label="审核时间" prop="reviewerDate">
-          <el-date-picker clearable
-                          v-model="form.reviewerDate"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择审核时间">
-          </el-date-picker>
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
+      <el-divider content-position="center">进货明细</el-divider>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="addGoods"
+            v-hasPermi="['order:purchase:add']"
+          >添加
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['order:purchase:remove']"
+          >移除
+          </el-button>
+        </el-col>
+      </el-row>
+      <el-table v-loading="goodsLoading" :data="purchaseDetails" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="45" align="center"/>
+        <el-table-column label="货品名称" align="center" prop="product.gName"/>
+        <el-table-column label="货品编号" width="75" align="center" prop="product.productCode"/>
+        <el-table-column label="规格型号" align="center" prop="customCode"/>
+        <el-table-column label="单位" width="50" align="center" prop="product.productUnit">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.product_unit" :value="scope.row.product.productUnit"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="货品类型" align="center" prop="product.productPrice"/>
+        <el-table-column label="货品数量" align="center" prop="jhDetailNum">
+          <template slot-scope="scope">
+            <el-input-number v-model="scope.row.jhDetailNum" size="mini"
+                             @change="changeNum" :min="1" :max="100" label="描述文字"
+                             style="width: 100px"></el-input-number>
+          </template>
+        </el-table-column>
+        <el-table-column label="进货单价" align="center" prop="product.productPrice"/>
+        <el-table-column label="金额" align="center" width="90">
+          <template #default="scope">
+            {{ result(scope.row) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="delJhDetail(scope.row)"
+              v-hasPermi="['purchasesale:purchase:remove']"
+            >删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!--    添加货品对话框-->
+    <el-dialog title="选择产品" :visible.sync="openGoodsList" append-to-body style="width: 1500px;margin: auto">
+      <el-form :model="goodsQueryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
+               label-width="68px">
+        <el-form-item label="产品编号" prop="gCode">
+          <el-input
+            v-model="goodsQueryParams.gCode"
+            placeholder="请输入产品编号"
+            clearable
+            @keyup.enter.native="handleGoodsQuery"
+          />
+        </el-form-item>
+        <el-form-item label="产品名称" prop="productName">
+          <el-input
+            v-model="goodsQueryParams.gName"
+            placeholder="请输入产品名称"
+            clearable
+            @keyup.enter.native="handleGoodsQuery"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleGoodsQuery">搜索</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table ref="multipleTable" v-loading="goodsLoading" :data="goodsList"
+                @selection-change="goodsSelectionChange">
+        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column label="货品编号" align="center" prop="gCode" width="180"/>
+        <el-table-column label="货品名称" align="center" prop="gName"/>
+        <el-table-column label="规格型号" align="center" prop="specCode"/>
+        <!--        <el-table-column label="产品类别" align="center" prop="gtId">-->
+        <!--          <template slot-scope="scope">-->
+        <!--          <span v-for="item in goodsType">-->
+        <!--            <template v-if="scope.row.gtId===item.gtId">-->
+        <!--              {{ item.gtName }}-->
+        <!--            </template>-->
+        <!--          </span>-->
+        <!--          </template>-->
+        <!--        </el-table-column>-->
+        <el-table-column label="单位" align="center" prop="gUnit">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.g_unit" :value="scope.row.gUnit"/>
+          </template>
+        </el-table-column>
+        <!--        <el-table-column label="供应商" align="center" prop="sId">-->
+        <!--          <template slot-scope="scope">-->
+        <!--          <span v-for="item in supplierList">-->
+        <!--            <template v-if="scope.row.sId===item.sId">-->
+        <!--              {{ item.sName }}-->
+        <!--            </template>-->
+        <!--          </span>-->
+        <!--          </template>-->
+        <!--        </el-table-column>-->
+        <!--        <el-table-column label="联系电话" align="center" prop="contactNumber">-->
+        <!--          <template slot-scope="scope">-->
+        <!--        <span v-for="item in supplierList" :key="item.sId">-->
+        <!--          <template v-if="scope.row.sId===item.sId">-->
+        <!--            {{ item.contactNumber }}-->
+        <!--          </template>-->
+        <!--        </span>-->
+        <!--          </template>-->
+        <!--        </el-table-column>-->
+        <el-table-column label="入库单价" align="center" prop="wrPrice"/>
+      </el-table>
+      <pagination
+        v-show="goodsTotal>0"
+        :total="goodsTotal"
+        :page.sync="goodsQueryParams.pageNum"
+        :limit.sync="goodsQueryParams.pageSize"
+        @pagination="getGoodsList"
+      />
+      <div slot="footer">
+        <el-button @click="closeProduct">关 闭</el-button>
+        <el-button type="primary" @click="goodsSubmit" v-hasPermi="['purchasesale:purchaseDetail:add']">确 定
+        </el-button>
       </div>
     </el-dialog>
   </div>
@@ -253,18 +399,25 @@
 
 <script>
 import {listPurchase, getPurchase, delPurchase, addPurchase, updatePurchase} from "@/api/order/purchase";
-import {listUser} from "@/api/system/user";
+import {deptTreeSelect, listUser} from "@/api/system/user";
 import {listSupplier} from "@/api/units/supplier";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {listGoods} from "@/api/cx-hpxx/goods";
 
 export default {
   name: "Purchase",
-  dicts: ['order_status'],
+  dicts: ['order_status', 'g_unit'],
+  components: {Treeselect},
   data() {
     return {
       // 遮罩层
       loading: true,
+      goodsLoading: true,
       // 选中数组
       ids: [],
+      // 选中货品数组
+      goods: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -273,6 +426,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      goodsTotal: 0,
       // 进货订单表格数据
       purchaseList: [],
       // 供应商列表数据
@@ -281,10 +435,17 @@ export default {
       supplierForId: [],
       //进货人（用户）数据
       userList: [],
+      //货品信息数据
+      goodsList: [],
+      //货品类型
+      goodsType: [],
+      // 部门树选项
+      deptOptions: undefined,
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      openGoodsList: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -295,6 +456,14 @@ export default {
         sId: null,
         sId2: null,
         userId: null,
+      },
+      //货品列表查询参数
+      goodsQueryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        gCode: null,
+        gName: null,
+        gUnit: null
       },
       // 表单参数
       form: {},
@@ -340,6 +509,7 @@ export default {
     this.getList();
     this.getSupplierList();
     this.getBuyer();
+    this.getDeptTree();
   },
   methods: {
     /** 根据供应商id进行查询联系人和联系方式 */
@@ -390,6 +560,7 @@ export default {
         contactPerson: null,
         contactDetails: null,
         purchaserId: null,
+        deptId: null,
         remark: null,
         reviewer: null,
         reviewerDate: null,
@@ -406,22 +577,34 @@ export default {
       this.queryParams.pageNum = 1;
       this.getList();
     },
+    handleGoodsQuery() {
+      this.goodsQueryParams.pageNum = 1;
+      this.getGoodsList();
+    },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
+    /** 多选框选中数据 */
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.poId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
+    },
+    /** 货品多选框选中数据 */
+    goodsSelectionChange(selection) {
+      this.goods = selection
     },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
       this.open = true;
       this.title = "添加进货订单";
+      this.getGoodsList();
+    },
+    /** 新增货品信息操作 */
+    addGoods() {
+      this.openGoodsList = true;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -469,6 +652,32 @@ export default {
       this.download('order/purchase/export', {
         ...this.queryParams
       }, `purchase_${new Date().getTime()}.xlsx`)
+    },
+    /** 查询部门下拉树结构 */
+    getDeptTree() {
+      deptTreeSelect().then(response => {
+        this.deptOptions = response.data;
+      });
+    },
+    /** 获取货品列表 */
+    getGoodsList() {
+      this.goodsLoading = true;
+      listGoods(this.goodsQueryParams).then(response => {
+        this.goodsList = response.rows;
+        this.goodsTotal = response.total;
+        this.goodsLoading = false;
+      });
+    },
+    /** 货品选择列表提交 */
+    goodsSubmit() {
+      let prelist = [];
+      let data = {
+        goodsCode: []
+      }
+      //选中数组遍历
+      this.goods.forEach(item=> {
+        data.goodsCode.push(item.gCode)
+      })
     }
   }
 };
