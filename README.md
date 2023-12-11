@@ -32,23 +32,22 @@ Redis >= 3
 
 # 技术选型
 1、系统环境
-
 Java EE 8
 Servlet 3.0
 Apache Maven 3
-2、主框架
 
+2、主框架
 Spring Boot 2.3.x
 Spring Cloud Hoxton.SR9
 Spring Framework 5.2.x
 Spring Security 5.2.x
-3、持久层
 
+3、持久层
 Apache MyBatis 3.5.x
 Hibernate Validation 6.0.x
 Alibaba Druid 1.2.x
-4、视图层
 
+4、视图层
 Vue 2.6.x
 Axios 0.21.0
 Element 2.14.x
