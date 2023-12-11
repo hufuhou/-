@@ -246,7 +246,7 @@ import {
   findCheckNmu,
   listCheckinWithUser
 } from "@/api/checkin/checkin";
-import {parseTime} from "../../../utils/ruoyi";
+import {parseTime} from "@/utils/ruoyi";
 import {selectDataParam} from "@/api/opdm/opdm";
 
 
