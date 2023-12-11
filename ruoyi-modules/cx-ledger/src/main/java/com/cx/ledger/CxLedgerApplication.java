@@ -16,7 +16,7 @@ public class CxLedgerApplication
     public static void main(String[] args)
     {
         SpringApplication.run(CxLedgerApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  台账模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
+        System.out.println("(♥◠‿◠)ﾉﾞ  创鑫WMS台账模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 "_________ ____  ___\n" +
                 "\\_   ___ \\\\   \\/  /\n" +
                 "/    \\  \\/ \\     / \n" +

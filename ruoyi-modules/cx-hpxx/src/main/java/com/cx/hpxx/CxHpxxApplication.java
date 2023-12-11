@@ -19,7 +19,7 @@ public class CxHpxxApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CxHpxxApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  系统模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
+        System.out.println("(♥◠‿◠)ﾉﾞ  创鑫WMS货品信息模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 "_________ ____  ___\n" +
                 "\\_   ___ \\\\   \\/  /\n" +
                 "/    \\  \\/ \\     / \n" +

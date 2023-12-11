@@ -19,7 +19,7 @@ public class CxCkglApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CxCkglApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  系统模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
+        System.out.println("(♥◠‿◠)ﾉﾞ  创鑫WMS仓库管理模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 "_________ ____  ___\n" +
                 "\\_   ___ \\\\   \\/  /\n" +
                 "/    \\  \\/ \\     / \n" +
