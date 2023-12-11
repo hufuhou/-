@@ -1,5 +1,17 @@
 <template>
   <div class="app-container">
+    <el-form>
+      <el-form-item>
+        <el-row>
+          <el-button plain @click="getInfoByDate('today')">今 日</el-button>
+          <el-button type="primary" plain @click="getInfoByDate('yesterday')">昨 日</el-button>
+          <el-button type="success" plain @click="getInfoByDate('thisWeek')">本 周</el-button>
+          <el-button type="info" plain @click="getInfoByDate('lastWeek')">上 周</el-button>
+          <el-button type="warning" plain @click="getInfoByDate('thisMonth')">本 月</el-button>
+          <el-button type="danger" plain @click="getInfoByDate('lastMonth')">上 月</el-button>
+        </el-row>
+      </el-form-item>
+    </el-form>
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="出库编号" prop="outId">
         <el-input
@@ -294,11 +306,19 @@ import {
   listDetailsWithUser,
   updateDetails
 } from "@/api/out_details/details";
+import {selectDataParam} from "@/api/opdm/opdm";
 
 export default {
   name: "Details",
   data() {
     return {
+      //今日 or 昨日
+      TodayOrYesterday: "",
+      //周,月开始日
+      BeginDay: "",
+      //周,月结束日
+      EndDay: "",
+      //出库单量
       outDetailNumber: 0,
       // 遮罩层
       loading: true,
@@ -395,6 +415,58 @@ export default {
     this.getOutNumber();
   },
   methods: {
+
+    /**
+     * 获取时间参数
+     * @param param
+     */
+    async getDateParam(param) {
+      return new Promise((resolve, reject) => {
+        selectDataParam(param).then(response => {
+          if (typeof response.data === 'string') {
+            // 如果是字符串
+            this.TodayOrYesterday = response.data;
+            resolve(true);
+          } else if (Array.isArray(response.data)) {
+            // 如果是数组
+            this.BeginDay = response.data[0];
+            this.EndDay = response.data[1];
+            resolve(true);
+          } else {
+            // 处理其他类型的数据，或者抛出错误提示
+            console.error('非法数据类型:', typeof response.data);
+            reject(false);
+          }
+        }).catch(error => {
+          console.error('获取参数失败:', error);
+          reject(false);
+        });
+      });
+    },
+
+    /**
+     * 按时间段获取信息
+     * @param param
+     */
+    async getInfoByDate(param) {
+      let DateParams;
+      this.TodayOrYesterday = null;
+      this.BeginDay = null;
+      this.EndDay = null;
+      DateParams = null;
+      try {
+        // 等待 getDateParam 方法执行完毕
+        await this.getDateParam(param);
+        // 在这里可以获取到正确的 DateParams
+        DateParams = [this.TodayOrYesterday, this.BeginDay, this.EndDay];
+        console.info(DateParams)
+        //TODO : 从这下面添加业务代码
+      } catch (error) {
+        // 处理错误
+        console.error('按时间段查询进货信息失败:', error);
+      }
+    },
+
     /** 查询出库明细列表 */
     getList() {
       this.loading = true;

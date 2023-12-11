@@ -67,14 +67,12 @@
     </sql>
 
     <select id="findListWithUser" resultMap="combinedResultMap">
-        SELECT
-            crk_im_details.*,
-            sys_user.nick_name AS create_user_name,
-            sys_user2.nick_name AS update_user_name
-        FROM
-            crk_im_details
-                LEFT JOIN sys_user ON crk_im_details.create_by = sys_user.user_id
-                LEFT JOIN sys_user AS sys_user2 ON crk_im_details.update_by = sys_user2.user_id
+        SELECT crk_im_details.*,
+               sys_user.nick_name  AS create_user_name,
+               sys_user2.nick_name AS update_user_name
+        FROM crk_im_details
+                 LEFT JOIN sys_user ON crk_im_details.create_by = sys_user.user_id
+                 LEFT JOIN sys_user AS sys_user2 ON crk_im_details.update_by = sys_user2.user_id
     </select>
 
     <select id="selectCrkImDetailsList" parameterType="CrkImDetails" resultMap="CrkImDetailsResult">
@@ -181,5 +179,43 @@
         FROM crk_im_details
         WHERE is_delte = 0;
     </select>
+
+    <select id="findInfoByDate">
+        SELECT
+        crk_im_details.*,
+        sys_user.nick_name AS create_user_name,
+        sys_user2.nick_name AS update_user_name
+        FROM
+        crk_im_details
+        LEFT JOIN sys_user ON crk_im_details.create_by = sys_user.user_id
+        LEFT JOIN sys_user AS sys_user2 ON crk_im_details.update_by = sys_user2.user_id
+        <where>
+            <if test="TodayOrYesterday != null and TodayOrYesterday != ''">
+                AND crk_im_details.create_time > #{TodayOrYesterday}
+            </if>
+            <if test="BeginDay != null and EndDay != null">
+                AND crk_im_details.create_time BETWEEN #{BeginDay} AND #{EndDay}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询表： 从表 crk_im_details 中选择所有列的数据。
+连接创建人信息： 使用左连接 (LEFT JOIN) 将表 sys_user 与 crk_im_details 关联，通过 create_by 列连接，将创建人的昵称 (nick_name) 作为 create_user_name 别名返回。
+连接更新人信息： 同样使用左连接将表 sys_user 与 crk_im_details 关联，通过 update_by 列连接，将更新人的昵称 (nick_name) 作为 update_user_name 别名返回。
+连接库存位置信息： 使用左连接将表 tj_storage_location 与 crk_im_details 关联，通过 sl_id 列连接，将库存位置的名称 (sl_name) 作为 location 别名返回。
+连接仓库信息： 使用左连接将表 warehouse 与 tj_storage_location 关联，通过 w_id 列连接，将仓库的名称 (w_name) 作为 warehouseName 别名返回。   -->
+    <select id="Temp" resultMap="combinedResultMap">
+        SELECT crk_im_details.*,
+               sys_user.nick_name          AS create_user_name,
+               sys_user2.nick_name         AS update_user_name,
+               tj_storage_location.sl_name AS location,
+               warehouse.w_name            AS warehouseName
+        FROM crk_im_details
+                 LEFT JOIN sys_user ON crk_im_details.create_by = sys_user.user_id
+                 LEFT JOIN sys_user AS sys_user2 ON crk_im_details.update_by = sys_user2.user_id
+                 LEFT JOIN tj_storage_location ON crk_im_details.sl_id = tj_storage_location.sl_id
+                 LEFT JOIN warehouse ON tj_storage_location.w_id = warehouse.w_id;
+    </select>
+    <!--  TODO:SQL写好了,明天再写Controller Service Mapper  -->
 
 </mapper>

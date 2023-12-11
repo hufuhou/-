@@ -121,8 +121,7 @@ public class OrderPurchaseDetailsController extends BaseController {
 
     /**
      * 查询日期参数
-     * no param
-     *
+     * @param param 前段传递选择时间段参数
      * @return 时间段开始结束数组
      */
     @GetMapping(value = "/dateParam")
@@ -150,8 +149,7 @@ public class OrderPurchaseDetailsController extends BaseController {
     }
 
     /**
-     * 查询进货列表按时间段
-     * no param
+     * 按时间段查询进货列表
      *
      * @return 按时间段进货列表
      */
@@ -159,10 +157,6 @@ public class OrderPurchaseDetailsController extends BaseController {
     @Log(title = "按时间段查询进货明细信息", businessType = BusinessType.OTHER)
     public AjaxResult findInfoByDate(@Param("TodayOrYesterday") String TodayOrYesterday,@Param("BeginDay") String BeginDay, @Param("EndDay") String EndDay) {
         try {
-//            PurchaseDateQuery query = new PurchaseDateQuery();
-//            query.setTodayOrYesterday(TodayOrYesterday);
-//            query.setBeginDay(BeginDay);
-//            query.setEndDay(EndDay);
             List<OrderPurchaseDetails> list = orderPurchaseDetailsService.findInfoByDate(TodayOrYesterday, BeginDay, EndDay);
             if (list != null && !list.isEmpty()) {
                 return AjaxResult.success("查询成功,查询到"+list.size()+"条数据", list);

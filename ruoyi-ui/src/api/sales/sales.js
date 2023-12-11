@@ -67,3 +67,11 @@ export function getSumSale() {
     method: 'get'
   })
 }
+
+// 获取查询日期参数
+export function selectDataParam(param) {
+  return request({
+    url: '/opdm/opdm/dateParam?param='+ param,
+    method: 'get'
+  })
+}
