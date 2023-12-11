@@ -54,7 +54,7 @@
         <!-- 第二个板块 -->
         <el-card shadow="hover">
           <div>
-            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ "￥" + sumSale.toFixed(2) }}</p>
+            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ "￥" + sumSale.toFixed(2) / 10000 + "W" }}</p>
             <p>销售货品金额</p>
           </div>
         </el-card>
@@ -63,7 +63,7 @@
         <!-- 第三个板块 -->
         <el-card shadow="hover">
           <div>
-            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ orderSaleNumber * 10 }}</p>
+            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ orderProductionNum }}</p>
             <p>销售货品数量</p>
           </div>
         </el-card>
@@ -132,15 +132,20 @@
       <el-table-column label="单位" align="center" prop="unit"/>
       <el-table-column label="货品类型" align="center" prop="goodsType"/>
       <el-table-column label="进货数量" align="center" prop="purchaseQuantity"/>
-      <el-table-column label="已入库" align="center" prop="aiStock"/>
+<!--      <el-table-column label="已入库" align="center" prop="aiStock"/>-->
       <el-table-column label="销售单价" align="center" prop="suPrice"/>
       <el-table-column label="销售金额" align="center" prop="salesAmount"/>
       <el-table-column label="销售数量" align="center" prop="salesVolume"/>
       <el-table-column label="创建人" align="center" prop="create_user_name"/>
-      <el-table-column label="更新人" align="center" prop="update_user_name"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新人" align="center" prop="update_user_name"/>
+      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark"/>
@@ -198,11 +203,15 @@ import {
   updateSales
 } from "@/api/sales/sales";
 import {updateUser} from "@/api/system/user";
+import {parseTime} from "@/utils/ruoyi";
+import {selectListUG} from "@/api/opdm/opdm";
 
 export default {
   name: "Sales",
   data() {
     return {
+      //售出产品数
+      orderProductionNum : 0,
       //售单订单数
       orderSaleNumber: 0,
       //售单总金额
@@ -223,7 +232,7 @@ export default {
       salesList: [],
       // 弹出层标题
       title: "",
-      // 是否显示弹出层
+      // 是否显示弹出层++
       open: false,
       // 查询参数
       queryParams: {
@@ -298,9 +307,10 @@ export default {
   },
   mounted() {
     this.getSaleNumber();
-    this.getSumSale();
+    //this.getSumSale();
   },
   methods: {
+    parseTime,
     updateUser,
     /** 查询销售订单总数 **/
     getSaleNumber() {
@@ -308,7 +318,7 @@ export default {
       getNumbers().then(respone =>{
         this.orderSaleNumber = respone.data;
         //console.info(respone);
-        this.$modal.msgSuccess("查询成功!");
+        //this.$modal.msgSuccess("查询成功!");
         this.loading = false;
       }).catch(reason => {
         this.$modal.msgError("发生错误!");
@@ -320,7 +330,7 @@ export default {
       getSumSale().then(respone =>{
         this.sumSale = respone.data;
         //console.info(respone);
-        this.$modal.msgSuccess("查询成功!");
+        //this.$modal.msgSuccess("查询成功!");
         this.loading = false;
       }).catch(reason => {
         this.$modal.msgError("发生错误!");
@@ -330,11 +340,26 @@ export default {
     getList() {
       this.loading = true;
       listSalesWithUser(this.queryParams).then(response => {
+        if (response && response.rows) {
+          this.sumSale = response.rows.reduce((total, row) => total + row.salesAmount, 0);
+          this.orderProductionNum = response.rows.reduce((total, row) => total + row.salesVolume, 0);
+          console.info(this.sumSale);
+          console.info(this.orderProductionNum);
+          this.salesList = response.rows;
+          this.total = response.total;
+        }
+        this.loading = false;
+      });
+    },
+    /*getList() {
+      this.loading = true;
+      listSalesWithUser(this.queryParams).then(response => {
+        //console.info(response);
         this.salesList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
-    },
+    },*/
     // 取消按钮
     cancel() {
       this.open = false;

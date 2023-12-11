@@ -43,6 +43,7 @@ public class CrkOutDetailsController extends BaseController {
     /**
      * 查询出库明细带用户名
      * 列表
+     *
      */
     @RequiresPermissions("out_details:details:list")
     @GetMapping("/listAndUser")
@@ -67,7 +68,7 @@ public class CrkOutDetailsController extends BaseController {
 
     /**
      * 获取出库明细
-     * 详细信息
+     * 详细信息+
      */
     @RequiresPermissions("out_details:details:query")
     @GetMapping(value = "/{omId}")
@@ -97,6 +98,7 @@ public class CrkOutDetailsController extends BaseController {
 
     /**
      * 删除出库明细
+     *
      */
     @RequiresPermissions("out_details:details:remove")
     @Log(title = "出库明细 ", businessType = BusinessType.DELETE)
@@ -107,7 +109,7 @@ public class CrkOutDetailsController extends BaseController {
 
     /**
      * 查询出库订单数
-     *
+     *+
      * @return 未删除出库订单数
      */
     @GetMapping("/numbers")

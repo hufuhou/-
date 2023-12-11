@@ -3,11 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cx.wms.mapper.OrderPurchaseDetailsMapper">
-
+    <!--++-->
     <resultMap type="OrderPurchaseDetails" id="OrderPurchaseDetailsResult">
         <result property="pdId" column="pd_id"/>
         <result property="poCode" column="po_code"/>
-        <result property="goodsId" column="goods_id"/>
+        <!--        <result property="goodsId" column="goods_id"/>-->
         <result property="purchaseQuantity" column="purchase_quantity"/>
         <result property="money" column="money"/>
         <result property="remark" column="remark"/>
@@ -22,18 +22,14 @@
     </resultMap>
 
     <sql id="selectOrderPurchaseDetailsVo">
-        select pd_id,
-               po_code,
-               goods_id,
-               purchase_quantity,
-               money,
-               remark,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               is_delte
-        from order_purchase_details
+        SELECT order_purchase_details.*,
+               sys_user.nick_name  AS create_user_name,
+               sys_user2.nick_name AS update_user_name,
+               hp_goods.g_name     AS goods_name
+        FROM order_purchase_details
+                 LEFT JOIN sys_user ON order_purchase_details.create_by = sys_user.user_id
+                 LEFT JOIN sys_user AS sys_user2 ON order_purchase_details.update_by = sys_user2.user_id
+                 LEFT JOIN hp_goods ON order_purchase_details.g_code = hp_goods.g_code
     </sql>
 
     <select id="selectOrderPurchaseDetailsList" parameterType="OrderPurchaseDetails"
@@ -41,7 +37,6 @@
         <include refid="selectOrderPurchaseDetailsVo"/>
         <where>
             <if test="poCode != null  and poCode != ''">and po_code = #{poCode}</if>
-            <if test="goodsId != null ">and goods_id = #{goodsId}</if>
             <if test="purchaseQuantity != null ">and purchase_quantity = #{purchaseQuantity}</if>
             <if test="money != null ">and money = #{money}</if>
             <if test="isDelte != null ">and is_delte = #{isDelte}</if>
@@ -50,7 +45,7 @@
 
     <select id="selectOrderPurchaseDetailsByPdId" parameterType="Long" resultMap="OrderPurchaseDetailsResult">
         <include refid="selectOrderPurchaseDetailsVo"/>
-        where pd_id = #{pdId}
+        where order_purchase_details.po_code = #{po_code}
     </select>
 
     <insert id="insertOrderPurchaseDetails" parameterType="OrderPurchaseDetails" useGeneratedKeys="true"
@@ -58,7 +53,6 @@
         insert into order_purchase_details
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="poCode != null and poCode != ''">po_code,</if>
-            <if test="goodsId != null">goods_id,</if>
             <if test="purchaseQuantity != null">purchase_quantity,</if>
             <if test="money != null">money,</if>
             <if test="remark != null">remark,</if>
@@ -70,7 +64,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="poCode != null and poCode != ''">#{poCode},</if>
-            <if test="goodsId != null">#{goodsId},</if>
+<!--            <if test="goodsId != null">#{goodsId},</if>-->
             <if test="purchaseQuantity != null">#{purchaseQuantity},</if>
             <if test="money != null">#{money},</if>
             <if test="remark != null">#{remark},</if>
@@ -86,7 +80,6 @@
         update order_purchase_details
         <trim prefix="SET" suffixOverrides=",">
             <if test="poCode != null and poCode != ''">po_code = #{poCode},</if>
-            <if test="goodsId != null">goods_id = #{goodsId},</if>
             <if test="purchaseQuantity != null">purchase_quantity = #{purchaseQuantity},</if>
             <if test="money != null">money = #{money},</if>
             <if test="remark != null">remark = #{remark},</if>
@@ -119,15 +112,34 @@
     </select>
 
     <select id="findWithUserAndGoodName" resultMap="OrderPurchaseDetailsResult">
+        SELECT order_purchase_details.*,
+               sys_user.nick_name  AS create_user_name,
+               sys_user2.nick_name AS update_user_name,
+               hp_goods.g_name     AS goods_name
+        FROM order_purchase_details
+                 LEFT JOIN sys_user ON order_purchase_details.create_by = sys_user.user_id
+                 LEFT JOIN sys_user AS sys_user2 ON order_purchase_details.update_by = sys_user2.user_id
+                 LEFT JOIN hp_goods ON order_purchase_details.g_code = hp_goods.g_code
+    </select>
+
+    <select id="findInfoByDate" resultMap="OrderPurchaseDetailsResult">
         SELECT
-            order_purchase_details.*,
-            sys_user.nick_name AS create_user_name,
-            sys_user2.nick_name AS update_user_name,
-            hp_goods.g_name AS goods_name
+        order_purchase_details.*,
+        sys_user.nick_name AS create_user_name,
+        sys_user2.nick_name AS update_user_name,
+        hp_goods.g_name AS goods_name
         FROM
-            order_purchase_details
-                LEFT JOIN sys_user ON order_purchase_details.create_by = sys_user.user_id
-                LEFT JOIN sys_user AS sys_user2 ON order_purchase_details.update_by = sys_user2.user_id
-                LEFT JOIN hp_goods ON order_purchase_details.goods_id = hp_goods.g_id
+        order_purchase_details
+        LEFT JOIN sys_user ON order_purchase_details.create_by = sys_user.user_id
+        LEFT JOIN sys_user AS sys_user2 ON order_purchase_details.update_by = sys_user2.user_id
+        LEFT JOIN hp_goods ON order_purchase_details.g_code = hp_goods.g_code
+        <where>
+            <if test="TodayOrYesterday != null and TodayOrYesterday != ''">
+                AND order_purchase_details.create_time > #{TodayOrYesterday}
+            </if>
+            <if test="BeginDay != null and EndDay != null">
+                AND order_purchase_details.create_time BETWEEN #{BeginDay} AND #{EndDay}
+            </if>
+        </where>
     </select>
 </mapper>

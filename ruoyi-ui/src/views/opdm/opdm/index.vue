@@ -1,5 +1,18 @@
 <template>
-  <div class="app-container" style='font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;'>
+  <div class="app-container"
+       style='font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;'>
+    <el-form>
+      <el-form-item>
+        <el-row>
+          <el-button plain @click="getInfoByDate('today')">今 日</el-button>
+          <el-button type="primary" plain @click="getInfoByDate('yesterday')">昨 日</el-button>
+          <el-button type="success" plain @click="getInfoByDate('thisWeek')">本 周</el-button>
+          <el-button type="info" plain @click="getInfoByDate('lastWeek')">上 周</el-button>
+          <el-button type="warning" plain @click="getInfoByDate('thisMonth')">本 月</el-button>
+          <el-button type="danger" plain @click="getInfoByDate('lastMonth')">上 月</el-button>
+        </el-row>
+      </el-form-item>
+    </el-form>
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="进货单id" prop="poId">
         <el-input
@@ -46,34 +59,35 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
       <el-row :gutter="20" class="mb8">
-          <!-- 搜索和重置按钮... -->
-          <el-col :span="1.5"></el-col> <!-- 空白列 -->
-          <el-col :span="4"> <!-- 第一个板块 -->
-            <el-card shadow="hover" style="text-align: center">
-              <div>
-                <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ orderNum }}</p>
-                <p>进货单数量</p>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="4" style="text-align: center"> <!-- 第二个板块 -->
-            <el-card shadow="hover">
-              <div>
-                <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ "$" + orderNum * 100 }}</p>
-                <p>进货货品金额</p>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="4" style="text-align: center"> <!-- 第三个板块 -->
-            <el-card shadow="hover">
-              <div>
-                <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ orderNum }}</p>
-                <p>进货货品数量</p>
-              </div>
-            </el-card>
-          </el-col>
-          <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-        </el-row>
+        <!-- 搜索和重置按钮... -->
+        <el-col :span="1.5"></el-col> <!-- 空白列 -->
+        <el-col :span="4"> <!-- 第一个板块 -->
+          <el-card shadow="hover" style="text-align: center">
+            <div>
+              <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ orderNum }}</p>
+              <p>进货单数量</p>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="4" style="text-align: center"> <!-- 第二个板块 -->
+          <el-card shadow="hover">
+            <div>
+              <p style="color: #00afff;font-size: 35px;line-height: 1px">
+                {{ "￥" + (OrderPurchaseMoney / 10000).toFixed(2) + "W" }}</p>
+              <p>进货货品金额</p>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="4" style="text-align: center"> <!-- 第三个板块+ -->
+          <el-card shadow="hover">
+            <div>
+              <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ orderProductionNum }}</p>
+              <p>进货货品数量</p>
+            </div>
+          </el-card>
+        </el-col>
+        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      </el-row>
 
     </el-form>
     <el-row :gutter="10" class="mb8">
@@ -127,13 +141,17 @@
     </el-row>
 
     <el-table v-loading="loading" :data="opdmList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="进货明细单id" align="center" prop="pdId" />
-      <el-table-column label="进货单号" align="center" prop="poCode" />
-      <el-table-column label="货品" align="center" prop="goods_name" />
-      <el-table-column label="进货数量" align="center" prop="purchaseQuantity" />
-      <el-table-column label="总金额" align="center" prop="money" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="进货明细单id" align="center" prop="pdId"/>
+      <el-table-column label="进货单号" align="center" prop="poCode"/>
+      <el-table-column label="货品" align="center" prop="goods_name"/>
+      <el-table-column label="进货数量" align="center" prop="purchaseQuantity"/>
+      <el-table-column label="总金额" align="center" prop="money"/>
+      <el-table-column label="备注" align="center" prop="remark">
+        <template slot-scope="scope">
+          {{ scope.row.remark === null ? '暂无备注' : scope.row.remark }}
+        </template>
+      </el-table-column>
       <el-table-column label="是否存在" align="center" prop="isDelete">
         <template slot-scope="scope">
           {{ scope.row.isDelete === 1 ? '不存在' : '存在' }}
@@ -142,13 +160,18 @@
       <el-table-column label="创建人" align="center" prop="create_user_name"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新人" align="center" prop="update_user_name"/>
+      <el-table-column label="更新人" align="center" prop="update_user_name">
+        <template slot-scope="scope">
+          {{ scope.row.update_user_name === null ? '未更改' : scope.row.update_user_name }}
+        </template>
+      </el-table-column>
       <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
+          <span v-if="scope.row.updateTime">{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          <span v-else>未更改</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -159,14 +182,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:details:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:details:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -193,12 +218,32 @@
 </template>
 
 <script>
-import {addOpdm, delOpdm, getOpdm, listOpdm, selectListUG, selectNum, updateOpdm} from "@/api/opdm/opdm";
+import {
+  addOpdm,
+  delOpdm,
+  findInfoByDate,
+  getOpdm,
+  selectDataParam,
+  selectListUG,
+  selectNum,
+  updateOpdm
+} from "@/api/opdm/opdm";
+import {parseTime} from "../../../utils/ruoyi";
 
 export default {
   name: "Opdm",
   data() {
     return {
+      //今日 or 昨日
+      TodayOrYesterday: "",
+      //周,月开始日
+      BeginDay: "",
+      //周,月结束日
+      EndDay: "",
+      //进货货品数量
+      orderProductionNum: 0,
+      //总售金额
+      OrderPurchaseMoney: 0,
       //订单数
       orderNum: 0,
       // 遮罩层
@@ -213,7 +258,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 进货明细表格数据
+      // 进货明细表格数据+
       opdmList: [],
       // 弹出层标题
       title: "",
@@ -289,12 +334,78 @@ export default {
     this.getOrderNum();
   },
   methods: {
+    /**
+     * 获取时间参数
+     * @param param
+     */
+    async getDateParam(param) {
+      return new Promise((resolve, reject) => {
+        selectDataParam(param).then(response => {
+          if (typeof response.data === 'string') {
+            // 如果是字符串
+            this.TodayOrYesterday = response.data;
+            resolve(true);
+          } else if (Array.isArray(response.data)) {
+            // 如果是数组
+            this.BeginDay = response.data[0];
+            this.EndDay = response.data[1];
+            resolve(true);
+          } else {
+            // 处理其他类型的数据，或者抛出错误提示
+            console.error('非法数据类型:', typeof response.data);
+            reject(false);
+          }
+        }).catch(error => {
+          console.error('获取参数失败:', error);
+          reject(false);
+        });
+      });
+    },
+
+    /**
+     * 按时间段获取信息
+     * @param param
+     */
+    async getInfoByDate(param) {
+      let DateParams;
+      this.TodayOrYesterday = null;
+      this.BeginDay = null;
+      this.EndDay = null;
+      DateParams = null;
+      try {
+        // 等待 getDateParam 方法执行完毕
+        await this.getDateParam(param);
+        // 在这里可以获取到正确的 DateParams
+        DateParams = [this.TodayOrYesterday, this.BeginDay, this.EndDay];
+        /*console.info(DateParams);*/
+        console.info(DateParams)
+        findInfoByDate(DateParams)
+          .then(response => {
+            // 处理响应
+            console.info(response)
+            this.$set(this, 'opdmList', response.data);
+          })
+          .catch(error => {
+            //处理错误
+            console.info(error)
+          });
+      } catch (error) {
+        // 处理错误
+        console.error('按时间段查询进货信息失败:', error);
+      }
+    },
+    parseTime,
     /** 查询进货明细列表 */
     getList() {
       this.loading = true;
       selectListUG(this.queryParams).then(response => {
-        this.opdmList = response.rows;
-        this.total = response.total;
+        if (response && response.rows) {
+          this.OrderPurchaseMoney = response.rows.reduce((total, row) => total + row.money, 0);
+          this.orderProductionNum = response.rows.reduce((total, row) => total + row.purchaseQuantity, 0);
+          console.info(this.OrderPurchaseMoney);
+          this.opdmList = response.rows;
+          this.total = response.total;
+        }
         this.loading = false;
       });
     },

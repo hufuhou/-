@@ -176,7 +176,7 @@
       <el-table-column label="本次入库数" align="center" prop="thisQuantity" />
       <el-table-column label="生产日期" align="center" prop="productionDate" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.productionDate, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.productionDate, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建人" align="center" prop="create_user_name"/>
@@ -234,6 +234,7 @@ import {
   findCheckNmu,
   listCheckinWithUser
 } from "@/api/checkin/checkin";
+import {parseTime} from "../../../utils/ruoyi";
 
 
 export default {
@@ -331,6 +332,7 @@ export default {
     this.getCheckinNumber();
   },
   methods: {
+    parseTime,
     /** 查询入库明细列表 */
     getList() {
       this.loading = true;

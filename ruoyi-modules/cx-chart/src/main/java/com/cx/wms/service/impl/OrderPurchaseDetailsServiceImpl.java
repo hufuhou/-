@@ -5,6 +5,7 @@ import com.cx.wms.mapper.OrderPurchaseDetailsMapper;
 import com.cx.wms.service.IOrderPurchaseDetailsService;
 import com.ruoyi.common.core.utils.DateUtils;
 import com.ruoyi.common.security.utils.SecurityUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -110,5 +111,18 @@ public class OrderPurchaseDetailsServiceImpl implements IOrderPurchaseDetailsSer
     @Override
     public List<OrderPurchaseDetails> findWithUserAndGoodName(OrderPurchaseDetails orderPurchaseDetails) {
         return orderPurchaseDetailsMapper.findWithUserAndGoodName(orderPurchaseDetails);
+    }
+
+    /**
+     * 查询进货列表按时间段
+     * @param TodayOrYesterday 今日/昨日
+     * @param BeginDay 本周/月 开始日
+     * @param EndDay 本周/月 结束日
+     * @return 按时间段进货列表
+     * @auther xrc
+     */
+    @Override
+    public List<OrderPurchaseDetails> findInfoByDate(@Param("TodayOrYesterday") String TodayOrYesterday, @Param("BeginDay") String BeginDay, @Param("EndDay") String EndDay) {
+        return orderPurchaseDetailsMapper.findInfoByDate(TodayOrYesterday, BeginDay, EndDay);
     }
 }

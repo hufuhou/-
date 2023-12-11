@@ -10,6 +10,7 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :sm="24" :lg="12" style="padding-left: 20px">
+        <!--        -->
         <h2>😎创鑫仓储管理系统😎</h2>
         <pre class="cx_plant">
             ______  __  __        ____  __ ____
@@ -59,6 +60,7 @@
           <el-col :span="6">
             <h4>后端技术</h4>
             <ul>
+              <!--              -->
               <li>SpringBoot</li>
               <li>SpringCloud</li>
               <li>Nacos</li>
@@ -111,7 +113,8 @@
               alt="donate"
               width="100%"
             />
-            <span style="display: inline-block; height: 30px; line-height: 30px;font-size: 16px">😤🐔坤坤镇楼,代码不愁!🐔😤</span>
+            <span
+              style="display: inline-block; height: 30px; line-height: 30px;font-size: 16px">😤🐔坤坤镇楼,代码不愁!🐔😤</span>
           </div>
         </el-card>
       </el-col>
@@ -200,7 +203,8 @@ export default {
       padding-inline-start: 40px;
     }
   }
-  .cx_plant{
+
+  .cx_plant {
     color: #00afff;
     font-size: 18px;
     font-weight: bold;

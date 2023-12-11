@@ -58,3 +58,27 @@ export function selectListUG() {
     method: 'get'
   })
 }
+
+// 获取查询日期参数
+export function selectDataParam(param) {
+  return request({
+    url: '/opdm/opdm/dateParam?param='+ param,
+    method: 'get'
+  })
+}
+
+// 按照时间段查询进货信息
+export function findInfoByDate(DateParams) {
+  // 将数组拆分为三个独立的参数
+  const [TodayOrYesterday, BeginDay, EndDay] = DateParams;
+  return request({
+    url: '/opdm/opdm/findInfoByDate',
+    method: 'get',
+    params: {
+      TodayOrYesterday,
+      BeginDay,
+      EndDay
+    }
+  });
+}
+

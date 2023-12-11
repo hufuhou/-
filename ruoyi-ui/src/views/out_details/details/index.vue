@@ -202,13 +202,13 @@
       <el-table-column label="创建人" align="center" prop="create_user_name"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="更新人" align="center" prop="update_user_name"/>
       <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -244,40 +244,41 @@
     <!-- 添加或修改出库明细
 对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="出库编号" prop="outId">
-          <el-input v-model="form.outId" placeholder="请输入出库编号"/>
-        </el-form-item>
-        <el-form-item label="明细ID" prop="orderId">
-          <el-input v-model="form.orderId" placeholder="请输入明细 ID"/>
-        </el-form-item>
-        <el-form-item label="单位" prop="unit">
-          <el-input v-model="form.unit" placeholder="请输入单位"/>
-        </el-form-item>
-        <el-form-item label="物品数" prop="itemQuantity">
-          <el-input v-model="form.itemQuantity" placeholder="请输入物品数"/>
-        </el-form-item>
-        <el-form-item label="已发量" prop="quantityShipped">
-          <el-input v-model="form.quantityShipped" placeholder="请输入已发数量"/>
-        </el-form-item>
-        <el-form-item label="未交数" prop="undeliveredQuantity">
-          <el-input v-model="form.undeliveredQuantity" placeholder="请输入未交付数量"/>
-        </el-form-item>
-        <el-form-item label="产出数" prop="currOutQuantity">
-          <el-input v-model="form.currOutQuantity" placeholder="请输入当前产出数量"/>
-        </el-form-item>
-        <el-form-item label="批号" prop="batchNumber">
-          <el-input v-model="form.batchNumber" placeholder="请输入批号"/>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注"/>
-        </el-form-item>
-        <el-form-item label="条形码" prop="barcode">
-          <el-input v-model="form.barcode" placeholder="请输入条形码"/>
-        </el-form-item>
-      </el-form>
+<!--      <el-form ref="form" :model="form" :rules="rules" label-width="80px">-->
+<!--        <el-form-item label="出库编号" prop="outId">-->
+<!--          <el-input v-model="form.outId" placeholder="请输入出库编号"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="明细ID" prop="orderId">-->
+<!--          <el-input v-model="form.orderId" placeholder="请输入明细 ID"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="单位" prop="unit">-->
+<!--          <el-input v-model="form.unit" placeholder="请输入单位"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="物品数" prop="itemQuantity">-->
+<!--          <el-input v-model="form.itemQuantity" placeholder="请输入物品数"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="已发量" prop="quantityShipped">-->
+<!--          <el-input v-model="form.quantityShipped" placeholder="请输入已发数量"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="未交数" prop="undeliveredQuantity">-->
+<!--          <el-input v-model="form.undeliveredQuantity" placeholder="请输入未交付数量"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="产出数" prop="currOutQuantity">-->
+<!--          <el-input v-model="form.currOutQuantity" placeholder="请输入当前产出数量"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="批号" prop="batchNumber">-->
+<!--          <el-input v-model="form.batchNumber" placeholder="请输入批号"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="备注" prop="remark">-->
+<!--          <el-input v-model="form.remark" placeholder="请输入备注"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="条形码" prop="barcode">-->
+<!--          <el-input v-model="form.barcode" placeholder="请输入条形码"/>-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
+      <h1>绝赞开发中！</h1>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitForm" disabled="disabled">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
