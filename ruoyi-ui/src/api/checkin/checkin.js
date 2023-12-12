@@ -67,3 +67,18 @@ export function selectDataParam(param) {
     method: 'get'
   })
 }
+
+// 按照时间段查询进货信息
+export function findInfoByDateCheckin(DateParams) {
+  // 将数组拆分为三个独立的参数
+  const [TodayOrYesterday, BeginDay, EndDay] = DateParams;
+  return request({
+    url: '/checkin/checkin/findInfoByDate',
+    method: 'get',
+    params: {
+      TodayOrYesterday,
+      BeginDay,
+      EndDay
+    }
+  });
+}

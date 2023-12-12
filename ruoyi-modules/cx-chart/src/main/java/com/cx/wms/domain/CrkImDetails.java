@@ -93,6 +93,37 @@ public class CrkImDetails extends BaseEntity {
     //更新人用户名
     private String update_user_name;
 
+    //库位
+    private String location;
+    //仓库名
+    private String warehouseName;
+
+    private String goods_name;
+
+    public String getGoods_name() {
+        return goods_name;
+    }
+
+    public void setGoods_name(String goods_name) {
+        this.goods_name = goods_name;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getWarehouseName() {
+        return warehouseName;
+    }
+
+    public void setWarehouseName(String warehouseName) {
+        this.warehouseName = warehouseName;
+    }
+
     public String getCreate_user_name() {
         return create_user_name;
     }
@@ -227,6 +258,9 @@ public class CrkImDetails extends BaseEntity {
                 .append("isDelte", getIsDelte())
                 .append("create_user_name", getCreate_user_name())
                 .append("update_user_name", getUpdate_user_name())
+                .append("Location", getLocation())
+                .append("WarehouseName", getWarehouseName())
+                .append("goods_name", getGoods_name())
                 .toString();
     }
 }

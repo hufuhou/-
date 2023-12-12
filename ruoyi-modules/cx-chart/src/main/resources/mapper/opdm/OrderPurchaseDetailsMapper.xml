@@ -123,8 +123,7 @@
     </select>
 
     <select id="findInfoByDate" resultMap="OrderPurchaseDetailsResult">
-        SELECT
-        order_purchase_details.*,
+        SELECT order_purchase_details.*,
         sys_user.nick_name AS create_user_name,
         sys_user2.nick_name AS update_user_name,
         hp_goods.g_name AS goods_name

@@ -149,12 +149,12 @@
       <el-table-column label="总金额" align="center" prop="money"/>
       <el-table-column label="备注" align="center" prop="remark">
         <template slot-scope="scope">
-          {{ scope.row.remark === null ? '暂无备注' : scope.row.remark }}
+          {{ scope.row.remark === null || scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
         </template>
       </el-table-column>
-      <el-table-column label="是否存在" align="center" prop="isDelete">
+      <el-table-column label="是否删除" align="center" prop="isDelete">
         <template slot-scope="scope">
-          {{ scope.row.isDelete === 1 ? '不存在' : '存在' }}
+          {{ scope.row.isDelete === 1 ? '删除' : '未删除' }}
         </template>
       </el-table-column>
       <el-table-column label="创建人" align="center" prop="create_user_name"/>
@@ -400,7 +400,9 @@ export default {
       this.loading = true;
       selectListUG(this.queryParams).then(response => {
         if (response && response.rows) {
+          //总进货金额
           this.OrderPurchaseMoney = response.rows.reduce((total, row) => total + row.money, 0);
+          //总进货订单数
           this.orderProductionNum = response.rows.reduce((total, row) => total + row.purchaseQuantity, 0);
           console.info(this.OrderPurchaseMoney);
           this.opdmList = response.rows;

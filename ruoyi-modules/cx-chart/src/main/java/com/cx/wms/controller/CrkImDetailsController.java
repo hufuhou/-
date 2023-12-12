@@ -9,6 +9,8 @@ import com.ruoyi.common.core.web.page.TableDataInfo;
 import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/checkin")
+@Slf4j
 public class CrkImDetailsController extends BaseController {
     @Autowired
     private ICrkImDetailsService crkImDetailsService;
@@ -113,6 +116,29 @@ public class CrkImDetailsController extends BaseController {
             return success(res);
         } else {
             return error("查询失败");
+        }
+    }
+
+    /**
+     * @param TodayOrYesterday 今日/昨日
+     * @param BeginDay         开始日
+     * @param EndDay           结束日
+     * @return 按时间段进货列表
+     */
+    @GetMapping("/findInfoByDate")
+    @Log(title = "入库明细总数", businessType = BusinessType.OTHER)
+    public AjaxResult findInfoByDate(@Param("TodayOrYesterday") String TodayOrYesterday, @Param("BeginDay") String BeginDay, @Param("EndDay") String EndDay) {
+        try {
+            List<CrkImDetails> list = crkImDetailsService.findInfoByDate(TodayOrYesterday, BeginDay, EndDay);
+            //System.out.println(list);'
+            if (list != null && !list.isEmpty()) {
+                return AjaxResult.success("查询成功,查询到" + list.size() + "条数据", list);
+            } else {
+                return AjaxResult.warn("查询不到数据");
+            }
+        } catch (Exception e) {
+            log.error("查询异常", e);
+            return AjaxResult.error("查询异常");
         }
     }
 }

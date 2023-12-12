@@ -111,4 +111,15 @@ public class CrkImDetailsServiceImpl implements ICrkImDetailsService {
     public Integer findCheckInNumber() {
         return crkImDetailsMapper.findCheckInNumber();
     }
+
+    /**
+     * @param TodayOrYesterday 今日/昨日
+     * @param BeginDay         开始日
+     * @param EndDay           结束日
+     * @return 按时间段进货列表
+     */
+    @Override
+    public List<CrkImDetails> findInfoByDate(String TodayOrYesterday, String BeginDay, String EndDay) {
+        return crkImDetailsMapper.findInfoByDate(TodayOrYesterday, BeginDay, EndDay);
+    }
 }

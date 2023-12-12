@@ -1,6 +1,7 @@
 package com.cx.wms.service;
 
 import com.cx.wms.domain.CrkImDetails;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -73,4 +74,12 @@ public interface ICrkImDetailsService {
      * @return 入库明细订货总数
      */
     public Integer findCheckInNumber();
+
+    /**
+     * @param TodayOrYesterday 今日/昨日
+     * @param BeginDay         开始日
+     * @param EndDay           结束日
+     * @return 按时间段进货列表
+     */
+    public List<CrkImDetails> findInfoByDate(@Param("TodayOrYesterday") String TodayOrYesterday, @Param("BeginDay") String BeginDay, @Param("EndDay") String EndDay);
 }

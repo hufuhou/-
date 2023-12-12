@@ -13,34 +13,10 @@
       </el-form-item>
     </el-form>
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="入库ID" prop="inId">
-        <el-input
-          v-model="queryParams.inId"
-          placeholder="请输入入库ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="入库单号" prop="inCode">
         <el-input
           v-model="queryParams.inCode"
           placeholder="请输入入库单号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="明细ID" prop="odId">
-        <el-input
-          v-model="queryParams.odId"
-          placeholder="请输入明细ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="单位" prop="unit">
-        <el-input
-          v-model="queryParams.unit"
-          placeholder="请输入单位"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -52,14 +28,6 @@
           value-format="yyyy-MM-dd"
           placeholder="请选择生产日期">
         </el-date-picker>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
       </el-form-item>
       <el-form-item label="创建人" prop="createBy">
         <el-input
@@ -113,7 +81,7 @@
       <el-col :span="4" style="text-align: center"> <!-- 第二个板块 -->
         <el-card shadow="hover">
           <div>
-            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ "$" + orderNum * 100 }}</p>
+            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ "￥" + orderNum * 100 }}</p>
             <p>入库货品金额</p>
           </div>
         </el-card>
@@ -121,7 +89,7 @@
       <el-col :span="4" style="text-align: center"> <!-- 第三个板块 -->
         <el-card shadow="hover">
           <div>
-            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ orderNum }}</p>
+            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ checkinProductionNum }}</p>
             <p>入库货品数量</p>
           </div>
         </el-card>
@@ -177,24 +145,45 @@
 
     <el-table v-loading="loading" :data="checkinList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="入库明细单ID" align="center" prop="imdId" />
+<!--      <el-table-column label="入库明细单ID" align="center" prop="imdId" />-->
 <!--      <el-table-column label="入库ID" align="center" prop="inId" />-->
-      <el-table-column label="入库单号" align="center" prop="inCode" />
+<!--      <el-table-column label="入库单号" align="center" prop="inCode" />-->
 <!--      <el-table-column label="明细ID" align="center" prop="odId" />-->
 <!--      <el-table-column label="单位" align="center" prop="unit" />-->
+      <el-table-column label="入库仓库" align="center" prop="warehouseName" />
+      <el-table-column label="入库仓位" align="center" prop="location" />
+      <el-table-column label="本次入库数" align="center" prop="thisQuantity" />
       <el-table-column label="已入库数" align="center" prop="quantityInStock" />
       <el-table-column label="未入库数" align="center" prop="unstockedQuantity" />
-      <el-table-column label="入库仓位" align="center" prop="slId" />
-      <el-table-column label="本次入库数" align="center" prop="thisQuantity" />
+      <el-table-column label="货品" align="center" prop="goods_name"/>
       <el-table-column label="生产日期" align="center" prop="productionDate" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.productionDate, '{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ parseTime(scope.row.productionDate, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="条形码" align="center" prop="barcode" />-->
+      <el-table-column label="备注" align="center" prop="remark">
+        <template slot-scope="scope">
+          {{ scope.row.remark === null ||  scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
         </template>
       </el-table-column>
       <el-table-column label="创建人" align="center" prop="create_user_name"/>
-      <el-table-column label="更新人" align="center" prop="update_user_name"/>
-      <el-table-column label="条形码" align="center" prop="barcode" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新人" align="center" prop="update_user_name">
+        <template slot-scope="scope">
+          {{ scope.row.update_user_name === null ? '未更改' : scope.row.update_user_name }}
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
+        <template slot-scope="scope">
+          <span v-if="scope.row.updateTime">{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          <span v-else>未更改</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -244,7 +233,7 @@ import {
   addCheckin,
   updateCheckin,
   findCheckNmu,
-  listCheckinWithUser
+  listCheckinWithUser, findInfoByDateCheckin
 } from "@/api/checkin/checkin";
 import {parseTime} from "@/utils/ruoyi";
 import {selectDataParam} from "@/api/opdm/opdm";
@@ -260,6 +249,8 @@ export default {
       BeginDay: "",
       //周,月结束日
       EndDay: "",
+      //进货产品数量
+      checkinProductionNum : 0,
       //订单总数
       orderNum : 0,
       // 遮罩层
@@ -348,7 +339,7 @@ export default {
     this.getList();
   },
   mounted() {
-    this.getCheckinNumber();
+    //this.getCheckinNumber();
   },
   methods: {
     /**
@@ -396,6 +387,16 @@ export default {
         DateParams = [this.TodayOrYesterday, this.BeginDay, this.EndDay];
         console.info(DateParams)
         //TODO : 从这下面添加业务代码
+        findInfoByDateCheckin(DateParams)
+          .then(response => {
+            // 处理响应
+            console.info(response)
+            this.$set(this, 'checkinList', response.data);
+          })
+          .catch(error => {
+            //处理错误
+            console.info(error)
+          });
       } catch (error) {
         // 处理错误
         console.error('按时间段查询进货信息失败:', error);
@@ -410,6 +411,9 @@ export default {
       listCheckinWithUser(this.queryParams).then(response => {
         this.checkinList = response.rows;
         this.total = response.total;
+        //总进货金额
+        this.orderNum = this.total;
+        this.checkinProductionNum = response.rows.reduce((total, row) => total + row.thisQuantity, 0);
         this.loading = false;
       });
     },

@@ -22,6 +22,11 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelte" column="is_delte"/>
+        <result property="create_user_name" column="create_user_name"/>
+        <result property="update_user_name" column="update_user_name"/>
+        <result property="location" column="location"/>
+        <result property="warehouseName" column="warehouseName"/>
+        <result property="goods_name" column="goods_name"/>
     </resultMap>
 
     <!--  带用户名的resultMap  -->
@@ -44,6 +49,9 @@
         <result property="isDelte" column="is_delte"/>
         <result property="create_user_name" column="create_user_name"/>
         <result property="update_user_name" column="update_user_name"/>
+        <result property="location" column="location"/>
+        <result property="warehouseName" column="warehouseName"/>
+        <result property="goods_name" column="goods_name"/>
     </resultMap>
 
     <sql id="selectCrkImDetailsVo">
@@ -67,12 +75,20 @@
     </sql>
 
     <select id="findListWithUser" resultMap="combinedResultMap">
-        SELECT crk_im_details.*,
-               sys_user.nick_name  AS create_user_name,
-               sys_user2.nick_name AS update_user_name
-        FROM crk_im_details
-                 LEFT JOIN sys_user ON crk_im_details.create_by = sys_user.user_id
-                 LEFT JOIN sys_user AS sys_user2 ON crk_im_details.update_by = sys_user2.user_id
+        SELECT
+            crk_im_details.*,
+            sys_user.nick_name AS create_user_name,
+            sys_user2.nick_name AS update_user_name,
+            tj_storage_location.sl_name AS location,
+            warehouse.w_name AS warehouseName,
+            hp_goods.g_name AS goods_name
+        FROM
+            crk_im_details
+                LEFT JOIN sys_user ON crk_im_details.create_by = sys_user.user_id
+                LEFT JOIN sys_user AS sys_user2 ON crk_im_details.update_by = sys_user2.user_id
+                LEFT JOIN tj_storage_location ON crk_im_details.sl_id = tj_storage_location.sl_id
+                LEFT JOIN warehouse ON tj_storage_location.w_id = warehouse.w_id
+                LEFT JOIN hp_goods ON crk_im_details.g_code = hp_goods.g_code
     </select>
 
     <select id="selectCrkImDetailsList" parameterType="CrkImDetails" resultMap="CrkImDetailsResult">
@@ -180,15 +196,21 @@
         WHERE is_delte = 0;
     </select>
 
-    <select id="findInfoByDate">
+    <select id="findInfoByDate" resultMap="combinedResultMap">
         SELECT
         crk_im_details.*,
         sys_user.nick_name AS create_user_name,
-        sys_user2.nick_name AS update_user_name
+        sys_user2.nick_name AS update_user_name,
+        tj_storage_location.sl_name AS location,
+        warehouse.w_name AS warehouseName,
+        hp_goods.g_name AS goods_name
         FROM
         crk_im_details
         LEFT JOIN sys_user ON crk_im_details.create_by = sys_user.user_id
         LEFT JOIN sys_user AS sys_user2 ON crk_im_details.update_by = sys_user2.user_id
+        LEFT JOIN tj_storage_location ON crk_im_details.sl_id = tj_storage_location.sl_id
+        LEFT JOIN warehouse ON tj_storage_location.w_id = warehouse.w_id
+        LEFT JOIN hp_goods ON crk_im_details.g_code = hp_goods.g_code
         <where>
             <if test="TodayOrYesterday != null and TodayOrYesterday != ''">
                 AND crk_im_details.create_time > #{TodayOrYesterday}
@@ -204,18 +226,6 @@
 连接更新人信息： 同样使用左连接将表 sys_user 与 crk_im_details 关联，通过 update_by 列连接，将更新人的昵称 (nick_name) 作为 update_user_name 别名返回。
 连接库存位置信息： 使用左连接将表 tj_storage_location 与 crk_im_details 关联，通过 sl_id 列连接，将库存位置的名称 (sl_name) 作为 location 别名返回。
 连接仓库信息： 使用左连接将表 warehouse 与 tj_storage_location 关联，通过 w_id 列连接，将仓库的名称 (w_name) 作为 warehouseName 别名返回。   -->
-    <select id="Temp" resultMap="combinedResultMap">
-        SELECT crk_im_details.*,
-               sys_user.nick_name          AS create_user_name,
-               sys_user2.nick_name         AS update_user_name,
-               tj_storage_location.sl_name AS location,
-               warehouse.w_name            AS warehouseName
-        FROM crk_im_details
-                 LEFT JOIN sys_user ON crk_im_details.create_by = sys_user.user_id
-                 LEFT JOIN sys_user AS sys_user2 ON crk_im_details.update_by = sys_user2.user_id
-                 LEFT JOIN tj_storage_location ON crk_im_details.sl_id = tj_storage_location.sl_id
-                 LEFT JOIN warehouse ON tj_storage_location.w_id = warehouse.w_id;
-    </select>
     <!--  TODO:SQL写好了,明天再写Controller Service Mapper  -->
 
 </mapper>
