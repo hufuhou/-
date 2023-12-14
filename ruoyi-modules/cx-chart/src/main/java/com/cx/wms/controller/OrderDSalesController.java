@@ -30,7 +30,6 @@ public class OrderDSalesController extends BaseController {
     /**
      * 查询销售明细列表
      */
-    @RequiresPermissions("sales:sales:list")
     @GetMapping("/list")
     public TableDataInfo list(OrderDSales orderDSales) {
         startPage();
@@ -41,7 +40,6 @@ public class OrderDSalesController extends BaseController {
     /**
      * 查询销售明细列表带用户名
      */
-    @RequiresPermissions("sales:sales:list")
     @GetMapping("/listWithUser")
     public TableDataInfo listWithUser(OrderDSales orderDSales) {
         startPage();
@@ -64,7 +62,6 @@ public class OrderDSalesController extends BaseController {
     /**
      * 获取销售明细详细信息
      */
-    @RequiresPermissions("sales:sales:query")
     @GetMapping(value = "/{sdId}")
     public AjaxResult getInfo(@PathVariable("sdId") Long sdId) {
         return success(orderDSalesService.selectOrderDSalesBySdId(sdId));

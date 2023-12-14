@@ -152,11 +152,11 @@
           {{ scope.row.remark === null || scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
         </template>
       </el-table-column>
-      <el-table-column label="是否删除" align="center" prop="isDelete">
-        <template slot-scope="scope">
-          {{ scope.row.isDelete === 1 ? '删除' : '未删除' }}
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="是否删除" align="center" prop="isDelete">-->
+<!--        <template slot-scope="scope">-->
+<!--          {{ scope.row.isDelete === 1 ? '删除' : '未删除' }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="创建人" align="center" prop="create_user_name"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">

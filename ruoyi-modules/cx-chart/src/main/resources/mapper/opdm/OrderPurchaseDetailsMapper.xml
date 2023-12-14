@@ -64,7 +64,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="poCode != null and poCode != ''">#{poCode},</if>
-<!--            <if test="goodsId != null">#{goodsId},</if>-->
+            <!--            <if test="goodsId != null">#{goodsId},</if>-->
             <if test="purchaseQuantity != null">#{purchaseQuantity},</if>
             <if test="money != null">#{money},</if>
             <if test="remark != null">#{remark},</if>
@@ -141,4 +141,20 @@
             </if>
         </where>
     </select>
+
+    <!--
+        这条SQL查询的结果包含了 crk_inventory_sheet 表中的所有列，crk_is_details 表中的所有列，以及通过左连接关联的两个 sys_user 表的 nick_name 列。
+        检索与库存盘点相关的信息，包括盘点表的详细信息、创建人和修改人的昵称
+        TODO :  看看盘点主表和明细要用到些什么字段
+    -->
+    <sql id="Temp">
+        SELECT `crk_inventory_sheet`.*,
+               crk_is_details.*,
+               sys_user.nick_name  AS create_user_name,
+               sys_user2.nick_name AS update_user_name
+        FROM `crk_inventory_sheet`
+                 LEFT JOIN sys_user ON crk_inventory_sheet.create_by = sys_user.user_id
+                 LEFT JOIN sys_user AS sys_user2 ON crk_inventory_sheet.update_by = sys_user2.user_id
+                 LEFT JOIN crk_is_details ON crk_inventory_sheet.is_id = crk_is_details.is_id;
+    </sql>
 </mapper>

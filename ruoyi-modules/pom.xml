@@ -21,6 +21,7 @@
         <module>cx-order</module>
         <module>cx-units</module>
         <module>cx-ledger</module>
+        <module>cx-kcinventory</module>
     </modules>
 
     <artifactId>ruoyi-modules</artifactId>

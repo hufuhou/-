@@ -386,7 +386,6 @@ export default {
         // 在这里可以获取到正确的 DateParams
         DateParams = [this.TodayOrYesterday, this.BeginDay, this.EndDay];
         console.info(DateParams)
-        //TODO : 从这下面添加业务代码
         findInfoByDateCheckin(DateParams)
           .then(response => {
             // 处理响应

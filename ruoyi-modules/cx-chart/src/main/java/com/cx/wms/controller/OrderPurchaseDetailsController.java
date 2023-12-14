@@ -1,7 +1,6 @@
 package com.cx.wms.controller;
 
 import com.cx.wms.domain.OrderPurchaseDetails;
-import com.cx.wms.domain.PurchaseDateQuery;
 import com.cx.wms.service.IOrderPurchaseDetailsService;
 import com.cx.wms.utils.DateUtils;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
@@ -121,6 +120,7 @@ public class OrderPurchaseDetailsController extends BaseController {
 
     /**
      * 查询日期参数
+     *
      * @param param 前段传递选择时间段参数
      * @return 时间段开始结束数组
      */
@@ -155,11 +155,11 @@ public class OrderPurchaseDetailsController extends BaseController {
      */
     @GetMapping(value = "/findInfoByDate")
     @Log(title = "按时间段查询进货明细信息", businessType = BusinessType.OTHER)
-    public AjaxResult findInfoByDate(@Param("TodayOrYesterday") String TodayOrYesterday,@Param("BeginDay") String BeginDay, @Param("EndDay") String EndDay) {
+    public AjaxResult findInfoByDate(@Param("TodayOrYesterday") String TodayOrYesterday, @Param("BeginDay") String BeginDay, @Param("EndDay") String EndDay) {
         try {
             List<OrderPurchaseDetails> list = orderPurchaseDetailsService.findInfoByDate(TodayOrYesterday, BeginDay, EndDay);
             if (list != null && !list.isEmpty()) {
-                return AjaxResult.success("查询成功,查询到"+list.size()+"条数据", list);
+                return AjaxResult.success("查询成功,查询到" + list.size() + "条数据", list);
             } else {
                 return AjaxResult.warn("查询不到数据");
             }
