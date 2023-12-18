@@ -91,6 +91,43 @@ public class CrkInventorySheet extends BaseEntity {
     @Excel(name = "0：存在；1：已删除，不存在")
     private Integer isDelte;
 
+    private String create_user_name;
+    private String update_user_name;
+    private String warehouseName;
+    private String manager;
+
+    public String getManager() {
+        return manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
+
+    public String getCreate_user_name() {
+        return create_user_name;
+    }
+
+    public void setCreate_user_name(String create_user_name) {
+        this.create_user_name = create_user_name;
+    }
+
+    public String getUpdate_user_name() {
+        return update_user_name;
+    }
+
+    public void setUpdate_user_name(String update_user_name) {
+        this.update_user_name = update_user_name;
+    }
+
+    public String getWarehouseName() {
+        return warehouseName;
+    }
+
+    public void setWarehouseName(String warehouseName) {
+        this.warehouseName = warehouseName;
+    }
+
     /**
      * 盘点明细信息
      */
@@ -220,6 +257,10 @@ public class CrkInventorySheet extends BaseEntity {
                 .append("updateBy", getUpdateBy())
                 .append("updateTime", getUpdateTime())
                 .append("isDelte", getIsDelte())
+                .append("create_user_name", getCreate_user_name())
+                .append("update_user_name", getUpdate_user_name())
+                .append("warehouseName", getWarehouseName())
+                .append("manager", getManager())
                 .append("crkIsDetailsList", getCrkIsDetailsList())
                 .toString();
     }

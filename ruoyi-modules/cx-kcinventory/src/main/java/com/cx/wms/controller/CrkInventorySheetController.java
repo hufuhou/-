@@ -88,4 +88,39 @@ public class CrkInventorySheetController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] isIds) {
         return toAjax(crkInventorySheetService.deleteCrkInventorySheetByIsIds(isIds));
     }
+
+    /**
+     * 查询最新的is_code
+     * @return 最新的is_code
+     * @auther xrc
+     */
+    @GetMapping("/findIsCode")
+    public AjaxResult findIsCode() {
+        return new AjaxResult(200,"查询成功",crkInventorySheetService.findIsCode());
+    }
+
+    /**
+     * 生成is_code
+     * @return 生成的is_code
+     * @auther xrc
+     */
+    @GetMapping("/genIsCode")
+    public AjaxResult genIsCode() {
+        return new AjaxResult(200,"生成成功",crkInventorySheetService.genIsCode());
+    }
+
+
+    /**
+     * 查询仓库name 仓库id
+     *
+     * @return 仓库name 仓库id
+     */
+    @GetMapping("/findWareHouse")
+    public AjaxResult findWareHouse() {
+        return new AjaxResult(200,"获取成功",crkInventorySheetService.findWareHouse());
+    }
+
+
+
+
 }

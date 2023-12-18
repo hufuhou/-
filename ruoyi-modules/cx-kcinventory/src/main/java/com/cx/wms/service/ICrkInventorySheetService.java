@@ -1,8 +1,10 @@
 package com.cx.wms.service;
 
 import com.cx.wms.domain.CrkInventorySheet;
+import com.cx.wms.domain.WareHouse;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 库存盘点Service接口
@@ -58,4 +60,18 @@ public interface ICrkInventorySheetService {
      * @return 结果
      */
     public int deleteCrkInventorySheetByIsId(Long isId);
+
+    /**
+     * 查询最新的is_code
+     * @return 最新的is_code
+     */
+    public String findIsCode();
+
+    public String genIsCode();
+
+    /**
+     * 查询仓库name 仓库id
+     * @return 仓库name 仓库id
+     */
+    public List<WareHouse> findWareHouse();
 }

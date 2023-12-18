@@ -2,8 +2,10 @@ package com.cx.wms.service.impl;
 
 import com.cx.wms.domain.CrkInventorySheet;
 import com.cx.wms.domain.CrkIsDetails;
+import com.cx.wms.domain.WareHouse;
 import com.cx.wms.mapper.CrkInventorySheetMapper;
 import com.cx.wms.service.ICrkInventorySheetService;
+import com.cx.wms.utils.NumberGenerator;
 import com.ruoyi.common.core.utils.DateUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.security.utils.SecurityUtils;
@@ -25,8 +27,11 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
     @Autowired
     private CrkInventorySheetMapper crkInventorySheetMapper;
 
-    private String UpdateBy = String.valueOf(SecurityUtils.getUserId());
-    private String CreateBy = String.valueOf(SecurityUtils.getUserId());
+    //private String UpdateBy = String.valueOf(SecurityUtils.getUserId());
+
+    //private String CreateBy = String.valueOf(SecurityUtils.getUserId());
+
+    private static String code = null;
 
     /**
      * 查询库存盘点
@@ -60,7 +65,7 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
     @Override
     public int insertCrkInventorySheet(CrkInventorySheet crkInventorySheet) {
         crkInventorySheet.setCreateTime(DateUtils.getNowDate());
-        crkInventorySheet.setCreateBy(CreateBy);
+        crkInventorySheet.setCreateBy(String.valueOf(SecurityUtils.getUserId()));
         int rows = crkInventorySheetMapper.insertCrkInventorySheet(crkInventorySheet);
         insertCrkIsDetails(crkInventorySheet);
         return rows;
@@ -76,7 +81,7 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
     @Override
     public int updateCrkInventorySheet(CrkInventorySheet crkInventorySheet) {
         crkInventorySheet.setUpdateTime(DateUtils.getNowDate());
-        crkInventorySheet.setUpdateBy(UpdateBy);
+        crkInventorySheet.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
         crkInventorySheetMapper.deleteCrkIsDetailsByIsId(crkInventorySheet.getIsId());
         insertCrkIsDetails(crkInventorySheet);
         return crkInventorySheetMapper.updateCrkInventorySheet(crkInventorySheet);
@@ -109,6 +114,17 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
     }
 
     /**
+     * 查询最新的is_code
+     * @return 最新的is_code
+     */
+    @Override
+    public String findIsCode() {
+        code = crkInventorySheetMapper.findIsCode();
+        System.out.println(genIsCode());
+        return code;
+    }
+
+    /**
      * 新增盘点明细信息
      *
      * @param crkInventorySheet 库存盘点对象
@@ -120,7 +136,7 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
             List<CrkIsDetails> list = new ArrayList<CrkIsDetails>();
             for (CrkIsDetails crkIsDetails : crkIsDetailsList) {
                 crkIsDetails.setIsId(isId);
-                crkIsDetails.setCreateBy(CreateBy);
+                crkIsDetails.setCreateBy(String.valueOf(SecurityUtils.getUserId()));
                 crkIsDetails.setCreateTime(DateUtils.getNowDate());
                 list.add(crkIsDetails);
             }
@@ -128,5 +144,21 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
                 crkInventorySheetMapper.batchCrkIsDetails(list);
             }
         }
+    }
+
+    public String genIsCode() {
+        code = crkInventorySheetMapper.findIsCode();
+        NumberGenerator numberGenerator = new NumberGenerator("CKPD");
+        return numberGenerator.generateNumber(code);
+    }
+
+    /**
+     * 查询仓库name 仓库id
+     *
+     * @return 仓库name 仓库id
+     */
+    @Override
+    public List<WareHouse> findWareHouse() {
+        return crkInventorySheetMapper.findWareHouse();
     }
 }

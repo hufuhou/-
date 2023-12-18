@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="仓库ID" prop="warWId">
-        <el-input
-          v-model="queryParams.warWId"
-          placeholder="请输入仓库ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="盘点单号" prop="isCode">
         <el-input
           v-model="queryParams.isCode"
@@ -18,12 +10,14 @@
         />
       </el-form-item>
       <el-form-item label="盘点结果" prop="isResult">
-        <el-input
-          v-model="queryParams.isResult"
-          placeholder="请输入盘点结果"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.isResult" placeholder="请选择盘点结果" clearable>
+          <el-option
+            v-for="dict in dict.type.is_result"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="仓库 ID" prop="wId">
         <el-input
@@ -33,21 +27,37 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="开始时间" prop="isStartTime">
-        <el-date-picker clearable
-                        v-model="queryParams.isStartTime"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="请选择盘点开始时间">
-        </el-date-picker>
+      <el-form-item label="盘点类型" prop="isType">
+        <el-select v-model="queryParams.isType" placeholder="请选择来自数据字典" clearable>
+          <el-option
+            v-for="dict in dict.type.is_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="结束时间" prop="isEndTime">
-        <el-date-picker clearable
-                        v-model="queryParams.isEndTime"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="请选择盘点结束时间">
-        </el-date-picker>
+      <el-form-item label="开始时间">
+        <el-date-picker
+          v-model="daterangeIsStartTime"
+          style="width: 240px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="结束时间">
+        <el-date-picker
+          v-model="daterangeIsEndTime"
+          style="width: 240px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -63,7 +73,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['cx-kcinventory:kcinventory:add']"
+          v-hasPermi="['kcinventory:kcinventory:add']"
         >新增
         </el-button>
       </el-col>
@@ -75,7 +85,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['cx-kcinventory:kcinventory:edit']"
+          v-hasPermi="['kcinventory:kcinventory:edit']"
         >修改
         </el-button>
       </el-col>
@@ -87,7 +97,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['cx-kcinventory:kcinventory:remove']"
+          v-hasPermi="['kcinventory:kcinventory:remove']"
         >删除
         </el-button>
       </el-col>
@@ -98,7 +108,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['cx-kcinventory:kcinventory:export']"
+          v-hasPermi="['kcinventory:kcinventory:export']"
         >导出
         </el-button>
       </el-col>
@@ -107,12 +117,19 @@
 
     <el-table v-loading="loading" :data="kcinventoryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="盘点ID" align="center" prop="isId"/>
-      <el-table-column label="仓库ID" align="center" prop="warWId"/>
+      <!--      <el-table-column label="盘点ID" align="center" prop="isId" />-->
       <el-table-column label="盘点单号" align="center" prop="isCode"/>
-      <el-table-column label="盘点结果" align="center" prop="isResult"/>
-      <el-table-column label="仓库 ID" align="center" prop="wId"/>
-<!--      <el-table-column label="来自数据字典" align="center" prop="isType"/>-->
+      <el-table-column label="盘点结果" align="center" prop="isResult">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.is_result" :value="scope.row.isResult"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="仓库" align="center" prop="warehouseName"/>
+      <el-table-column label="盘点类型" align="center" prop="isType">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.is_type" :value="scope.row.isType"/>
+        </template>
+      </el-table-column>
       <el-table-column label="盘点开始时间" align="center" prop="isStartTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.isStartTime, '{y}-{m}-{d}') }}</span>
@@ -123,11 +140,20 @@
           <span>{{ parseTime(scope.row.isEndTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出库状态" align="center" prop="outStatus"/>
-      <el-table-column label="入库状态" align="center" prop="inStatus"/>
+      <el-table-column label="出库状态" align="center" prop="outStatus">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.out_status" :value="scope.row.outStatus"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="入库状态" align="center" prop="inStatus">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.in_status" :value="scope.row.inStatus"/>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark"/>
-<!--      <el-table-column label="关联用户表" align="center" prop="isManager"/>-->
-<!--      <el-table-column label="0：存在；1：已删除，不存在" align="center" prop="isDelte"/>-->
+      <el-table-column label="经办人" align="center" prop="manager"/>
+      <!--      <el-table-column label="0：存在；1：已删除，不存在" align="center" prop="isDelte" />-->
+      <el-table-column label="货品code" align="center" prop="gCode"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -135,7 +161,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['cx-kcinventory:kcinventory:edit']"
+            v-hasPermi="['kcinventory:kcinventory:edit']"
           >修改
           </el-button>
           <el-button
@@ -143,7 +169,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['cx-kcinventory:kcinventory:remove']"
+            v-hasPermi="['kcinventory:kcinventory:remove']"
           >删除
           </el-button>
         </template>
@@ -161,17 +187,38 @@
     <!-- 添加或修改库存盘点对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="仓库ID" prop="warWId">
-          <el-input v-model="form.warWId" placeholder="请输入仓库ID"/>
-        </el-form-item>
         <el-form-item label="盘点单号" prop="isCode">
           <el-input v-model="form.isCode" placeholder="请输入盘点单号"/>
         </el-form-item>
         <el-form-item label="盘点结果" prop="isResult">
-          <el-input v-model="form.isResult" placeholder="请输入盘点结果"/>
+          <el-select v-model="form.isResult" placeholder="请选择盘点结果">
+            <el-option
+              v-for="dict in dict.type.is_result"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="仓库ID" prop="wId">
-          <el-input v-model="form.wId" placeholder="请输入仓库 ID"/>
+        <el-form-item label="仓库" prop="wId">
+          <el-select v-model="form.wId" placeholder="请选择仓库" filterable>
+            <el-option
+              v-for="warehouse in WareHouse"
+              :key="warehouse.w_id"
+              :label="warehouse.w_name"
+              :value="warehouse.w_id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="盘点类型" prop="isType">
+          <el-select v-model="form.isType" placeholder="请选择盘点类型">
+            <el-option
+              v-for="dict in dict.type.is_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="盘点开始时间" prop="isStartTime">
           <el-date-picker clearable
@@ -192,6 +239,30 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
+        <el-form-item label="经办人" prop="isManager">
+          <el-input v-model="form.isManager" placeholder="请输入用户ID"/>
+          <!--   TODO : 明天把这输入框改为下拉框选择输入       -->
+        </el-form-item>
+        <el-form-item label="出库状态" prop="outStatus">
+          <el-select v-model="form.outStatus" placeholder="请选择出库状态">
+            <el-option
+              v-for="dict in dict.type.out_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="入库状态" prop="inStatus">
+          <el-select v-model="form.inStatus" placeholder="请选择入库状态">
+            <el-option
+              v-for="dict in dict.type.in_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-divider content-position="center">盘点明细信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -211,19 +282,9 @@
               <el-input v-model="scope.row.isCode" placeholder="请输入盘点单号"/>
             </template>
           </el-table-column>
-          <el-table-column label="进货退货明细 ID 或销售订单 ID(相关订单 ID)" prop="orderId" width="150">
+          <el-table-column label="相关订单ID" prop="orderId" width="150">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.orderId" placeholder="请输入进货退货明细 ID 或销售订单 ID(相关订单 ID)"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="规格型号" prop="specCode" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.specCode" placeholder="请输入规格型号"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="单位" prop="unit" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.unit" placeholder="请输入单位"/>
+              <el-input v-model="scope.row.orderId" placeholder="请输入相关订单ID"/>
             </template>
           </el-table-column>
           <el-table-column label="盘点数量" prop="countQuantity" width="150">
@@ -236,10 +297,15 @@
               <el-input v-model="scope.row.profitLossQuantity" placeholder="请输入盈亏数量"/>
             </template>
           </el-table-column>
-          <el-table-column label="盘点状态 0:无盈亏 1:盘盈 2:盘亏" prop="isStatus" width="150">
+          <el-table-column label="盘点状态" prop="isStatus" width="150">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.isStatus" placeholder="请选择盘点状态 0:无盈亏 1:盘盈 2:盘亏">
-                <el-option label="请选择字典生成" value=""/>
+              <el-select v-model="scope.row.isStatus" placeholder="请选择盘点状态">
+                <el-option
+                  v-for="dict in dict.type.inventory_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -258,9 +324,9 @@
               <el-input v-model="scope.row.remark" placeholder="请输入备注"/>
             </template>
           </el-table-column>
-          <el-table-column label="0：存在；1：已删除，不存在" prop="isDelte" width="150">
+          <el-table-column label="货品code" prop="gCode" width="150">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.isDelte" placeholder="0:存在 1:已删除"/>
+              <el-input v-model="scope.row.gCode" placeholder="请输入货品code"/>
             </template>
           </el-table-column>
         </el-table>
@@ -275,18 +341,21 @@
 
 <script>
 import {
-  listKcinventory,
-  getKcinventory,
   addKcinventory,
-  updateKcinventory,
-  delKcinventory
+  delKcinventory,
+  findWareHouse,
+  genIsCode,
+  getKcinventory,
+  listKcinventory,
+  updateKcinventory
 } from "@/api/kcinventory/kcinventory";
-
 
 export default {
   name: "Kcinventory",
+  dicts: ['is_result', 'is_type', 'out_status', 'in_status', 'inventory_status'],
   data() {
     return {
+      WareHouse: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -309,40 +378,30 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 货品code时间范围
+      daterangeIsStartTime: [],
+      // 货品code时间范围
+      daterangeIsEndTime: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        warWId: null,
         isCode: null,
         isResult: null,
         wId: null,
         isType: null,
         isStartTime: null,
         isEndTime: null,
-        outStatus: null,
-        inStatus: null,
-        isManager: null,
-        isDelte: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        warWId: [
-          {required: true, message: "仓库表_仓库ID不能为空", trigger: "blur"}
-        ],
         isCode: [
           {required: true, message: "盘点单号不能为空", trigger: "blur"}
         ],
         isResult: [
-          {required: true, message: "盘点结果", trigger: "blur"}
-        ],
-        wId: [
-          {required: true, message: "仓库 ID不能为空", trigger: "blur"}
-        ],
-        isType: [
-          {required: true, message: "数据字典不能为空", trigger: "change"}
+          {required: true, message: "盘点结果不能为空", trigger: "change"}
         ],
         isStartTime: [
           {required: true, message: "盘点开始时间不能为空", trigger: "blur"}
@@ -350,14 +409,23 @@ export default {
         isEndTime: [
           {required: true, message: "盘点结束时间不能为空", trigger: "blur"}
         ],
-        outStatus: [
-          {required: true, message: "出库状态", trigger: "change"}
-        ],
-        inStatus: [
-          {required: true, message: "入库状态", trigger: "change"}
-        ],
         isManager: [
           {required: true, message: "关联用户表不能为空", trigger: "blur"}
+        ],
+        createBy: [
+          {required: true, message: "关联至用户表不能为空", trigger: "blur"}
+        ],
+        createTime: [
+          {required: true, message: "创建时间不能为空", trigger: "blur"}
+        ],
+        updateBy: [
+          {required: true, message: "关联至用户表不能为空", trigger: "blur"}
+        ],
+        updateTime: [
+          {required: true, message: "修改时间不能为空", trigger: "blur"}
+        ],
+        isDelte: [
+          {required: true, message: "0：存在；1：已删除，不存在不能为空", trigger: "blur"}
         ],
       }
     };
@@ -365,10 +433,22 @@ export default {
   created() {
     this.getList();
   },
+  mounted() {
+    this.findWareHouse();
+  },
   methods: {
     /** 查询库存盘点列表 */
     getList() {
       this.loading = true;
+      this.queryParams.params = {};
+      if (null != this.daterangeIsStartTime && '' != this.daterangeIsStartTime) {
+        this.queryParams.params["beginIsStartTime"] = this.daterangeIsStartTime[0];
+        this.queryParams.params["endIsStartTime"] = this.daterangeIsStartTime[1];
+      }
+      if (null != this.daterangeIsEndTime && '' != this.daterangeIsEndTime) {
+        this.queryParams.params["beginIsEndTime"] = this.daterangeIsEndTime[0];
+        this.queryParams.params["endIsEndTime"] = this.daterangeIsEndTime[1];
+      }
       listKcinventory(this.queryParams).then(response => {
         this.kcinventoryList = response.rows;
         this.total = response.total;
@@ -384,7 +464,6 @@ export default {
     reset() {
       this.form = {
         isId: null,
-        warWId: null,
         isCode: null,
         isResult: null,
         wId: null,
@@ -399,7 +478,8 @@ export default {
         createTime: null,
         updateBy: null,
         updateTime: null,
-        isDelte: null
+        isDelte: null,
+        gCode: null
       };
       this.crkIsDetailsList = [];
       this.resetForm("form");
@@ -411,6 +491,8 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.daterangeIsStartTime = [];
+      this.daterangeIsEndTime = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -425,6 +507,10 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加库存盘点";
+      genIsCode().then(response => {
+        console.info(response);
+        this.form.isCode = response.data;
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -476,7 +562,7 @@ export default {
     /** 盘点明细添加按钮操作 */
     handleAddCrkIsDetails() {
       let obj = {};
-      obj.isCode = "";
+      obj.isCode = this.form.isCode;
       obj.orderId = "";
       obj.specCode = "";
       obj.unit = "";
@@ -487,6 +573,7 @@ export default {
       obj.iuPrice = "";
       obj.remark = "";
       obj.isDelte = "";
+      obj.gCode = "";
       this.crkIsDetailsList.push(obj);
     },
     /** 盘点明细删除按钮操作 */
@@ -507,10 +594,18 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('cx-kcinventory/kcinventory/export', {
+      this.download('kcinventory/kcinventory/export', {
         ...this.queryParams
       }, `kcinventory_${new Date().getTime()}.xlsx`)
-    }
+    },
+    // 获取仓库信息
+    findWareHouse() {
+      findWareHouse().then(response => {
+        //console.info(response);
+        this.WareHouse = response.data;
+      })
+    },
+
   }
 };
 </script>

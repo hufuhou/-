@@ -22,6 +22,10 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelte" column="is_delte"/>
+        <result property="create_user_name" column="create_user_name"/>
+        <result property="update_user_name" column="update_user_name"/>
+        <result property="warehouseName" column="warehouseName"/>
+        <result property="manager" column="manager"/>
     </resultMap>
 
     <resultMap id="CrkInventorySheetCrkIsDetailsResult" type="CrkInventorySheet" extends="CrkInventorySheetResult">
@@ -50,24 +54,16 @@
     </resultMap>
 
     <sql id="selectCrkInventorySheetVo">
-        select is_id,
-               war_w_id,
-               is_code,
-               is_result,
-               w_id,
-               is_type,
-               is_start_time,
-               is_end_time,
-               out_status,
-               in_status,
-               remark,
-               is_manager,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               is_delte
-        from crk_inventory_sheet
+        SELECT crk_inventory_sheet.*,
+               sys_user.nick_name  AS create_user_name,
+               sys_user2.nick_name AS update_user_name,
+               sys_user3.nick_name AS manager,
+               warehouse.w_name    AS warehouseName
+        FROM crk_inventory_sheet
+                 LEFT JOIN sys_user ON crk_inventory_sheet.create_by = sys_user.user_id
+                 LEFT JOIN sys_user AS sys_user2 ON crk_inventory_sheet.update_by = sys_user2.user_id
+                 LEFT JOIN sys_user AS sys_user3 ON crk_inventory_sheet.is_manager = sys_user3.user_id
+                 LEFT JOIN warehouse ON crk_inventory_sheet.w_id = warehouse.w_id
     </sql>
 
     <select id="selectCrkInventorySheetList" parameterType="CrkInventorySheet" resultMap="CrkInventorySheetResult">
@@ -89,7 +85,6 @@
 
     <select id="selectCrkInventorySheetByIsId" parameterType="Long" resultMap="CrkInventorySheetCrkIsDetailsResult">
         select a.is_id,
-               a.war_w_id,
                a.is_code,
                a.is_result,
                a.w_id,
@@ -172,7 +167,6 @@
     <update id="updateCrkInventorySheet" parameterType="CrkInventorySheet">
         update crk_inventory_sheet
         <trim prefix="SET" suffixOverrides=",">
-            <if test="warWId != null">war_w_id = #{warWId},</if>
             <if test="isCode != null and isCode != ''">is_code = #{isCode},</if>
             <if test="isResult != null">is_result = #{isResult},</if>
             <if test="wId != null">w_id = #{wId},</if>
@@ -228,4 +222,32 @@
             #{item.remark}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.isDelte})
         </foreach>
     </insert>
+
+    <select id="findIsCode" resultType="String">
+        SELECT `is_code`
+        FROM `crk_inventory_sheet`
+        ORDER BY `is_id` DESC
+        LIMIT 1;
+    </select>
+
+
+    <!--  Temp : 未测试的SQL代码 -->
+    <sql id="Temp">
+        SELECT crk_inventory_sheet.*,
+               sys_user.nick_name  AS create_user_name,
+               sys_user2.nick_name AS update_user_name,
+               sys_user3.nick_name AS manager,
+               warehouse.w_name    AS warehouseName
+        FROM crk_inventory_sheet
+                 LEFT JOIN sys_user ON crk_inventory_sheet.create_by = sys_user.user_id
+                 LEFT JOIN sys_user AS sys_user2 ON crk_inventory_sheet.update_by = sys_user2.user_id
+                 LEFT JOIN sys_user AS sys_user3 ON crk_inventory_sheet.is_manager = sys_user3.user_id
+                 LEFT JOIN warehouse ON crk_inventory_sheet.w_id = warehouse.w_id;
+    </sql>
+
+    <!-- 查询仓库名称  -->
+    <select id="findWareHouse" resultType="WareHouse">
+        SELECT `w_id`,`w_name` FROM `warehouse` WHERE 1 = 1;
+    </select>
+
 </mapper>

@@ -83,14 +83,21 @@
 
     <el-table v-loading="loading" :data="inventoryDetailList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="盘点明细ID" align="center" prop="isdId"/>
-      <el-table-column label="盘点主表id" align="center" prop="isId"/>
+<!--      <el-table-column label="盘点明细ID" align="center" prop="isdId"/>-->
+<!--      <el-table-column label="盘点主表id" align="center" prop="isId"/>-->
       <el-table-column label="盘点单号" align="center" prop="isCode"/>
       <el-table-column label="相关订单" align="center" prop="orderId"/>
       <el-table-column label="规格型号" align="center" prop="specCode"/>
       <el-table-column label="盘点数量" align="center" prop="countQuantity"/>
       <el-table-column label="盈亏数量" align="center" prop="profitLossQuantity"/>
-      <el-table-column label="盘点状态" align="center" prop="isStatus"/>
+      <el-table-column label="盘点状态" align="center" prop="isStatus">
+        <template slot-scope="scope">
+          <span v-if="scope.row.isStatus === 0">无盈亏</span>
+          <span v-else-if="scope.row.isStatus === 1">盘盈</span>
+          <span v-else-if="scope.row.isStatus === 2">盘亏</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
       <el-table-column label="盘点金额" align="center" prop="countAmount"/>
       <el-table-column label="入库单价" align="center" prop="iuPrice"/>
       <el-table-column label="备注" align="center" prop="remark"/>
@@ -133,8 +140,8 @@
         <el-form-item label="盘点单号" prop="isCode">
           <el-input v-model="form.isCode" placeholder="请输入盘点单号"/>
         </el-form-item>
-        <el-form-item label="进货退货明细 ID 或销售订单 ID(相关订单 ID)" prop="orderId">
-          <el-input v-model="form.orderId" placeholder="请输入进货退货明细 ID 或销售订单 ID(相关订单 ID)"/>
+        <el-form-item label="相关订单ID" prop="orderId">
+          <el-input v-model="form.orderId" placeholder="请输入相关订单ID"/>
         </el-form-item>
         <el-form-item label="规格型号" prop="specCode">
           <el-input v-model="form.specCode" placeholder="请输入规格型号"/>
@@ -171,6 +178,8 @@ import {
   listInventoryDetail,
   updateInventoryDetail
 } from "@/api/inventoryDetail/inventoryDetail";
+import dict from "@/utils/dict";
+import {genIsCode} from "@/api/kcinventory/kcinventory";
 
 export default {
   name: "InventoryDetail",
@@ -218,7 +227,7 @@ export default {
           {required: true, message: "盘点单号不能为空", trigger: "blur"}
         ],
         orderId: [
-          {required: true, message: "进货退货明细 ID 或销售订单 ID(相关订单 ID)不能为空", trigger: "blur"}
+          {required: true, message: "相关订单ID不能为空", trigger: "blur"}
         ],
         specCode: [
           {required: true, message: "规格型号不能为空", trigger: "blur"}
@@ -245,6 +254,7 @@ export default {
     this.getList();
   },
   methods: {
+    dict,
     /** 查询盘点明细列表 */
     getList() {
       this.loading = true;
@@ -311,6 +321,9 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      genIsCode().then(response =>{
+        console.info(response);
+      });
       this.reset();
       this.open = true;
       this.title = "添加盘点明细";

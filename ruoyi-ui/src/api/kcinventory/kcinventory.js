@@ -42,3 +42,19 @@ export function delKcinventory(isId) {
     method: 'delete'
   })
 }
+
+// 生成IsCode
+export function genIsCode() {
+  return request({
+    url: '/kcinventory/kcinventory/genIsCode',
+    method: 'get'
+  })
+}
+
+// 获取w_id,w_name
+export function findWareHouse() {
+  return request({
+    url: '/kcinventory/kcinventory/findWareHouse',
+    method: 'get'
+  })
+}

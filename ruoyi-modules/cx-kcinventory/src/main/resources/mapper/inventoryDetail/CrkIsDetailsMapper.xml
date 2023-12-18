@@ -113,9 +113,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteCrkIsDetailsByIsdIds" parameterType="String">
-        delete from crk_is_details where isd_id in 
+        delete from crk_is_details where isd_id in
         <foreach item="isdId" collection="array" open="(" separator="," close=")">
             #{isdId}
         </foreach>
     </delete>
+
 </mapper>

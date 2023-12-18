@@ -4,6 +4,7 @@ import com.cx.wms.domain.CrkIsDetails;
 import com.cx.wms.mapper.CrkIsDetailsMapper;
 import com.cx.wms.service.ICrkIsDetailsService;
 import com.ruoyi.common.core.utils.DateUtils;
+import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,7 @@ public class CrkIsDetailsServiceImpl implements ICrkIsDetailsService {
     @Override
     public int insertCrkIsDetails(CrkIsDetails crkIsDetails) {
         crkIsDetails.setCreateTime(DateUtils.getNowDate());
+        crkIsDetails.setCreateBy(String.valueOf(SecurityUtils.getUserId()));
         return crkIsDetailsMapper.insertCrkIsDetails(crkIsDetails);
     }
 
@@ -63,6 +65,7 @@ public class CrkIsDetailsServiceImpl implements ICrkIsDetailsService {
     @Override
     public int updateCrkIsDetails(CrkIsDetails crkIsDetails) {
         crkIsDetails.setUpdateTime(DateUtils.getNowDate());
+        crkIsDetails.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
         return crkIsDetailsMapper.updateCrkIsDetails(crkIsDetails);
     }
 
