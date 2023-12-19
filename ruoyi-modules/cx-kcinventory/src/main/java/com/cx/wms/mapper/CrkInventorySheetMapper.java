@@ -1,8 +1,6 @@
 package com.cx.wms.mapper;
 
-import com.cx.wms.domain.CrkInventorySheet;
-import com.cx.wms.domain.CrkIsDetails;
-import com.cx.wms.domain.WareHouse;
+import com.cx.wms.domain.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -95,11 +93,16 @@ public interface CrkInventorySheetMapper {
      * @return 最新的is_code
      */
     public String findIsCode();
+    public String findIsId();
 
     /**
      * 查询仓库name 仓库id
      * @return 仓库name 仓库id
      */
     public List<WareHouse> findWareHouse();
+
+    public List<User> findAllUser();
+
+    public List<HpGood> findAllHpGoods();
 
 }

@@ -91,22 +91,24 @@ public class CrkInventorySheetController extends BaseController {
 
     /**
      * 查询最新的is_code
+     *
      * @return 最新的is_code
      * @auther xrc
      */
     @GetMapping("/findIsCode")
     public AjaxResult findIsCode() {
-        return new AjaxResult(200,"查询成功",crkInventorySheetService.findIsCode());
+        return new AjaxResult(200, "查询成功", crkInventorySheetService.findIsCode());
     }
 
     /**
      * 生成is_code
+     *
      * @return 生成的is_code
      * @auther xrc
      */
     @GetMapping("/genIsCode")
     public AjaxResult genIsCode() {
-        return new AjaxResult(200,"生成成功",crkInventorySheetService.genIsCode());
+        return new AjaxResult(200, "生成成功", crkInventorySheetService.genIsCode());
     }
 
 
@@ -117,10 +119,38 @@ public class CrkInventorySheetController extends BaseController {
      */
     @GetMapping("/findWareHouse")
     public AjaxResult findWareHouse() {
-        return new AjaxResult(200,"获取成功",crkInventorySheetService.findWareHouse());
+        return new AjaxResult(200, "获取成功", crkInventorySheetService.findWareHouse());
     }
 
 
+    /**
+     * 查询用户name 用户id
+     *
+     * @return 用户name 用户id
+     */
+    @GetMapping("/findAllUser")
+    public AjaxResult findAllUser() {
+        return new AjaxResult(200, "获取成功", crkInventorySheetService.findAllUser());
+    }
+
+    /**
+     * 查询货品name 货品id
+     *
+     * @return 货品name 货品id
+     */
+    @GetMapping("/findAllHpGoods")
+    public AjaxResult findAllHpGoods() {
+        return new AjaxResult(200, "获取成功", crkInventorySheetService.findAllHpGoods());
+    }
+    /**
+     * 查询findIsId
+     *
+     * @return IsId
+     */
+    @GetMapping("/findIsId")
+    public AjaxResult findIsId() {
+        return new AjaxResult(200, "获取成功", crkInventorySheetService.findIsId());
+    }
 
 
 }

@@ -1,8 +1,6 @@
 package com.cx.wms.service.impl;
 
-import com.cx.wms.domain.CrkInventorySheet;
-import com.cx.wms.domain.CrkIsDetails;
-import com.cx.wms.domain.WareHouse;
+import com.cx.wms.domain.*;
 import com.cx.wms.mapper.CrkInventorySheetMapper;
 import com.cx.wms.service.ICrkInventorySheetService;
 import com.cx.wms.utils.NumberGenerator;
@@ -115,6 +113,7 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
 
     /**
      * 查询最新的is_code
+     *
      * @return 最新的is_code
      */
     @Override
@@ -122,6 +121,11 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
         code = crkInventorySheetMapper.findIsCode();
         System.out.println(genIsCode());
         return code;
+    }
+
+    @Override
+    public String findIsId() {
+        return crkInventorySheetMapper.findIsId();
     }
 
     /**
@@ -138,6 +142,8 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
                 crkIsDetails.setIsId(isId);
                 crkIsDetails.setCreateBy(String.valueOf(SecurityUtils.getUserId()));
                 crkIsDetails.setCreateTime(DateUtils.getNowDate());
+                crkIsDetails.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
+                crkIsDetails.setUpdateTime(DateUtils.getNowDate());
                 list.add(crkIsDetails);
             }
             if (list.size() > 0) {
@@ -160,5 +166,15 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
     @Override
     public List<WareHouse> findWareHouse() {
         return crkInventorySheetMapper.findWareHouse();
+    }
+
+    @Override
+    public List<User> findAllUser() {
+        return crkInventorySheetMapper.findAllUser();
+    }
+
+    @Override
+    public List<HpGood> findAllHpGoods() {
+        return crkInventorySheetMapper.findAllHpGoods();
     }
 }

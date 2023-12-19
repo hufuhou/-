@@ -87,7 +87,7 @@
 <!--      <el-table-column label="盘点主表id" align="center" prop="isId"/>-->
       <el-table-column label="盘点单号" align="center" prop="isCode"/>
       <el-table-column label="相关订单" align="center" prop="orderId"/>
-      <el-table-column label="规格型号" align="center" prop="specCode"/>
+      <el-table-column label="货品信息" align="center" prop="goods_name"/>
       <el-table-column label="盘点数量" align="center" prop="countQuantity"/>
       <el-table-column label="盈亏数量" align="center" prop="profitLossQuantity"/>
       <el-table-column label="盘点状态" align="center" prop="isStatus">
@@ -100,7 +100,9 @@
       </el-table-column>
       <el-table-column label="盘点金额" align="center" prop="countAmount"/>
       <el-table-column label="入库单价" align="center" prop="iuPrice"/>
+<!--      <el-table-column label="货品code" align="center" prop="g_code"/>-->
       <el-table-column label="备注" align="center" prop="remark"/>
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -143,9 +145,9 @@
         <el-form-item label="相关订单ID" prop="orderId">
           <el-input v-model="form.orderId" placeholder="请输入相关订单ID"/>
         </el-form-item>
-        <el-form-item label="规格型号" prop="specCode">
-          <el-input v-model="form.specCode" placeholder="请输入规格型号"/>
-        </el-form-item>
+<!--        <el-form-item label="规格型号" prop="specCode">-->
+<!--          <el-input v-model="form.specCode" placeholder="请输入规格型号"/>-->
+<!--        </el-form-item>-->
         <el-form-item label="盘点数量" prop="countQuantity">
           <el-input v-model="form.countQuantity" placeholder="请输入盘点数量"/>
         </el-form-item>
@@ -160,6 +162,9 @@
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注"/>
+        </el-form-item>
+        <el-form-item label="货品code" prop="gCode">
+          <el-input v-model="form.gCode" placeholder="请输入货品code"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -297,7 +302,8 @@ export default {
         createTime: null,
         updateBy: null,
         updateTime: null,
-        isDelte: null
+        isDelte: null,
+        gCode : null
       };
       this.resetForm("form");
     },

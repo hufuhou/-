@@ -59,8 +59,27 @@ public class CrkIsDetails extends BaseEntity
 
     /** 0：存在；1：已删除，不存在 */
     private Integer isDelte;
+    private String gCode;
 
-    public void setIsdId(Long isdId) 
+    private String goods_name;
+
+    public String getGoods_name() {
+        return goods_name;
+    }
+
+    public void setGoods_name(String goods_name) {
+        this.goods_name = goods_name;
+    }
+
+    public String getgCode() {
+        return gCode;
+    }
+
+    public void setgCode(String gCode) {
+        this.gCode = gCode;
+    }
+
+    public void setIsdId(Long isdId)
     {
         this.isdId = isdId;
     }
@@ -188,6 +207,8 @@ public class CrkIsDetails extends BaseEntity
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
+            .append("gCode", getgCode())
+            .append("goods_name", getGoods_name())
             .append("isDelte", getIsDelte())
             .toString();
     }

@@ -1,89 +1,68 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cx.wms.mapper.CrkIsDetailsMapper">
-    
+
     <resultMap type="CrkIsDetails" id="CrkIsDetailsResult">
-        <result property="isdId"    column="isd_id"    />
-        <result property="isId"    column="is_id"    />
-        <result property="isCode"    column="is_code"    />
-        <result property="orderId"    column="order_id"    />
-        <result property="specCode"    column="spec_code"    />
-        <result property="unit"    column="unit"    />
-        <result property="countQuantity"    column="count_quantity"    />
-        <result property="profitLossQuantity"    column="profit_loss_quantity"    />
-        <result property="isStatus"    column="is_status"    />
-        <result property="countAmount"    column="count_amount"    />
-        <result property="iuPrice"    column="iu_price"    />
-        <result property="remark"    column="remark"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="isDelte"    column="is_delte"    />
+        <result property="isdId" column="isd_id"/>
+        <result property="isId" column="is_id"/>
+        <result property="isCode" column="is_code"/>
+        <result property="orderId" column="order_id"/>
+        <result property="countQuantity" column="count_quantity"/>
+        <result property="profitLossQuantity" column="profit_loss_quantity"/>
+        <result property="isStatus" column="is_status"/>
+        <result property="countAmount" column="count_amount"/>
+        <result property="iuPrice" column="iu_price"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="goods_name" column="goods_name"/>
+        <result property="gCode" column="g_code"/>
     </resultMap>
 
     <sql id="selectCrkIsDetailsVo">
-        select isd_id, is_id, is_code, order_id, spec_code, unit, count_quantity, profit_loss_quantity, is_status, count_amount, iu_price, remark, create_by, create_time, update_by, update_time, is_delte from crk_is_details
+        SELECT crk_is_details.*,
+               sys_user.nick_name  AS create_user_name,
+               sys_user2.nick_name AS update_user_name,
+               hp_goods.g_name     AS goods_name
+        FROM crk_is_details
+                 LEFT JOIN sys_user ON crk_is_details.create_by = sys_user.user_id
+                 LEFT JOIN sys_user AS sys_user2 ON crk_is_details.update_by = sys_user2.user_id
+                 LEFT JOIN hp_goods ON crk_is_details.g_code = hp_goods.g_code
     </sql>
 
     <select id="selectCrkIsDetailsList" parameterType="CrkIsDetails" resultMap="CrkIsDetailsResult">
         <include refid="selectCrkIsDetailsVo"/>
-        <where>  
-            <if test="isId != null "> and is_id = #{isId}</if>
-            <if test="isCode != null  and isCode != ''"> and is_code = #{isCode}</if>
-            <if test="orderId != null "> and order_id = #{orderId}</if>
-            <if test="isStatus != null "> and is_status = #{isStatus}</if>
+        <where>
+            <if test="isCode != null  and isCode != ''">and is_code = #{isCode}</if>
+            <if test="isStatus != null ">and is_status = #{isStatus}</if>
+            <if test="gCode != null  and gCode != ''">and g_code = #{gCode}</if>
         </where>
     </select>
-    
+
     <select id="selectCrkIsDetailsByIsdId" parameterType="Long" resultMap="CrkIsDetailsResult">
         <include refid="selectCrkIsDetailsVo"/>
         where isd_id = #{isdId}
     </select>
-        
+
+
     <insert id="insertCrkIsDetails" parameterType="CrkIsDetails">
-        insert into crk_is_details
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="isdId != null">isd_id,</if>
-            <if test="isId != null">is_id,</if>
-            <if test="isCode != null and isCode != ''">is_code,</if>
-            <if test="orderId != null">order_id,</if>
-            <if test="specCode != null and specCode != ''">spec_code,</if>
-            <if test="unit != null">unit,</if>
-            <if test="countQuantity != null">count_quantity,</if>
-            <if test="profitLossQuantity != null">profit_loss_quantity,</if>
-            <if test="isStatus != null">is_status,</if>
-            <if test="countAmount != null">count_amount,</if>
-            <if test="iuPrice != null">iu_price,</if>
-            <if test="remark != null">remark,</if>
-            <if test="createBy != null">create_by,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateBy != null">update_by,</if>
-            <if test="updateTime != null">update_time,</if>
-            <if test="isDelte != null">is_delte,</if>
-         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="isdId != null">#{isdId},</if>
-            <if test="isId != null">#{isId},</if>
-            <if test="isCode != null and isCode != ''">#{isCode},</if>
-            <if test="orderId != null">#{orderId},</if>
-            <if test="specCode != null and specCode != ''">#{specCode},</if>
-            <if test="unit != null">#{unit},</if>
-            <if test="countQuantity != null">#{countQuantity},</if>
-            <if test="profitLossQuantity != null">#{profitLossQuantity},</if>
-            <if test="isStatus != null">#{isStatus},</if>
-            <if test="countAmount != null">#{countAmount},</if>
-            <if test="iuPrice != null">#{iuPrice},</if>
-            <if test="remark != null">#{remark},</if>
-            <if test="createBy != null">#{createBy},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateBy != null">#{updateBy},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-            <if test="isDelte != null">#{isDelte},</if>
-         </trim>
+        INSERT INTO `dnzx_wms_db`.`crk_is_details`
+        (
+            is_id, is_code, order_id, spec_code, unit, count_quantity, profit_loss_quantity, is_status,
+            count_amount, iu_price, remark, create_by, create_time, update_by, update_time, is_delte, g_code
+        )
+        VALUES
+            (
+                #{isId}, #{isCode}, #{orderId}, #{specCode}, #{unit}, #{countQuantity}, #{profitLossQuantity}, #{isStatus},
+                #{countAmount}, #{iuPrice}, #{remark}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime}, #{isDelte}, #{gCode}
+            )
     </insert>
+
 
     <update id="updateCrkIsDetails" parameterType="CrkIsDetails">
         update crk_is_details
@@ -91,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isId != null">is_id = #{isId},</if>
             <if test="isCode != null and isCode != ''">is_code = #{isCode},</if>
             <if test="orderId != null">order_id = #{orderId},</if>
-            <if test="specCode != null and specCode != ''">spec_code = #{specCode},</if>
+            <if test="specCode != null">spec_code = #{specCode},</if>
             <if test="unit != null">unit = #{unit},</if>
             <if test="countQuantity != null">count_quantity = #{countQuantity},</if>
             <if test="profitLossQuantity != null">profit_loss_quantity = #{profitLossQuantity},</if>
@@ -104,16 +83,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="isDelte != null">is_delte = #{isDelte},</if>
+            <if test="gCode != null">g_code = #{gCode},</if>
         </trim>
         where isd_id = #{isdId}
     </update>
 
-    <delete id="deleteCrkIsDetailsByIsdId" parameterType="Long">
-        delete from crk_is_details where isd_id = #{isdId}
-    </delete>
+    <update id="deleteCrkIsDetailsByIsdId" parameterType="Long">
+        update crk_is_details
+        set is_delte = 1
+        where isd_id = #{isdId}
+    </update>
 
     <delete id="deleteCrkIsDetailsByIsdIds" parameterType="String">
-        delete from crk_is_details where isd_id in
+        update crk_is_details set is_delte = 1 where isd_id in
         <foreach item="isdId" collection="array" open="(" separator="," close=")">
             #{isdId}
         </foreach>

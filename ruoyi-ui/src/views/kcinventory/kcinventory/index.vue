@@ -153,7 +153,7 @@
       <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="经办人" align="center" prop="manager"/>
       <!--      <el-table-column label="0：存在；1：已删除，不存在" align="center" prop="isDelte" />-->
-      <el-table-column label="货品code" align="center" prop="gCode"/>
+<!--      <el-table-column label="货品code" align="center" prop="gCode"/>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -187,6 +187,9 @@
     <!-- 添加或修改库存盘点对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="盘点ID" prop="isId">
+          <el-input v-model="form.isId" placeholder="盘点id" disabled="disabled"/>
+        </el-form-item>
         <el-form-item label="盘点单号" prop="isCode">
           <el-input v-model="form.isCode" placeholder="请输入盘点单号"/>
         </el-form-item>
@@ -240,8 +243,15 @@
           <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
         <el-form-item label="经办人" prop="isManager">
-          <el-input v-model="form.isManager" placeholder="请输入用户ID"/>
-          <!--   TODO : 明天把这输入框改为下拉框选择输入       -->
+          <el-select v-model="form.isManager" placeholder="请选择经办人">
+            <el-option
+              v-for="user in allUser"
+              :key="user.user_id"
+              :label="user.nick_name"
+              :value="user.user_id"
+            />
+          </el-select>
+
         </el-form-item>
         <el-form-item label="出库状态" prop="outStatus">
           <el-select v-model="form.outStatus" placeholder="请选择出库状态">
@@ -277,6 +287,7 @@
                   @selection-change="handleCrkIsDetailsSelectionChange" ref="crkIsDetails">
           <el-table-column type="selection" width="50" align="center"/>
           <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="单号ID" align="center" prop="isId" width="50"/>
           <el-table-column label="盘点单号" prop="isCode" width="150">
             <template slot-scope="scope">
               <el-input v-model="scope.row.isCode" placeholder="请输入盘点单号"/>
@@ -326,7 +337,14 @@
           </el-table-column>
           <el-table-column label="货品code" prop="gCode" width="150">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.gCode" placeholder="请输入货品code"/>
+              <el-select v-model="scope.row.gCode" placeholder="请选择货品">
+                <el-option
+                  v-for="good in allHpGoods"
+                  :key="good.g_code"
+                  :label="good.g_name"
+                  :value="good.g_code"
+                ></el-option>
+              </el-select>
             </template>
           </el-table-column>
         </el-table>
@@ -342,7 +360,7 @@
 <script>
 import {
   addKcinventory,
-  delKcinventory,
+  delKcinventory, findAllHpGoods, findAllUser, findIsId,
   findWareHouse,
   genIsCode,
   getKcinventory,
@@ -355,6 +373,11 @@ export default {
   dicts: ['is_result', 'is_type', 'out_status', 'in_status', 'inventory_status'],
   data() {
     return {
+      //货品
+      allHpGoods : [],
+      //用户
+      allUser : [],
+      //仓库
       WareHouse: [],
       // 遮罩层
       loading: true,
@@ -435,6 +458,8 @@ export default {
   },
   mounted() {
     this.findWareHouse();
+    this.findAllUser();
+    this.findAllHpGoods();
   },
   methods: {
     /** 查询库存盘点列表 */
@@ -508,9 +533,15 @@ export default {
       this.open = true;
       this.title = "添加库存盘点";
       genIsCode().then(response => {
-        console.info(response);
+        //console.info(response);
         this.form.isCode = response.data;
       });
+
+      findIsId().then(response => {
+        //console.info(response);
+        this.form.isId = response.data + 1;
+      });
+
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -563,6 +594,7 @@ export default {
     handleAddCrkIsDetails() {
       let obj = {};
       obj.isCode = this.form.isCode;
+      obj.isId = this.form.isId;
       obj.orderId = "";
       obj.specCode = "";
       obj.unit = "";
@@ -574,6 +606,9 @@ export default {
       obj.remark = "";
       obj.isDelte = "";
       obj.gCode = "";
+      obj.isDelte = 0;
+      obj.specCode = null;
+      obj.unit = null;
       this.crkIsDetailsList.push(obj);
     },
     /** 盘点明细删除按钮操作 */
@@ -603,6 +638,21 @@ export default {
       findWareHouse().then(response => {
         //console.info(response);
         this.WareHouse = response.data;
+      })
+    },
+    // 获取用户信息
+    findAllUser() {
+      findAllUser().then(response => {
+        //console.info(response);
+        this.allUser = response.data;
+      })
+    },
+
+    // 获取货品信息
+    findAllHpGoods() {
+      findAllHpGoods().then(response => {
+        //console.info(response);
+        this.allHpGoods = response.data;
       })
     },
 

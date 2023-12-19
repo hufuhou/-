@@ -58,3 +58,27 @@ export function findWareHouse() {
     method: 'get'
   })
 }
+
+// 获取user_id,user_name
+export function findAllUser() {
+  return request({
+    url: '/kcinventory/kcinventory/findAllUser',
+    method: 'get'
+  })
+}
+
+// 获取货品id,货品name
+export function findAllHpGoods() {
+  return request({
+    url: '/kcinventory/kcinventory/findAllHpGoods',
+    method: 'get'
+  })
+}
+
+// 获取IsId
+export function findIsId() {
+  return request({
+    url: '/kcinventory/kcinventory/findIsId',
+    method: 'get'
+  })
+}

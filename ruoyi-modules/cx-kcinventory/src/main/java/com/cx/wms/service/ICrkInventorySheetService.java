@@ -1,6 +1,8 @@
 package com.cx.wms.service;
 
 import com.cx.wms.domain.CrkInventorySheet;
+import com.cx.wms.domain.HpGood;
+import com.cx.wms.domain.User;
 import com.cx.wms.domain.WareHouse;
 
 import java.util.List;
@@ -66,6 +68,7 @@ public interface ICrkInventorySheetService {
      * @return 最新的is_code
      */
     public String findIsCode();
+    public String findIsId();
 
     public String genIsCode();
 
@@ -74,4 +77,8 @@ public interface ICrkInventorySheetService {
      * @return 仓库name 仓库id
      */
     public List<WareHouse> findWareHouse();
+
+    public List<User> findAllUser();
+
+    public List<HpGood> findAllHpGoods();
 }
