@@ -11,8 +11,9 @@
         <result property="purchaseDate" column="purchase_date"/>
         <result property="sId" column="s_id"/>
         <result property="contactPerson" column="contact_person"/>
-        <result property="contactDetails" column="contact_details"/>
+        <result property="contactNumber" column="contact_number"/>
         <result property="purchaserId" column="purchaser_id"/>
+        <result property="deptId" column="dept_id"/>
         <result property="remark" column="remark"/>
         <result property="reviewer" column="reviewer"/>
         <result property="reviewerDate" column="reviewer_date"/>
@@ -21,46 +22,120 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelte" column="is_delte"/>
+        <result property="totalPurchaseQuantity" column="total_purchase_quantity"/>
+        <result property="totalMoney" column="total_money"/>
+        <result property="totalGoodsName" column="total_goods_name"/>
+    </resultMap>
+
+    <resultMap id="OrderPurchaseAndDetailsResult" type="OrderPurchase" extends="OrderPurchaseResult">
+        <collection property="detailsList" notNullColumn="pd_id" javaType="java.util.List"
+                    resultMap="OrderPurchaseDetailsResult"/>
+    </resultMap>
+
+    <resultMap type="OrderPurchaseDetails" id="OrderPurchaseDetailsResult">
+        <result property="pdId" column="pd_id"/>
+        <result property="poCode" column="po_code"/>
+        <result property="gCode" column="g_code"/>
+        <result property="purchaseQuantity" column="purchase_quantity"/>
+        <result property="money" column="money"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <association property="hpGoods" javaType="HpGoods" resultMap="HpGoodsResult"/>
+    </resultMap>
+
+    <resultMap type="HpGoods" id="HpGoodsResult">
+        <result property="gId" column="g_id"/>
+        <result property="gtId" column="gt_id"/>
+        <result property="gCode" column="g_code"/>
+        <result property="gName" column="g_name"/>
+        <result property="gUnit" column="g_unit"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="specCode" column="spec_code"/>
+        <result property="sId" column="s_id"/>
+        <result property="remark" column="remark"/>
+        <result property="orPrice" column="or_price"/>
+        <result property="wrPrice" column="wr_price"/>
+        <result property="hasShelfLife" column="has_shelf_life"/>
+        <result property="warningDays" column="warning_days"/>
+        <result property="itemLimit" column="item_limit"/>
+        <result property="lowerLimit" column="lower_limit"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="qualityG" column="quality_g"/>
     </resultMap>
 
     <sql id="selectOrderPurchaseVo">
-        select po_id,
-               po_code,
-               status,
-               purchase_date,
-               s_id,
-               contact_person,
-               contact_details,
-               purchaser_id,
-               remark,
-               reviewer,
-               reviewer_date,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               is_delte
-        from order_purchase_order
+        select o.po_id,
+               o.po_code,
+               o.status,
+               o.purchase_date,
+               o.s_id,
+               o.contact_person,
+               o.contact_number,
+               o.purchaser_id,
+               o.dept_id,
+               o.remark,
+               o.reviewer,
+               o.reviewer_date,
+               o.create_by,
+               o.create_time,
+               o.update_by,
+               o.update_time,
+               o.is_delte,
+               SUM(d.purchase_quantity) AS total_purchase_quantity,
+               SUM(d.money)             AS total_money,
+               GROUP_CONCAT(g.g_name)   AS total_goods_name
+        from order_purchase_order o
+                 left join order_purchase_details d on o.po_code = d.po_code
+                 left join hp_goods g on g.g_code = d.g_code
     </sql>
 
     <select id="selectOrderPurchaseList" parameterType="OrderPurchase" resultMap="OrderPurchaseResult">
         <include refid="selectOrderPurchaseVo"/>
         <where>
-            <if test="poCode != null  and poCode != ''">and po_code = #{poCode}</if>
-            <if test="status != null ">and status = #{status}</if>
-            <if test="purchaseDate != null ">and purchase_date = #{purchaseDate}</if>
-            <if test="sId != null ">and s_id = #{sId}</if>
-            <if test="contactPerson != null  and contactPerson != ''">and contact_person = #{contactPerson}</if>
-            <if test="contactDetails != null  and contactDetails != ''">and contact_details = #{contactDetails}</if>
-            <if test="purchaserId != null ">and purchaser_id = #{purchaserId}</if>
-            <if test="reviewer != null  and reviewer != ''">and reviewer = #{reviewer}</if>
-            <if test="reviewerDate != null ">and reviewer_date = #{reviewerDate}</if>
-            <if test="isDelte != null ">and is_delte = #{isDelte}</if>
+            <if test="poCode != null  and poCode != ''">and o.po_code like concat('%', #{poCode}, '%')</if>
+            <if test="status != null ">and o.status = #{status}</if>
+            <if test="purchaseDate != null ">and o.purchase_date like concat('%',#{purchaseDate}, '%')</if>
+            <if test="sId != null ">and o.s_id = #{sId}</if>
+            <if test="contactPerson != null  and contactPerson != ''">and o.contact_person = #{contactPerson}</if>
+            <if test="contactNumber != null  and contactNumber != ''">and o.contact_number = #{contactNumber}</if>
+            <if test="purchaserId != null ">and o.purchaser_id = #{purchaserId}</if>
+            <if test="reviewer != null  and reviewer != ''">and o.reviewer = #{reviewer}</if>
+            <if test="reviewerDate != null ">and o.reviewer_date = #{reviewerDate}</if>
+            <if test="isDelte != null ">and o.is_delte = #{isDelte}</if>
         </where>
+        group by o.po_code
     </select>
 
-    <select id="selectOrderPurchaseByPoId" parameterType="Long" resultMap="OrderPurchaseResult">
-        <include refid="selectOrderPurchaseVo"/>
+    <select id="selectOrderPurchaseByPoId" parameterType="Long" resultMap="OrderPurchaseAndDetailsResult">
+        select o.po_id,
+               o.po_code,
+               o.status,
+               o.purchase_date,
+               o.s_id,
+               o.contact_person,
+               o.contact_number,
+               o.purchaser_id,
+               o.dept_id,
+               o.remark,
+               o.reviewer,
+               o.reviewer_date,
+               o.create_by,
+               o.create_time,
+               o.update_by,
+               o.update_time,
+               o.is_delte,
+               d.*,
+               g.*
+        from order_purchase_order o
+                 left join order_purchase_details d on o.po_code = d.po_code
+                 left join hp_goods g on g.g_code = d.g_code
         where po_id = #{poId}
     </select>
 
@@ -73,16 +148,14 @@
             <if test="purchaseDate != null">purchase_date,</if>
             <if test="sId != null">s_id,</if>
             <if test="contactPerson != null and contactPerson != ''">contact_person,</if>
-            <if test="contactDetails != null">contact_details,</if>
+            <if test="contactNumber != null">contact_number,</if>
             <if test="purchaserId != null">purchaser_id,</if>
+            <if test="deptId != null">dept_id,</if>
             <if test="remark != null">remark,</if>
             <if test="reviewer != null">reviewer,</if>
             <if test="reviewerDate != null">reviewer_date,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
-            <if test="updateBy != null">update_by,</if>
-            <if test="updateTime != null">update_time,</if>
-            <if test="isDelte != null">is_delte,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="poId != null">#{poId},</if>
@@ -91,16 +164,14 @@
             <if test="purchaseDate != null">#{purchaseDate},</if>
             <if test="sId != null">#{sId},</if>
             <if test="contactPerson != null and contactPerson != ''">#{contactPerson},</if>
-            <if test="contactDetails != null">#{contactDetails},</if>
+            <if test="contactNumber != null and contactNumber != ''">#{contactNumber},</if>
             <if test="purchaserId != null">#{purchaserId},</if>
+            <if test="deptId != null">#{deptId},</if>
             <if test="remark != null">#{remark},</if>
             <if test="reviewer != null">#{reviewer},</if>
             <if test="reviewerDate != null">#{reviewerDate},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
-            <if test="updateBy != null">#{updateBy},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-            <if test="isDelte != null">#{isDelte},</if>
         </trim>
     </insert>
 
@@ -112,8 +183,9 @@
             <if test="purchaseDate != null">purchase_date = #{purchaseDate},</if>
             <if test="sId != null">s_id = #{sId},</if>
             <if test="contactPerson != null and contactPerson != ''">contact_person = #{contactPerson},</if>
-            <if test="contactDetails != null">contact_details = #{contactDetails},</if>
+            <if test="contactNumber != null">contact_number = #{contactNumber},</if>
             <if test="purchaserId != null">purchaser_id = #{purchaserId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="reviewer != null">reviewer = #{reviewer},</if>
             <if test="reviewerDate != null">reviewer_date = #{reviewerDate},</if>
@@ -138,4 +210,17 @@
             #{poId}
         </foreach>
     </delete>
+
+    <select id="getPoCode" resultMap="OrderPurchaseResult">
+        select *
+        from order_purchase_order
+        order by po_id desc limit 1;
+    </select>
+
+    <update id="updateAudit">
+        update order_purchase_order set status = #{status},reviewer = #{reviewer},reviewer_date = NOW() where po_id in
+        <foreach item="poId" collection="poIds" open="(" separator="," close=")">
+            #{poId}
+        </foreach>
+    </update>
 </mapper>

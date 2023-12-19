@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.order.mapper.OrderPurchaseDetailsMapper">
+
+    <resultMap type="OrderPurchaseDetails" id="OrderPurchaseDetailsResult">
+        <result property="pdId" column="pd_id"/>
+        <result property="poCode" column="po_code"/>
+        <result property="gCode" column="g_code"/>
+        <result property="purchaseQuantity" column="purchase_quantity"/>
+        <result property="money" column="money"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <association property="hpGoods" javaType="HpGoods" resultMap="HpGoodsResult"/>
+    </resultMap>
+
+    <resultMap type="HpGoods" id="HpGoodsResult">
+        <result property="gId" column="g_id"/>
+        <result property="gtId" column="gt_id"/>
+        <result property="gCode" column="g_code"/>
+        <result property="gName" column="g_name"/>
+        <result property="gUnit" column="g_unit"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="specCode" column="spec_code"/>
+        <result property="sId" column="s_id"/>
+        <result property="remark" column="remark"/>
+        <result property="orPrice" column="or_price"/>
+        <result property="wrPrice" column="wr_price"/>
+        <result property="hasShelfLife" column="has_shelf_life"/>
+        <result property="warningDays" column="warning_days"/>
+        <result property="itemLimit" column="item_limit"/>
+        <result property="lowerLimit" column="lower_limit"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="qualityG" column="quality_g"/>
+    </resultMap>
+    <sql id="selectOrderPurchaseDetailsVo">
+        select pd_id,
+               po_code,
+               g_code,
+               purchase_quantity,
+               money,
+               remark,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from order_purchase_details
+    </sql>
+
+    <select id="selectOrderPurchaseDetailsList" parameterType="OrderPurchaseDetails"
+            resultMap="OrderPurchaseDetailsResult">
+        <include refid="selectOrderPurchaseDetailsVo"/>
+        <where>
+            <if test="poCode != null  and poCode != ''">and po_code = #{poCode}</if>
+            <if test="gCode != null  and gCode != ''">and g_code = #{gCode}</if>
+            <if test="purchaseQuantity != null ">and purchase_quantity = #{purchaseQuantity}</if>
+            <if test="money != null ">and money = #{money}</if>
+            <if test="isDelte != null ">and is_delte = #{isDelte}</if>
+        </where>
+    </select>
+
+    <select id="selectOrderPurchaseDetailsByPdId" parameterType="Long" resultMap="OrderPurchaseDetailsResult">
+        <include refid="selectOrderPurchaseDetailsVo"/>
+        where pd_id = #{pdId}
+    </select>
+
+    <insert id="insertOrderPurchaseDetails">
+        insert into order_purchase_details(po_code,g_code,purchase_quantity,money,create_by,create_time,update_by,update_time) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.poCode},#{item.gCode},#{item.purchaseQuantity},#{item.money},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime})
+        </foreach>
+    </insert>
+
+    <update id="updateOrderPurchaseDetails" parameterType="OrderPurchaseDetails">
+        update order_purchase_details
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="poCode != null and poCode != ''">po_code = #{poCode},</if>
+            <if test="gCode != null and gCode != ''">g_code = #{gCode},</if>
+            <if test="purchaseQuantity != null">purchase_quantity = #{purchaseQuantity},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where pd_id = #{pdId}
+    </update>
+
+    <delete id="deleteOrderPurchaseDetailsByPdId" parameterType="Long">
+        delete
+        from order_purchase_details
+        where pd_id = #{pdId}
+    </delete>
+
+    <delete id="deleteOrderPurchaseDetailsByPdIds" parameterType="String">
+        delete from order_purchase_details where pd_id in
+        <foreach item="pdId" collection="array" open="(" separator="," close=")">
+            #{pdId}
+        </foreach>
+    </delete>
+
+    <select id="detailAndProduct" resultMap="OrderPurchaseDetailsResult">
+        SELECT * FROM order_purchase_details d INNER JOIN hp_goods g ON d.g_code = g.g_code
+        <where>
+            <if test="poCode != null">and d.po_code = #{poCode}</if>
+            <if test="oldPoCode != null">or d.po_code = #{oldPoCode}</if>
+        </where>
+    </select>
+</mapper>

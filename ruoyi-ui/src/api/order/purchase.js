@@ -52,3 +52,28 @@ export function preProduct(data) {
   })
 }
 
+// 获取进货编号
+export function getCode() {
+  return request({
+    url: '/order/purchase/getPoCode',
+    method: 'get'
+  })
+}
+
+// 审核状态修改
+export function updateAudit(status, poIds) {
+  return request({
+    url: '/order/purchase/' + status + '/' + poIds,
+    method: 'get'
+  })
+}
+
+// //添加进货明细
+// export function addOrderDetail(data){
+//   return request({
+//     url: '/order/purchase/add',
+//     method: 'post',
+//     data: JSON.stringify(data)
+//   })
+// }
+

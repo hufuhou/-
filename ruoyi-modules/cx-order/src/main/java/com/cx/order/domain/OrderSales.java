@@ -11,24 +11,30 @@ import com.ruoyi.common.core.annotation.Excel;
 import com.ruoyi.common.core.web.domain.BaseEntity;
 
 /**
- * 进货订单对象 order_purchase_order
+ * 销售订单对象 order_sales_order
  *
  * @author LZA
- * @date 2023-11-20
+ * @date 2023-12-19
  */
-public class OrderPurchase extends BaseEntity {
+public class OrderSales extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 进货订单id
+     * 销售订单ID
      */
-    private Long poId;
+    private Long sId;
 
     /**
-     * 进货单号
+     * 销售明细ID
      */
-    @Excel(name = "进货单号")
-    private String poCode;
+    @Excel(name = "销售明细ID")
+    private Long sdId;
+
+    /**
+     * 销售单号
+     */
+    @Excel(name = "销售单号")
+    private String sCode;
 
     /**
      * 进货审核状态：0：草稿；1：待审核；2：驳回；3：未入库；4：部分入库；5：已完成；
@@ -37,17 +43,17 @@ public class OrderPurchase extends BaseEntity {
     private Integer status;
 
     /**
-     * 进货日期
+     * 销售日期
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "进货日期", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date purchaseDate;
+    @Excel(name = "销售日期", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date saleDate;
 
     /**
-     * 供应商id
+     * 客户id
      */
-    @Excel(name = "供应商id")
-    private Long sId;
+    @Excel(name = "客户id")
+    private Long cId;
 
     /**
      * 联系人
@@ -62,11 +68,14 @@ public class OrderPurchase extends BaseEntity {
     private String contactNumber;
 
     /**
-     * 进货人
+     * 销售负责人
      */
-    @Excel(name = "进货人")
-    private Long purchaserId;
+    @Excel(name = "销售负责人")
+    private Long principalId;
 
+    /**
+     * 进货部门id
+     */
     @Excel(name = "进货部门id")
     private Long deptId;
 
@@ -107,23 +116,7 @@ public class OrderPurchase extends BaseEntity {
     /**
      * 进货明细信息
      */
-    private List<OrderPurchaseDetails> detailsList;
-
-    public List<OrderPurchaseDetails> getDetailsList() {
-        return detailsList;
-    }
-
-    public void setDetailsList(List<OrderPurchaseDetails> detailsList) {
-        this.detailsList = detailsList;
-    }
-
-    public String getTotalGoodsName() {
-        return totalGoodsName;
-    }
-
-    public void setTotalGoodsName(String totalGoodsName) {
-        this.totalGoodsName = totalGoodsName;
-    }
+    private List<OrderSalesDetails> detailsList;
 
     public BigDecimal getTotalPurchaseQuantity() {
         return totalPurchaseQuantity;
@@ -141,36 +134,20 @@ public class OrderPurchase extends BaseEntity {
         this.totalMoney = totalMoney;
     }
 
-    public void setPoId(Long poId) {
-        this.poId = poId;
+    public String getTotalGoodsName() {
+        return totalGoodsName;
     }
 
-    public Long getPoId() {
-        return poId;
+    public void setTotalGoodsName(String totalGoodsName) {
+        this.totalGoodsName = totalGoodsName;
     }
 
-    public void setPoCode(String poCode) {
-        this.poCode = poCode;
+    public List<OrderSalesDetails> getDetailsList() {
+        return detailsList;
     }
 
-    public String getPoCode() {
-        return poCode;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setPurchaseDate(Date purchaseDate) {
-        this.purchaseDate = purchaseDate;
-    }
-
-    public Date getPurchaseDate() {
-        return purchaseDate;
+    public void setDetailsList(List<OrderSalesDetails> detailsList) {
+        this.detailsList = detailsList;
     }
 
     public void setsId(Long sId) {
@@ -181,6 +158,46 @@ public class OrderPurchase extends BaseEntity {
         return sId;
     }
 
+    public void setSdId(Long sdId) {
+        this.sdId = sdId;
+    }
+
+    public Long getSdId() {
+        return sdId;
+    }
+
+    public void setsCode(String sCode) {
+        this.sCode = sCode;
+    }
+
+    public String getsCode() {
+        return sCode;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setSaleDate(Date saleDate) {
+        this.saleDate = saleDate;
+    }
+
+    public Date getSaleDate() {
+        return saleDate;
+    }
+
+    public void setcId(Long cId) {
+        this.cId = cId;
+    }
+
+    public Long getcId() {
+        return cId;
+    }
+
     public void setContactPerson(String contactPerson) {
         this.contactPerson = contactPerson;
     }
@@ -189,28 +206,28 @@ public class OrderPurchase extends BaseEntity {
         return contactPerson;
     }
 
-    public String getContactNumber() {
-        return contactNumber;
-    }
-
     public void setContactNumber(String contactNumber) {
         this.contactNumber = contactNumber;
     }
 
-    public void setPurchaserId(Long purchaserId) {
-        this.purchaserId = purchaserId;
+    public String getContactNumber() {
+        return contactNumber;
     }
 
-    public Long getPurchaserId() {
-        return purchaserId;
+    public void setPrincipalId(Long principalId) {
+        this.principalId = principalId;
     }
 
-    public Long getDeptId() {
-        return deptId;
+    public Long getPrincipalId() {
+        return principalId;
     }
 
     public void setDeptId(Long deptId) {
         this.deptId = deptId;
+    }
+
+    public Long getDeptId() {
+        return deptId;
     }
 
     public void setReviewer(String reviewer) {
@@ -240,14 +257,15 @@ public class OrderPurchase extends BaseEntity {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("poId", getPoId())
-                .append("poCode", getPoCode())
-                .append("status", getStatus())
-                .append("purchaseDate", getPurchaseDate())
                 .append("sId", getsId())
+                .append("sdId", getSdId())
+                .append("sCode", getsCode())
+                .append("status", getStatus())
+                .append("saleDate", getSaleDate())
+                .append("cId", getcId())
                 .append("contactPerson", getContactPerson())
                 .append("contactNumber", getContactNumber())
-                .append("purchaserId", getPurchaserId())
+                .append("principalId", getPrincipalId())
                 .append("deptId", getDeptId())
                 .append("remark", getRemark())
                 .append("reviewer", getReviewer())

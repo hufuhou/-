@@ -114,7 +114,7 @@
       <el-table-column label="销售负责人" align="center" prop="nickName" width="100">
         <template slot-scope="scope">
         <span v-for="item in userList" :key="item.userId">
-          <template v-if="scope.row.principalId===item.userId">
+            <template v-if="scope.row.principalId===item.userId">
             {{ item.nickName }}
           </template>
         </span>

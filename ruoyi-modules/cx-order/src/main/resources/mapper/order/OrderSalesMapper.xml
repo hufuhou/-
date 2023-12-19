@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.order.mapper.OrderSalesMapper">
+    
+    <resultMap type="OrderSales" id="OrderSalesResult">
+        <result property="sId"    column="s_id"    />
+        <result property="sdId"    column="sd_id"    />
+        <result property="sCode"    column="s_code"    />
+        <result property="status"    column="status"    />
+        <result property="saleDate"    column="sale_date"    />
+        <result property="cId"    column="c_id"    />
+        <result property="contactPerson"    column="contact_person"    />
+        <result property="contactNumber"    column="contact_number"    />
+        <result property="principalId"    column="principal_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="remark"    column="remark"    />
+        <result property="reviewer"    column="reviewer"    />
+        <result property="reviewerDate"    column="reviewer_date"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelte"    column="is_delte"    />
+        <result property="totalPurchaseQuantity" column="total_purchase_quantity"/>
+        <result property="totalMoney" column="total_money"/>
+        <result property="totalGoodsName" column="total_goods_name"/>
+    </resultMap>
+
+    <resultMap id="OrderSalesAndDetailsResult" type="OrderSales" extends="OrderSalesResult">
+        <collection property="detailsList" notNullColumn="pd_id" javaType="java.util.List"
+                    resultMap="OrderSalesDetailsResult"/>
+    </resultMap>
+
+    <resultMap type="OrderSalesDetails" id="OrderSalesDetailsResult">
+        <result property="sdId"    column="sd_id"    />
+        <result property="srdId"    column="srd_id"    />
+        <result property="sId"    column="s_id"    />
+        <result property="sCode"    column="s_code"    />
+        <result property="goodsNumber"    column="goods_number"    />
+        <result property="specCode"    column="spec_code"    />
+        <result property="unit"    column="unit"    />
+        <result property="goodsType"    column="goods_type"    />
+        <result property="purchaseQuantity"    column="purchase_quantity"    />
+        <result property="aiStock"    column="ai_stock"    />
+        <result property="suPrice"    column="su_price"    />
+        <result property="salesAmount"    column="sales_amount"    />
+        <result property="salesVolume"    column="sales_volume"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelte"    column="is_delte"    />
+        <association property="hpGoods" javaType="HpGoods" resultMap="HpGoodsResult"/>
+    </resultMap>
+
+    <resultMap type="HpGoods" id="HpGoodsResult">
+        <result property="gId" column="g_id"/>
+        <result property="gtId" column="gt_id"/>
+        <result property="gCode" column="g_code"/>
+        <result property="gName" column="g_name"/>
+        <result property="gUnit" column="g_unit"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="specCode" column="spec_code"/>
+        <result property="sId" column="s_id"/>
+        <result property="remark" column="remark"/>
+        <result property="orPrice" column="or_price"/>
+        <result property="wrPrice" column="wr_price"/>
+        <result property="hasShelfLife" column="has_shelf_life"/>
+        <result property="warningDays" column="warning_days"/>
+        <result property="itemLimit" column="item_limit"/>
+        <result property="lowerLimit" column="lower_limit"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="qualityG" column="quality_g"/>
+    </resultMap>
+
+    <sql id="selectOrderSalesVo">
+        select o.s_id,
+               o.s_code,
+               o.status,
+               o.sale_date,
+               o.c_id,
+               o.contact_person,
+               o.contact_number,
+               o.principal_id,
+               o.dept_id,
+               o.remark,
+               o.reviewer,
+               o.reviewer_date,
+               o.create_by,
+               o.create_time,
+               o.update_by,
+               o.update_time,
+               o.is_delte,
+               SUM(d.purchase_quantity) AS total_purchase_quantity,
+               SUM(d.money)             AS total_money,
+               GROUP_CONCAT(g.g_name)   AS total_goods_name
+        from order_sales_order o
+                 left join order_d_sales d on o.s_code = d.s_code
+                 left join hp_goods g on g.g_code = d.g_code
+    </sql>
+
+    <select id="selectOrderSalesList" parameterType="OrderSales" resultMap="OrderSalesResult">
+        <include refid="selectOrderSalesVo"/>
+        <where>
+            <if test="sdId != null "> and sd_id = #{sdId}</if>
+            <if test="sCode != null  and sCode != ''"> and s_code like concat('%', #{sCode}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="saleDate != null "> and sale_date &lt;= #{saleDate}</if>
+            <if test="cId != null "> and c_id = #{cId}</if>
+            <if test="contactPerson != null  and contactPerson != ''"> and contact_person = #{contactPerson}</if>
+            <if test="contactNumber != null  and contactNumber != ''"> and contact_number = #{contactNumber}</if>
+            <if test="principalId != null "> and principal_id = #{principalId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="reviewer != null  and reviewer != ''"> and reviewer = #{reviewer}</if>
+            <if test="reviewerDate != null "> and reviewer_date = #{reviewerDate}</if>
+            <if test="isDelte != null "> and is_delte = #{isDelte}</if>
+        </where>
+    </select>
+
+    <select id="selectOrderSalesBySId" parameterType="Long" resultMap="OrderSalesResult">
+        <include refid="selectOrderSalesVo"/>
+        where s_id = #{sId}
+    </select>
+
+    <insert id="insertOrderSales" parameterType="OrderSales">
+        insert into order_sales_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sId != null">s_id,</if>
+            <if test="sdId != null">sd_id,</if>
+            <if test="sCode != null and sCode != ''">s_code,</if>
+            <if test="status != null">status,</if>
+            <if test="saleDate != null">sale_date,</if>
+            <if test="cId != null">c_id,</if>
+            <if test="contactPerson != null and contactPerson != ''">contact_person,</if>
+            <if test="contactNumber != null">contact_number,</if>
+            <if test="principalId != null">principal_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="reviewer != null">reviewer,</if>
+            <if test="reviewerDate != null">reviewer_date,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sId != null">#{sId},</if>
+            <if test="sdId != null">#{sdId},</if>
+            <if test="sCode != null and sCode != ''">#{sCode},</if>
+            <if test="status != null">#{status},</if>
+            <if test="saleDate != null">#{saleDate},</if>
+            <if test="cId != null">#{cId},</if>
+            <if test="contactPerson != null and contactPerson != ''">#{contactPerson},</if>
+            <if test="contactNumber != null">#{contactNumber},</if>
+            <if test="principalId != null">#{principalId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="reviewer != null">#{reviewer},</if>
+            <if test="reviewerDate != null">#{reviewerDate},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOrderSales" parameterType="OrderSales">
+        update order_sales_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sdId != null">sd_id = #{sdId},</if>
+            <if test="sCode != null and sCode != ''">s_code = #{sCode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="saleDate != null">sale_date = #{saleDate},</if>
+            <if test="cId != null">c_id = #{cId},</if>
+            <if test="contactPerson != null and contactPerson != ''">contact_person = #{contactPerson},</if>
+            <if test="contactNumber != null">contact_number = #{contactNumber},</if>
+            <if test="principalId != null">principal_id = #{principalId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="reviewer != null">reviewer = #{reviewer},</if>
+            <if test="reviewerDate != null">reviewer_date = #{reviewerDate},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where s_id = #{sId}
+    </update>
+
+    <delete id="deleteOrderSalesBySId" parameterType="Long">
+        delete from order_sales_order where s_id = #{sId}
+    </delete>
+
+    <delete id="deleteOrderSalesBySIds" parameterType="String">
+        delete from order_sales_order where s_id in
+        <foreach item="sId" collection="array" open="(" separator="," close=")">
+            #{sId}
+        </foreach>
+    </delete>
+</mapper>
