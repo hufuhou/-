@@ -15,9 +15,8 @@
         <module>ruoyi-file</module>
         <module>cx-hpxx</module>
         <module>cx-ckgl</module>
-        <module>cx-hpxx</module>
+        <module>cx-crkgl</module>
         <module>cx-chart</module>
-        <module>cx-hpxx</module>
         <module>cx-order</module>
         <module>cx-units</module>
         <module>cx-ledger</module>

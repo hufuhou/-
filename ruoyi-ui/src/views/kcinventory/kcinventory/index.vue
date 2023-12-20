@@ -142,11 +142,11 @@
       </el-table-column>
       <el-table-column label="盘点单状态" align="center" prop="sheetStatus" width="100">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.sheetStatus === 0">待审核</el-tag>
-          <el-tag type="success" v-else-if="scope.row.sheetStatus === 1">审核通过</el-tag>
-          <el-tag type="warning" v-else-if="scope.row.sheetStatus === 2">驳回</el-tag>
-          <el-tag type="info" v-else-if="scope.row.sheetStatus === 3">已完成</el-tag>
-          <el-tag type="danger" v-else>未知状态</el-tag>
+          <el-tag size="mini" v-if="scope.row.sheetStatus === 0">待审核</el-tag>
+          <el-tag type="success" size="mini" v-else-if="scope.row.sheetStatus === 1">审核通过</el-tag>
+          <el-tag type="warning" size="mini" v-else-if="scope.row.sheetStatus === 2">驳回</el-tag>
+          <el-tag type="info" size="mini" v-else-if="scope.row.sheetStatus === 3">已完成</el-tag>
+          <el-tag type="danger" size="mini" v-else>未知状态</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="盘点开始时间" align="center" prop="isStartTime" width="130">
@@ -204,7 +204,7 @@
     />
 
     <!-- 添加或修改库存盘点对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="盘点ID" prop="isId">
           <el-input v-model="form.isId" placeholder="盘点id" disabled="disabled"/>
