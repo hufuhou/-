@@ -136,35 +136,44 @@
     <!-- 添加或修改盘点明细对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="盘点主表id" prop="isId">
-          <el-input v-model="form.isId" placeholder="请输入盘点主表id"/>
+        <el-form-item label="主表id" prop="isId">
+          <el-input v-model="form.isId" placeholder="请输入盘点主表id" :disabled="isDisable"/>
         </el-form-item>
         <el-form-item label="盘点单号" prop="isCode">
-          <el-input v-model="form.isCode" placeholder="请输入盘点单号"/>
+          <el-input v-model="form.isCode" placeholder="请输入盘点单号" :disabled="isDisable"/>
         </el-form-item>
-        <el-form-item label="相关订单ID" prop="orderId">
+        <el-form-item label="订单ID" prop="orderId">
           <el-input v-model="form.orderId" placeholder="请输入相关订单ID"/>
         </el-form-item>
 <!--        <el-form-item label="规格型号" prop="specCode">-->
 <!--          <el-input v-model="form.specCode" placeholder="请输入规格型号"/>-->
 <!--        </el-form-item>-->
         <el-form-item label="盘点数量" prop="countQuantity">
-          <el-input v-model="form.countQuantity" placeholder="请输入盘点数量"/>
+          <el-input-number v-model="form.countQuantity" placeholder="请输入盘点数量"/>
         </el-form-item>
         <el-form-item label="盈亏数量" prop="profitLossQuantity">
-          <el-input v-model="form.profitLossQuantity" placeholder="请输入盈亏数量"/>
+          <el-input-number v-model="form.profitLossQuantity" placeholder="请输入盈亏数量"/>
         </el-form-item>
         <el-form-item label="盘点金额" prop="countAmount">
-          <el-input v-model="form.countAmount" placeholder="请输入盘点金额"/>
+          <el-input-number v-model="form.countAmount" placeholder="请输入盘点金额"/>
         </el-form-item>
         <el-form-item label="入库单价" prop="iuPrice">
-          <el-input v-model="form.iuPrice" placeholder="请输入入库单价"/>
+          <el-input-number v-model="form.iuPrice" placeholder="请输入入库单价"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
-        <el-form-item label="货品code" prop="gCode">
-          <el-input v-model="form.gCode" placeholder="请输入货品code"/>
+        <el-form-item label="货品" prop="gCode">
+          <template slot-scope="scope">
+            <el-select v-model="form.gCode" placeholder="请选择货品">
+              <el-option
+                v-for="good in allHpGoods"
+                :key="good.g_code"
+                :label="good.g_name"
+                :value="good.g_code"
+              ></el-option>
+            </el-select>
+          </template>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -184,12 +193,15 @@ import {
   updateInventoryDetail
 } from "@/api/inventoryDetail/inventoryDetail";
 import dict from "@/utils/dict";
-import {genIsCode} from "@/api/kcinventory/kcinventory";
+import {findAllHpGoods, genIsCode} from "@/api/kcinventory/kcinventory";
 
 export default {
   name: "InventoryDetail",
   data() {
     return {
+      isDisable : false,
+      //货品信息
+      allHpGoods : [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -257,6 +269,9 @@ export default {
   },
   created() {
     this.getList();
+  },
+  mounted() {
+    this.findAllHpGoods();
   },
   methods: {
     dict,
@@ -342,7 +357,11 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改盘点明细";
+        if (this.title === "修改盘点明细"){
+          this.isDisable = true;
+        }
       });
+
     },
     /** 提交按钮 */
     submitForm() {
@@ -380,7 +399,14 @@ export default {
       this.download('cx-kcinventory/inventoryDetail/export', {
         ...this.queryParams
       }, `inventoryDetail_${new Date().getTime()}.xlsx`)
-    }
+    },
+    // 获取货品信息
+    findAllHpGoods() {
+      findAllHpGoods().then(response => {
+        //console.info(response);
+        this.allHpGoods = response.data;
+      })
+    },
   }
 };
 </script>

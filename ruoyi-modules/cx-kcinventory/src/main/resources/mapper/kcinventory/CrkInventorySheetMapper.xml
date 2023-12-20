@@ -22,6 +22,7 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="isDelte" column="is_delte"/>
+        <result property="SheetStatus" column="sheet_status"/>
         <result property="create_user_name" column="create_user_name"/>
         <result property="update_user_name" column="update_user_name"/>
         <result property="warehouseName" column="warehouseName"/>
@@ -101,6 +102,7 @@
                a.update_by,
                a.update_time,
                a.is_delte,
+               a.sheet_status,
                b.isd_id               as sub_isd_id,
                b.is_id                as sub_is_id,
                b.is_code              as sub_is_code,
@@ -184,6 +186,7 @@
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="isDelte != null">is_delte = #{isDelte},</if>
+            <if test="SheetStatus != null">sheet_status = #{SheetStatus},</if>
         </trim>
         where is_id = #{isId}
     </update>
@@ -276,6 +279,18 @@
         ORDER BY `is_id` DESC
         LIMIT 1;
     </select>
+
+    <!--  查询表状态sheet_status  -->
+    <select id="findSheetStatus">
+        SELECT `sheet_status`
+        FROM `crk_inventory_sheet`
+        WHERE `is_id` = #{isId}
+    </select>
+
+    <!--  更新表状态sheet_status  -->
+    <update id="updateSheetStatus">
+        UPDATE `crk_inventory_sheet` SET `sheet_status` = #{stateCode} WHERE `is_id` = #{isId}
+    </update>
 
 
 </mapper>

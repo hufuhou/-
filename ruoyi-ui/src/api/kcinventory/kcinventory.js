@@ -82,3 +82,21 @@ export function findIsId() {
     method: 'get'
   })
 }
+
+// 获取盘点状态
+export function findSheetStatus(isId) {
+  return request({
+    url: '/kcinventory/kcinventory/findSheetStatus/' + isId,
+    method: 'get'
+  })
+}
+
+// 更新盘点单状态
+export function updateSheetStatus(isId, stateCode) {
+  return request({
+    url: '/kcinventory/kcinventory/updateSheetStatus?isId=' + isId + '&stateCode=' + stateCode,
+    method: 'put'
+  })
+}
+
+

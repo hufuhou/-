@@ -111,6 +111,16 @@
           v-hasPermi="['kcinventory:kcinventory:export']"
         >导出
         </el-button>
+        <el-button
+          type="info"
+          plain
+          icon="el-icon-s-release"
+          size="mini"
+          :disabled="single"
+          @click="handleExam"
+          v-hasPermi="['kcinventory:kcinventory:edit']"
+        >审核
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -130,12 +140,21 @@
           <dict-tag :options="dict.type.is_type" :value="scope.row.isType"/>
         </template>
       </el-table-column>
-      <el-table-column label="盘点开始时间" align="center" prop="isStartTime" width="180">
+      <el-table-column label="盘点单状态" align="center" prop="sheetStatus" width="100">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.sheetStatus === 0">待审核</el-tag>
+          <el-tag type="success" v-else-if="scope.row.sheetStatus === 1">审核通过</el-tag>
+          <el-tag type="warning" v-else-if="scope.row.sheetStatus === 2">驳回</el-tag>
+          <el-tag type="info" v-else-if="scope.row.sheetStatus === 3">已完成</el-tag>
+          <el-tag type="danger" v-else>未知状态</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="盘点开始时间" align="center" prop="isStartTime" width="130">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.isStartTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="盘点结束时间" align="center" prop="isEndTime" width="180">
+      <el-table-column label="盘点结束时间" align="center" prop="isEndTime" width="130">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.isEndTime, '{y}-{m}-{d}') }}</span>
         </template>
@@ -153,7 +172,7 @@
       <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="经办人" align="center" prop="manager"/>
       <!--      <el-table-column label="0：存在；1：已删除，不存在" align="center" prop="isDelte" />-->
-<!--      <el-table-column label="货品code" align="center" prop="gCode"/>-->
+      <!--      <el-table-column label="货品code" align="center" prop="gCode"/>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -354,29 +373,111 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!--  抽屉区  -->
+    <el-drawer
+      title="库存盘点审核"
+      :visible.sync="drawer"
+      :direction="direction"
+      :before-close="handleClose">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="盘点ID" prop="isId">
+          <el-input v-model="form.isId" placeholder="盘点id" disabled="disabled"/>
+        </el-form-item>
+        <el-form-item label="盘点单号" prop="isCode">
+          <el-input v-model="form.isCode" placeholder="请输入盘点单号"/>
+        </el-form-item>
+        <el-form-item label="仓库" prop="wId">
+          <el-select v-model="form.wId" placeholder="请选择仓库" filterable>
+            <el-option
+              v-for="warehouse in WareHouse"
+              :key="warehouse.w_id"
+              :label="warehouse.w_name"
+              :value="warehouse.w_id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="盘点类型" prop="isType">
+          <el-select v-model="form.isType" placeholder="请选择盘点类型">
+            <el-option
+              v-for="dict in dict.type.is_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="盘点开始时间" prop="isStartTime">
+          <el-date-picker clearable
+                          v-model="form.isStartTime"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择盘点开始时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="盘点结束时间" prop="isEndTime">
+          <el-date-picker clearable
+                          v-model="form.isEndTime"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="请选择盘点结束时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注"/>
+        </el-form-item>
+        <el-form-item label="经办人" prop="isManager">
+          <el-select v-model="form.isManager" placeholder="请选择经办人">
+            <el-option
+              v-for="user in allUser"
+              :key="user.user_id"
+              :label="user.nick_name"
+              :value="user.user_id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-divider content-position="center">盘点审批信息</el-divider>
+        <center>
+          <div style="margin: 30px">
+            <el-button type="primary" @click="approved(form.isId)" style="position: relative; left: -30px">通 过
+            </el-button>
+            <el-button type="danger" @click="dismiss(form.isId)" style="position: relative; left: 30px">驳 回
+            </el-button>
+          </div>
+        </center>
+      </el-form>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import {
   addKcinventory,
-  delKcinventory, findAllHpGoods, findAllUser, findIsId,
+  delKcinventory,
+  findAllHpGoods,
+  findAllUser,
+  findIsId,
+  findSheetStatus,
   findWareHouse,
   genIsCode,
   getKcinventory,
   listKcinventory,
-  updateKcinventory
+  updateKcinventory,
+  updateSheetStatus
 } from "@/api/kcinventory/kcinventory";
+import {parseTime} from "@/utils/ruoyi";
 
 export default {
   name: "Kcinventory",
   dicts: ['is_result', 'is_type', 'out_status', 'in_status', 'inventory_status'],
   data() {
     return {
+      drawer: false,
+      direction: 'rtl',
       //货品
-      allHpGoods : [],
+      allHpGoods: [],
       //用户
-      allUser : [],
+      allUser: [],
       //仓库
       WareHouse: [],
       // 遮罩层
@@ -462,6 +563,7 @@ export default {
     this.findAllHpGoods();
   },
   methods: {
+    parseTime,
     /** 查询库存盘点列表 */
     getList() {
       this.loading = true;
@@ -485,6 +587,53 @@ export default {
       this.open = false;
       this.reset();
     },
+
+    //驳回盘点单
+    dismiss(isId) {
+      //this.$modal.msg(isId);
+      const stateCode = 2;
+      updateSheetStatus(isId, stateCode).then(response => {
+        console.info(response);
+        const res = response.code;
+        if (res === 200) {
+          this.$modal.msgSuccess("操作成功!");
+          this.drawer = false;
+          this.reset();
+          this.resetQuery();
+        }
+        if (res === 500) {
+          this.$modal.msgError("操作失败!");
+          this.drawer = false;
+          this.reset();
+        }
+      }).catch(error => {
+        this.$modal.msgError(error);
+      })
+    },
+
+    //盘点单审批通过
+    approved(isId) {
+      //this.$modal.msg(isId);
+      const stateCode = 1;
+      updateSheetStatus(isId, stateCode).then(response => {
+        console.info(response);
+        const res = response.code;
+        if (res === 200) {
+          this.$modal.msgSuccess("操作成功!");
+          this.drawer = false;
+          this.reset();
+          this.resetQuery();
+        }
+        if (res === 500) {
+          this.$modal.msgError("操作失败!");
+          this.drawer = false;
+          this.reset();
+        }
+      }).catch(error => {
+        this.$modal.msgError(error);
+      })
+    },
+
     // 表单重置
     reset() {
       this.form = {
@@ -544,6 +693,7 @@ export default {
 
     },
     /** 修改按钮操作 */
+    //TODO: 在这里添加盘点单状态逻辑判断,已完成的盘点单不能修改
     handleUpdate(row) {
       this.reset();
       const isId = row.isId || this.ids
@@ -553,6 +703,41 @@ export default {
         this.open = true;
         this.title = "修改库存盘点";
       });
+    },
+    /** 审核按钮操作 */
+    /* 0:待审核 1:审核通过 2:驳回 3:已完成  */
+    handleExam(row) {
+      this.reset();
+      const isId = row.isId || this.ids;
+      findSheetStatus(isId).then(response => {
+        const status = response.data;
+        let message = "";
+        /* 如果订单已完成或者已经审核 */
+        if (status === 1 || status === 3) {
+          message = status === 1 ? "此单已经审核!" : "此单已经完成!";
+          this.$modal.msgSuccess(message);
+        } else if (status === 0 || status === 2) {
+          message = status === 0 ? "初单审核!" : "驳回单重新审核";
+          this.$modal.msg(message);
+          getKcinventory(isId).then(response => {
+            const {data} = response;
+            this.form = data;
+            this.crkIsDetailsList = data.crkIsDetailsList;
+            this.drawer = true;
+          });
+        } else {
+          this.$modal.msgError("未知状态!");
+        }
+      });
+    },
+
+
+    //关闭抽屉
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done();
+        })
     },
     /** 提交按钮 */
     submitForm() {
@@ -655,6 +840,7 @@ export default {
         this.allHpGoods = response.data;
       })
     },
+
 
   }
 };

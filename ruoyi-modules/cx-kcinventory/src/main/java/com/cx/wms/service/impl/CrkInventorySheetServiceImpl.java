@@ -7,6 +7,7 @@ import com.cx.wms.utils.NumberGenerator;
 import com.ruoyi.common.core.utils.DateUtils;
 import com.ruoyi.common.core.utils.StringUtils;
 import com.ruoyi.common.security.utils.SecurityUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.List;
  * @date 2023-12-14
  */
 @Service
+@Transactional
 public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
     @Autowired
     private CrkInventorySheetMapper crkInventorySheetMapper;
@@ -176,5 +178,17 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
     @Override
     public List<HpGood> findAllHpGoods() {
         return crkInventorySheetMapper.findAllHpGoods();
+    }
+
+    //查询盘点单状态
+    @Override
+    public Integer findSheetStatus(Integer isId) {
+        return crkInventorySheetMapper.findSheetStatus(isId);
+    }
+
+    //更新盘点单状态
+    @Override
+    public Integer updateSheetStatus(@Param("isId")Integer isId, @Param("stateCode")Integer stateCode) {
+        return crkInventorySheetMapper.updateSheetStatus(isId,stateCode);
     }
 }

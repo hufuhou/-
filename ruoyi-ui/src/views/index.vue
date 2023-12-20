@@ -4,6 +4,7 @@
       <el-col :sm="24" :lg="24">
         <blockquote class="text-warning" style="font-size: 14px">
           <h1>😎创鑫仓储管理系统😎</h1>
+          <p>你说对，但原神，米自研，冒险游，提瓦特，神选中，授神眼，引元素。扮角色，邂同伴，击强敌，找亲人，掘真相。</p>
         </blockquote>
         <hr/>
       </el-col>
@@ -87,19 +88,19 @@
     </el-row>
     <el-divider/>
     <el-row :gutter="20">
-      <el-col :xs="24" :sm="24" :md="12" :lg="8">
+      <el-col :xs="25" :sm="25" :md="14" :lg="10">
         <el-card class="update-log">
-          <div slot="header" class="clearfix">
-            <span>捐赠支持</span>
+          <div slot="header" class="clearfix" style="text-align: center">
+            <span style="font-size: 18px;font-family :'Leelawadee UI'"> 创鑫 CX-WMS </span>
           </div>
-          <div class="body">
+          <div class="body" style="text-align: center">
             <img
-              src="@/assets/images/pay.png"
-              alt="donate"
-              width="100%"
+              src="@/assets/logo/logo.png"
+              alt="LOGO!!!"
+              width="500"
             />
             <span style="display: inline-block; height: 30px; line-height: 30px"
-            >你可以请若依作者喝杯咖啡表示鼓励</span
+            >Rhodes Island Pharmaceutical Inc.</span
             >
           </div>
         </el-card>
@@ -118,6 +119,30 @@
           </div>
         </el-card>
       </el-col>
+      <el-col :xs="24" :sm="24" :md="12" :lg="8">
+        <el-card>
+          <div class="body" style="text-align: center">
+            <video
+              src="@/assets/video/iiilab_video.mp4"
+              width="100%"
+            />
+            <span
+              style="display: inline-block; height: 30px; line-height: 30px;font-size: 16px">哈哈,你也想...嘛?</span>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :xs="24" :sm="24" :md="12" :lg="8">
+        <el-card>
+          <div class="body" style="text-align: center">
+            <video
+              src="@/assets/gif/yslogo.jpeg"
+              width="100%"
+            />
+            <span
+              style="display: inline-block; height: 30px; line-height: 30px;font-size: 16px">原神🤪👉🏻📱启动👐🏻!</span>
+          </div>
+        </el-card>
+      </el-col>
     </el-row>
 
   </div>
@@ -129,7 +154,7 @@ export default {
   data() {
     return {
       // 版本号+
-      version: "1.0.0",
+      version: "1.1.4.514 獣の先祖特別版",
     };
   },
   methods: {

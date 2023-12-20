@@ -9,6 +9,7 @@ import com.ruoyi.common.core.web.page.TableDataInfo;
 import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -142,6 +143,7 @@ public class CrkInventorySheetController extends BaseController {
     public AjaxResult findAllHpGoods() {
         return new AjaxResult(200, "获取成功", crkInventorySheetService.findAllHpGoods());
     }
+
     /**
      * 查询findIsId
      *
@@ -150,6 +152,28 @@ public class CrkInventorySheetController extends BaseController {
     @GetMapping("/findIsId")
     public AjaxResult findIsId() {
         return new AjaxResult(200, "获取成功", crkInventorySheetService.findIsId());
+    }
+
+    /**
+     * 查询盘点单状态
+     *
+     * @return IsId
+     */
+    @GetMapping("/findSheetStatus/{isId}")
+    public AjaxResult findSheetStatus(@PathVariable Integer isId) {
+        return new AjaxResult(200, "获取成功", crkInventorySheetService.findSheetStatus(isId));
+    }
+
+    /**
+     * 更新盘点单状态
+     *
+     * @param isId      盘点单id
+     * @param stateCode 更新状态码
+     */
+    @PutMapping("/updateSheetStatus")
+    public AjaxResult updateSheetStatus(@Param("isId") Integer isId, @Param("stateCode") Integer stateCode) {
+        System.out.println("isId:" + isId + "   " + "stateCode+" + stateCode);
+        return toAjax(crkInventorySheetService.updateSheetStatus(isId, stateCode));
     }
 
 

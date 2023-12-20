@@ -4,6 +4,7 @@ import com.cx.wms.domain.CrkInventorySheet;
 import com.cx.wms.domain.HpGood;
 import com.cx.wms.domain.User;
 import com.cx.wms.domain.WareHouse;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -78,7 +79,15 @@ public interface ICrkInventorySheetService {
      */
     public List<WareHouse> findWareHouse();
 
+    //查询全部用户
     public List<User> findAllUser();
 
+    //查询货品
     public List<HpGood> findAllHpGoods();
+
+    //查询盘点单状态
+    public Integer findSheetStatus(Integer isId);
+
+    //更新盘点单状态
+    public Integer updateSheetStatus(@Param("isId")Integer isId, @Param("stateCode")Integer stateCode);
 }

@@ -82,7 +82,7 @@ public class CrkInventorySheet extends BaseEntity {
     /**
      * 关联用户表（盘点经办人）
      */
-    @Excel(name = "关联用户表", readConverterExp = "盘=点经办人")
+    @Excel(name = "关联用户表", readConverterExp = "盘点经办人")
     private Long isManager;
 
     /**
@@ -91,10 +91,24 @@ public class CrkInventorySheet extends BaseEntity {
     @Excel(name = "0：存在；1：已删除，不存在")
     private Integer isDelte;
 
+    /**
+     * 0:待审核 1:审核通过 2:驳回 3:已完成
+     */
+    @Excel(name = "盘点单状态")
+    private Integer SheetStatus;
+
     private String create_user_name;
     private String update_user_name;
     private String warehouseName;
     private String manager;
+
+    public Integer getSheetStatus() {
+        return SheetStatus;
+    }
+
+    public void setSheetStatus(Integer sheetStatus) {
+        SheetStatus = sheetStatus;
+    }
 
     public String getManager() {
         return manager;
@@ -257,6 +271,7 @@ public class CrkInventorySheet extends BaseEntity {
                 .append("updateBy", getUpdateBy())
                 .append("updateTime", getUpdateTime())
                 .append("isDelte", getIsDelte())
+                .append("SheetStatus", getSheetStatus())
                 .append("create_user_name", getCreate_user_name())
                 .append("update_user_name", getUpdate_user_name())
                 .append("warehouseName", getWarehouseName())
