@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.crkgl.mapper.CrkInboundManagementMapper">
+    
+    <resultMap type="CrkInboundManagement" id="CrkInboundManagementResult">
+        <result property="inId"    column="in_id"    />
+        <result property="inCode"    column="in_code"    />
+        <result property="inType"    column="in_type"    />
+        <result property="wId"    column="w_id"    />
+        <result property="status"    column="status"    />
+        <result property="sId"    column="s_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="contactDetails"    column="contact_details"    />
+        <result property="iS"    column="i_s"    />
+        <result property="wManager"    column="w_manager"    />
+        <result property="remark"    column="remark"    />
+        <result property="reviewer"    column="reviewer"    />
+        <result property="reviewerTime"    column="reviewer_time"    />
+        <result property="storageDate"    column="storage_date"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelte"    column="is_delte"    />
+    </resultMap>
+
+    <resultMap id="CrkInboundManagementCrkImDetailsResult" type="CrkInboundManagement" extends="CrkInboundManagementResult">
+        <collection property="crkImDetailsList" notNullColumn="sub_imd_id" javaType="java.util.List" resultMap="CrkImDetailsResult" />
+    </resultMap>
+
+    <resultMap type="CrkImDetails" id="CrkImDetailsResult">
+        <result property="imdId"    column="sub_imd_id"    />
+        <result property="inId"    column="sub_in_id"    />
+        <result property="inCode"    column="sub_in_code"    />
+        <result property="odId"    column="sub_od_id"    />
+        <result property="gCode"    column="sub_g_code"    />
+        <result property="gId"    column="sub_g_id"    />
+        <result property="gName"    column="g_name"    />
+        <result property="gUnit"    column="g_unit"    />
+        <result property="specCode"    column="spec_code"    />
+        <result property="purchaseQuantity"    column="purchase_quantity"    />
+        <result property="quantityInStock"    column="sub_quantity_in_stock"    />
+        <result property="unstockedQuantity"    column="sub_unstocked_quantity"    />
+        <result property="slId"    column="sub_sl_id"    />
+        <result property="money"    column="sub_money"    />
+        <result property="thisQuantity"    column="sub_this_quantity"    />
+        <result property="productionDate"    column="sub_production_date"    />
+        <result property="barcode"    column="sub_barcode"    />
+        <result property="remark"    column="sub_remark"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+        <result property="isDelte"    column="sub_is_delte"    />
+    </resultMap>
+
+    <resultMap type="CrkImDetails" id="CrkImDetailsResult1">
+        <result property="imdId"    column="sub_imd_id"    />
+        <result property="inId"    column="sub_in_id"    />
+        <result property="inCode"    column="sub_in_code"    />
+        <result property="odId"    column="sub_od_id"    />
+        <result property="gCode"    column="sub_g_code"    />
+        <result property="gId"    column="sub_g_id"    />
+        <result property="quantityInStock"    column="sub_quantity_in_stock"    />
+        <result property="unstockedQuantity"    column="sub_unstocked_quantity"    />
+        <result property="slId"    column="sub_sl_id"    />
+        <result property="money"    column="sub_money"    />
+        <result property="thisQuantity"    column="sub_this_quantity"    />
+        <result property="productionDate"    column="sub_production_date"    />
+        <result property="barcode"    column="sub_barcode"    />
+        <result property="remark"    column="sub_remark"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+        <result property="isDelte"    column="sub_is_delte"    />
+    </resultMap>
+
+    <resultMap type="OrderPurchaseDetails" id="OrderPurchaseDetailsResult">
+        <result property="gId"    column="g_id"    />
+        <result property="pdId"    column="pd_id"    />
+        <result property="poCode"    column="po_code"    />
+        <result property="gCode"    column="g_code"    />
+        <result property="purchaseQuantity"    column="purchase_quantity"    />
+        <result property="gtId"    column="gt_id"    />
+        <result property="gName"    column="g_name"    />
+        <result property="gUnit"    column="g_unit"    />
+        <result property="specCode"    column="spec_code"    />
+    </resultMap>
+
+    <sql id="selectCrkInboundManagementVo">
+        select in_id, in_code, in_type, w_id, status, s_id, person_id, contact_details, i_s, w_manager, remark, reviewer, reviewer_time, storage_date, order_id, create_by, create_time, update_by, update_time, is_delte from crk_inbound_management
+    </sql>
+
+    <select id="getCrkInboundManagementBySlCode" resultMap="CrkInboundManagementResult">
+        select in_code from crk_inbound_management order by in_id desc limit 1;
+    </select>
+
+    <select id="InventoryQuantity" parameterType="string" resultType="long">
+        SELECT CASE WHEN sum(this_quantity) IS NULL THEN 0 ELSE sum(this_quantity) END AS inventory_quantity
+        FROM crk_im_details
+        WHERE g_code = #{gCode}
+    </select>
+
+    <select id="selectCrkInboundManagementList" parameterType="CrkInboundManagement" resultMap="CrkInboundManagementResult">
+        <include refid="selectCrkInboundManagementVo"/>
+        <where>  
+            <if test="inCode != null  and inCode != ''"> and in_code = #{inCode}</if>
+            <if test="inType != null  and inType != ''"> and in_type = #{inType}</if>
+            <if test="wId != null "> and w_id = #{wId}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectCrkInboundManagementList1" resultMap="CrkInboundManagementResult" >
+        <include refid="selectCrkInboundManagementVo"/>
+        <where>
+            <if test="list != null and list.size() > 0">
+                AND in_code IN
+                <foreach item="item" collection="list" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCrkImDetails"  resultMap="CrkImDetailsResult">
+        select imd_id as sub_imd_id, in_id as sub_in_id, in_code as sub_in_code, od_id as sub_od_id, g_code as sub_g_code,g_id as sub_g_id, quantity_in_stock as sub_quantity_in_stock, unstocked_quantity as sub_unstocked_quantityc,money as sub_money, this_quantity as sub_this_quantity, production_date as sub_production_date, barcode as sub_barcode, remark as sub_remark, create_by as sub_create_by, create_time as sub_create_time, update_by as sub_update_by, update_time as sub_update_time, is_delte as sub_is_delte
+        from crk_im_details
+        <where>
+            <if test="array != null and array.length > 0">
+                AND in_id IN
+                <foreach item="item" collection="array" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCrkImDetails1" parameterType="Long" resultMap="CrkImDetailsResult1">
+        select imd_id as sub_imd_id, in_id as sub_in_id, in_code as sub_in_code, od_id as sub_od_id, g_code as sub_g_code,g_id as sub_g_id, quantity_in_stock as sub_quantity_in_stock, unstocked_quantity as sub_unstocked_quantity, sl_id as sub_sl_id,money as sub_money, this_quantity as sub_this_quantity, production_date as sub_production_date, barcode as sub_barcode, remark as sub_remark, create_by as sub_create_by, create_time as sub_create_time, update_by as sub_update_by, update_time as sub_update_time, is_delte as sub_is_delte
+        from crk_im_details  where in_id = #{inId}
+    </select>
+
+    <select id="selectCrkImDetail" resultMap="CrkImDetailsResult">
+        select imd_id as sub_imd_id, in_id as sub_in_id, in_code as sub_in_code, od_id as sub_od_id, g_code as sub_g_code,g_id as sub_g_id, quantity_in_stock as sub_quantity_in_stock, unstocked_quantity as sub_unstocked_quantity, sl_id as sub_sl_id,money as sub_money, this_quantity as sub_this_quantity, production_date as sub_production_date, barcode as sub_barcode, remark as sub_remark, create_by as sub_create_by, create_time as sub_create_time, update_by as sub_update_by, update_time as sub_update_time, is_delte as sub_is_delte
+        from crk_im_details
+        <where>
+            <if test="list != null and list.size() > 0">
+                AND in_id IN
+                <foreach item="item" collection="list" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCrkInboundManagementByInId" parameterType="Long" resultMap="CrkInboundManagementCrkImDetailsResult">
+        select a.in_id, a.in_code, a.in_type, a.w_id, a.status, a.s_id, a.person_id, a.contact_details, a.i_s, a.w_manager, a.remark, a.reviewer, a.reviewer_time, a.storage_date, a.order_id, a.create_by, a.create_time, a.update_by, a.update_time, a.is_delte,
+ b.imd_id as sub_imd_id, b.in_id as sub_in_id, b.in_code as sub_in_code, b.od_id as sub_od_id, b.g_code as sub_g_code ,b.g_id as sub_g_id, b.quantity_in_stock as sub_quantity_in_stock, b.unstocked_quantity as sub_unstocked_quantity, b.sl_id as sub_sl_id, b.this_quantity as sub_this_quantity, b.production_date as sub_production_date, b.barcode as sub_barcode, b.remark as sub_remark, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.is_delte as sub_is_delte,
+ c.purchase_quantity, c.money as sub_money,
+d.g_name, d.g_unit, d.spec_code
+        from crk_inbound_management a
+        left join crk_im_details b on b.in_id = a.in_id
+        left join order_purchase_details c on c.g_code = b.g_code and b.od_id=c.po_code
+        left join hp_goods d on d.g_id = b.g_id
+        where a.in_id = #{inId}
+    </select>
+
+    <select id="selectInventoryDetails" resultMap="OrderPurchaseDetailsResult" parameterType="string">
+        SELECT a.pd_id, a.po_code, a.g_code, a.purchase_quantity, a.money, a.remark,
+        b.g_id, b.gt_id, b.g_name, b.g_unit, b.spec_code
+        FROM order_purchase_details a
+        LEFT JOIN hp_goods b ON b.g_code = a.g_code
+        LEFT JOIN order_purchase_order c ON c.po_code = a.po_code
+        <where>
+            <if test="poCode != null and poCode != ''">
+                AND a.po_code = #{poCode}
+            </if>
+            <if test="gName != null and gName != ''">
+                AND b.g_name = #{gName}
+            </if>
+            <if test="gUnit != null and gUnit != ''">
+                AND b.g_unit = #{gUnit}
+            </if>
+            AND c.status = 2
+        </where>
+    </select>
+
+    <insert id="insertCrkInboundManagement" parameterType="CrkInboundManagement" useGeneratedKeys="true" keyProperty="inId">
+        insert into crk_inbound_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="inId != null">in_id,</if>
+            <if test="inCode != null and inCode != ''">in_code,</if>
+            <if test="inType != null and inType != ''">in_type,</if>
+            <if test="wId != null">w_id,</if>
+            <if test="status != null">status,</if>
+            <if test="sId != null">s_id,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="contactDetails != null and contactDetails != ''">contact_details,</if>
+            <if test="iS != null">i_s,</if>
+            <if test="wManager != null">w_manager,</if>
+            <if test="remark != null">remark,</if>
+            <if test="reviewer != null">reviewer,</if>
+            <if test="reviewerTime != null">reviewer_time,</if>
+            <if test="storageDate != null">storage_date,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="inId != null">#{inId},</if>
+            <if test="inCode != null and inCode != ''">#{inCode},</if>
+            <if test="inType != null and inType != ''">#{inType},</if>
+            <if test="wId != null">#{wId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="sId != null">#{sId},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="contactDetails != null and contactDetails != ''">#{contactDetails},</if>
+            <if test="iS != null">#{iS},</if>
+            <if test="wManager != null">#{wManager},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="reviewer != null">#{reviewer},</if>
+            <if test="reviewerTime != null">#{reviewerTime},</if>
+            <if test="storageDate != null">#{storageDate},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCrkInboundManagement" parameterType="CrkInboundManagement">
+        update crk_inbound_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="inCode != null and inCode != ''">in_code = #{inCode},</if>
+            <if test="inType != null and inType != ''">in_type = #{inType},</if>
+            <if test="wId != null">w_id = #{wId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="sId != null">s_id = #{sId},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="contactDetails != null and contactDetails != ''">contact_details = #{contactDetails},</if>
+            <if test="iS != null">i_s = #{iS},</if>
+            <if test="wManager != null">w_manager = #{wManager},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="reviewer != null">reviewer = #{reviewer},</if>
+            <if test="reviewerTime != null">reviewer_time = #{reviewerTime},</if>
+            <if test="storageDate != null">storage_date = #{storageDate},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where in_id = #{inId}
+    </update>
+
+    <update id="InventoryReview" parameterType="CrkInboundManagement">
+        <choose>
+            <when test="isApproved">
+                update crk_inbound_management set status = 3 where in_id = #{inId}
+            </when>
+            <otherwise>
+                update crk_inbound_management set status = 2 where in_id = #{inId}
+            </otherwise>
+        </choose>
+    </update>
+
+    <update id="WithdrawalStorage" parameterType="Long">
+        update crk_inbound_management set status =1  where in_id = #{inId}
+    </update>
+
+    <update id="InventoryReviews">
+        <choose>
+            <when test="isApproved">
+                <foreach item="item" collection="crkInboundManagement" separator=";">
+                    update crk_inbound_management
+                    set status = 3,
+                    reviewer = #{item.reviewer},
+                    reviewer_time = #{item.reviewerTime}
+                    where in_id = #{item.inId}
+                </foreach>
+            </when>
+            <otherwise>
+                <foreach item="item" collection="crkInboundManagement" separator=";">
+                    update crk_inbound_management
+                    set status = 2,
+                    reviewer = #{item.reviewer},
+                    reviewer_time = #{item.reviewerTime}
+                    where in_id = #{item.inId}
+                </foreach>
+            </otherwise>
+        </choose>
+    </update>
+
+    <update id="WithdrawalStorages" parameterType="String">
+        update crk_inbound_management set status =1 , reviewer =null,
+        reviewer_time =null where in_id in
+        <foreach item="inIds" collection="list" open="(" separator="," close=")">
+            #{inIds}
+        </foreach>
+    </update>
+
+    <update id="productReviews" >
+        update tz_stock set item_quantity = number_plans  where
+        <foreach item="item" collection="item" open="(" separator="," close=")">
+            g_id = #{item.gId} and sl_id = #{item.slId}
+        </foreach>
+    </update>
+
+    <update id="reduceReviews" parameterType="String">
+        update tz_stock set item_quantity = 0  where
+        <foreach item="item" collection="item" open="(" separator="," close=")">
+            g_id = #{item.gId} and sl_id = #{item.slId}
+        </foreach>
+    </update>
+
+    <delete id="deleteCrkInboundManagementByInId" parameterType="Long">
+        delete from crk_inbound_management where in_id = #{inId}
+    </delete>
+
+    <delete id="deleteCrkInboundManagementByInIds" parameterType="String">
+        delete from crk_inbound_management where in_id in 
+        <foreach item="inId" collection="array" open="(" separator="," close=")">
+            #{inId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteReviews">
+        delete from tz_stock where
+        <foreach item="item" collection="item" separator=" OR " >
+            (g_id = #{item.gId} and sl_id = #{item.slId})
+        </foreach>
+    </delete>
+    
+    <delete id="deleteCrkImDetailsByInIds" parameterType="String">
+        delete from crk_im_details where in_id in 
+        <foreach item="inId" collection="array" open="(" separator="," close=")">
+            #{inId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteCrkImDetailsByInId" parameterType="Long">
+        delete from crk_im_details where in_id = #{inId}
+    </delete>
+
+    <insert id="batchCrkImDetails" parameterType="java.util.List">
+        insert into crk_im_details (imd_id, in_id, g_id, in_code, od_id, g_code, quantity_in_stock, unstocked_quantity, sl_id, money, this_quantity, production_date, barcode, remark, create_by, create_time, update_by, update_time, is_delte) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.imdId}, #{item.inId}, #{item.gId}, #{item.inCode}, #{item.odId}, #{item.gCode}, #{item.quantityInStock}, #{item.unstockedQuantity}, #{item.slId}, #{item.money}, #{item.thisQuantity}, #{item.productionDate}, #{item.barcode}, #{item.remark}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.isDelte})
+        </foreach>
+    </insert>
+    <insert id="addInventory">
+        insert into tz_stock(w_id,sl_id,item_quantity,number_plans,g_id,remark,create_bys,create_time)values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.wId}, #{item.slId}, #{item.itemQuantity}, #{item.numberPlans}, #{item.gId}, #{item.remark},  #{item.createBys}, #{item.createTime})
+        </foreach>
+    </insert>
+</mapper>

@@ -316,6 +316,7 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      names: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -468,6 +469,7 @@ export default {
   // 多选框选中数据
   handleSelectionChange(selection) {
     this.ids = selection.map(item => item.slId)
+    this.names=selection.map(item=> item.slName)
     this.single = selection.length !== 1
     this.multiple = !selection.length
   },
@@ -510,7 +512,8 @@ export default {
   /** 删除按钮操作 */
   handleDelete(row) {
     const slIds = row.slId || this.ids;
-    this.$modal.confirm('是否确认删除库位"' + row.slName + '"的数据项？').then(function () {
+    const slName = row.slName || this.names;
+    this.$modal.confirm('是否确认删除库位"' + slName + '"的数据项？').then(function () {
       return delLocation(slIds);
     }).then(() => {
       this.getList();

@@ -285,20 +285,31 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 
 
-// 检查货品类型是否存在关联的货品信息
+// 检查仓库是否存在关联的库位信息
 function checkKwExist(wId) {
   return new Promise((resolve, reject) => {
-    // 根据货品类型ID查询相关的货品信息
+    // 根据货品仓库ID查询相关的库位信息
     listLocation(wId)
       .then(response => {
         const kWList = response.rows.filter(Location => Location.wId === wId);
         const exists = kWList.length > 0;
-        resolve({exists, kWList});
+        resolve({ exists, kWList });
       })
       .catch(error => {
         console.error(error);
         reject(error);
       });
+  });
+}
+
+// 检查仓库是否存在关联的库位信息（数组中只要有一个库位信息，仓库就不能删除）
+function checkKwExistForDeletion(wIdList) {
+  return Promise.all(
+    wIdList.map(wId => checkKwExist(wId))
+  ).then(results => {
+    const exists = results.some(result => result.exists);
+    const kWList = results.flatMap(result => result.kWList);
+    return { exists, kWList };
   });
 }
 
@@ -483,9 +494,9 @@ export default {
       this.names=selection.map(item=> item.wName)
       this.single = selection.length !== 1
       this.multiple = !selection.length
-      this.enable = !selection.length
-      this.deactivate = !selection.length
-      this.lock = !selection.length
+      this.enable = selection.some(item => item.wStatus ===0);
+      this.deactivate = selection.some(item => item.wStatus === 1);
+      this.lock = selection.some(item => item.wStatus === 2);
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -535,31 +546,41 @@ export default {
     //   });
     // },
     handleDelete(row) {
-      // 先检查仓库是否有关联的库位信息
-      checkKwExist(row.wId)
       const wIds = row.wId || this.ids;
-      const wName = row.wName || this.names
-        .then(response => {
-          if (response.exists) {
-            // 仓库有关联的库位信息，提示用户先删除库位
-            this.$modal.alert('该仓库下存在库位信息，请先删除相关库位信息。');
-          } else {
-            // 仓库没有关联的库位信息，确认删除操作
-            this.$modal.confirm('是否确认删除仓库"' + wName + '"的数据项？')
-              .then(() => {
-                return delWarehouse(wIds);
-              })
-              .then(() => {
-                this.getList();
-                this.$modal.msgSuccess('删除成功');
-              })
-              .catch(() => {
-              });
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
+      const wName = row.wName || this.names;
+
+      const performDelete = () => {
+        this.$modal.confirm('是否确认删除仓库"' + wName + '"的数据项？')
+          .then(() => {
+            return delWarehouse(wIds);
+          })
+          .then(() => {
+            this.getList();
+            this.$modal.msgSuccess('删除成功');
+          })
+          .catch(() => {
+          });
+      };
+
+      const checkExistAndDelete = (checkMethod) => {
+        checkMethod(wIds)
+          .then(response => {
+            if (response.exists) {
+              this.$modal.alert('该仓库下存在库位信息，请先删除相关库位信息。');
+            } else {
+              performDelete();
+            }
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      };
+
+      if (wIds === row.wId) {
+        checkExistAndDelete(checkKwExist);
+      } else {
+        checkExistAndDelete(checkKwExistForDeletion);
+      }
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -568,9 +589,9 @@ export default {
       }, `warehouse_${new Date().getTime()}.xlsx`)
     },
     /** 启动按钮操作 */
-    handleEnable(row) {
-      const wIds = row.wId || this.ids;
-      const wName = row.wName || this.names;
+    handleEnable() {
+      const wIds = this.ids;
+      const wName = this.names;
       this.$modal.confirm('是否启用仓库为"' + wName + '"的数据项？').then(function () {
         return enableWarehouse(wIds);
       }).then(() => {
@@ -579,10 +600,10 @@ export default {
       }).catch(() => {
       });
     },
-    /** 启动按钮操作 */
-    handleDeactivate(row) {
-      const wIds = row.wId || this.ids;
-      const wName = row.wName || this.names;
+    /** 停用按钮操作 */
+    handleDeactivate() {
+      const wIds =  this.ids;
+      const wName =  this.names;
       this.$modal.confirm('是否停用仓库为"' + wName + '"的数据项？').then(function () {
         return deactivateWarehouse(wIds);
       }).then(() => {
@@ -591,10 +612,10 @@ export default {
       }).catch(() => {
       });
     },
-    /** 启动按钮操作 */
-    handleLock(row) {
-      const wIds = row.wId || this.ids;
-      const wName = row.wName || this.names;
+    /** 锁定按钮操作 */
+    handleLock() {
+      const wIds = this.ids;
+      const wName = this.names;
       this.$modal.confirm('是否锁定仓库为"' + wName + '"的数据项？').then(function () {
         return lockWarehouse(wIds);
       }).then(() => {

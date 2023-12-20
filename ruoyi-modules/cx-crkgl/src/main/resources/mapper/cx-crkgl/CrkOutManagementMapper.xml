@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.crkgl.mapper.CrkOutManagementMapper">
+    
+    <resultMap type="CrkOutManagement" id="CrkOutManagementResult">
+        <result property="outId"    column="out_id"    />
+        <result property="outCode"    column="out_code"    />
+        <result property="outType"    column="out_type"    />
+        <result property="outStatus"    column="out_status"    />
+        <result property="outDate"    column="out_date"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="cId"    column="c_id"    />
+        <result property="personId"    column="person_id"    />
+        <result property="contactDetails"    column="contact_details"    />
+        <result property="remark"    column="remark"    />
+        <result property="outManager"    column="out_manager"    />
+        <result property="wId"    column="w_id"    />
+        <result property="reviewer"    column="reviewer"    />
+        <result property="reviewerTime"    column="reviewer_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelte"    column="is_delte"    />
+    </resultMap>
+
+    <resultMap id="CrkOutManagementCrkOutDetailsResult" type="CrkOutManagement" extends="CrkOutManagementResult">
+        <collection property="crkOutDetailsList" notNullColumn="sub_om_id" javaType="java.util.List" resultMap="CrkOutDetailsResult" />
+    </resultMap>
+
+    <resultMap type="CrkOutDetails" id="CrkOutDetailsResult">
+        <result property="omId"    column="sub_om_id"    />
+        <result property="outOutId"    column="sub_out_out_id"    />
+        <result property="outId"    column="sub_out_id"    />
+        <result property="orderId"    column="sub_order_id"    />
+        <result property="unit"    column="sub_unit"    />
+        <result property="slId"    column="sub_sl_id"    />
+        <result property="itemQuantity"    column="sub_item_quantity"    />
+        <result property="quantityShipped"    column="sub_quantity_shipped"    />
+        <result property="undeliveredQuantity"    column="sub_undelivered_quantity"    />
+        <result property="currOutQuantity"    column="sub_curr_out_quantity"    />
+        <result property="batchNumber"    column="sub_batch_number"    />
+        <result property="remark"    column="sub_remark"    />
+        <result property="barcode"    column="sub_barcode"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+        <result property="isDelte"    column="sub_is_delte"    />
+    </resultMap>
+
+    <sql id="selectCrkOutManagementVo">
+        select out_id, out_code, out_type, out_status, out_date, order_id, c_id, person_id, contact_details, remark, out_manager, w_id, reviewer, reviewer_time, create_by, create_time, update_by, update_time, is_delte from crk_out_management
+    </sql>
+
+    <select id="getCrkOutManagementBySlCode" resultMap="CrkOutManagementResult">
+        select out_code from crk_out_management order by out_code desc limit 1;
+    </select>
+
+    <select id="selectCrkOutManagementList" parameterType="CrkOutManagement" resultMap="CrkOutManagementResult">
+        <include refid="selectCrkOutManagementVo"/>
+        <where>  
+            <if test="outCode != null  and outCode != ''"> and out_code = #{outCode}</if>
+            <if test="outType != null  and outType != ''"> and out_type = #{outType}</if>
+            <if test="outStatus != null "> and out_status = #{outStatus}</if>
+            <if test="wId != null "> and w_id = #{wId}</if>
+        </where>
+    </select>
+    
+    <select id="selectCrkOutManagementByOutId" parameterType="Long" resultMap="CrkOutManagementCrkOutDetailsResult">
+        select a.out_id, a.out_code, a.out_type, a.out_status, a.out_date, a.order_id, a.c_id, a.person_id, a.contact_details, a.remark, a.out_manager, a.w_id, a.reviewer, a.reviewer_time, a.create_by, a.create_time, a.update_by, a.update_time, a.is_delte,
+ b.om_id as sub_om_id, b.out_out_id as sub_out_out_id, b.out_id as sub_out_id, b.order_id as sub_order_id, b.unit as sub_unit, b.item_quantity as sub_item_quantity, b.quantity_shipped as sub_quantity_shipped, b.undelivered_quantity as sub_undelivered_quantity, b.curr_out_quantity as sub_curr_out_quantity, b.batch_number as sub_batch_number, b.remark as sub_remark, b.barcode as sub_barcode, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.is_delte as sub_is_delte, sl_id as sub_sl_id
+        from crk_out_management a
+        left join crk_out_details b on b.out_id = a.out_id
+        where a.out_id = #{outId}
+    </select>
+        
+    <insert id="insertCrkOutManagement" parameterType="CrkOutManagement">
+        insert into crk_out_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="outId != null">out_id,</if>
+            <if test="outCode != null and outCode != ''">out_code,</if>
+            <if test="outType != null and outType != ''">out_type,</if>
+            <if test="outStatus != null">out_status,</if>
+            <if test="outDate != null">out_date,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="cId != null">c_id,</if>
+            <if test="personId != null">person_id,</if>
+            <if test="contactDetails != null and contactDetails != ''">contact_details,</if>
+            <if test="remark != null">remark,</if>
+            <if test="outManager != null">out_manager,</if>
+            <if test="wId != null">w_id,</if>
+            <if test="reviewer != null">reviewer,</if>
+            <if test="reviewerTime != null">reviewer_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="outId != null">#{outId},</if>
+            <if test="outCode != null and outCode != ''">#{outCode},</if>
+            <if test="outType != null and outType != ''">#{outType},</if>
+            <if test="outStatus != null">#{outStatus},</if>
+            <if test="outDate != null">#{outDate},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="cId != null">#{cId},</if>
+            <if test="personId != null">#{personId},</if>
+            <if test="contactDetails != null and contactDetails != ''">#{contactDetails},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="outManager != null">#{outManager},</if>
+            <if test="wId != null">#{wId},</if>
+            <if test="reviewer != null">#{reviewer},</if>
+            <if test="reviewerTime != null">#{reviewerTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCrkOutManagement" parameterType="CrkOutManagement">
+        update crk_out_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="outCode != null and outCode != ''">out_code = #{outCode},</if>
+            <if test="outType != null and outType != ''">out_type = #{outType},</if>
+            <if test="outStatus != null">out_status = #{outStatus},</if>
+            <if test="outDate != null">out_date = #{outDate},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="cId != null">c_id = #{cId},</if>
+            <if test="personId != null">person_id = #{personId},</if>
+            <if test="contactDetails != null and contactDetails != ''">contact_details = #{contactDetails},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="outManager != null">out_manager = #{outManager},</if>
+            <if test="wId != null">w_id = #{wId},</if>
+            <if test="reviewer != null">reviewer = #{reviewer},</if>
+            <if test="reviewerTime != null">reviewer_time = #{reviewerTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where out_id = #{outId}
+    </update>
+
+    <delete id="deleteCrkOutManagementByOutId" parameterType="Long">
+        delete from crk_out_management where out_id = #{outId}
+    </delete>
+
+    <delete id="deleteCrkOutManagementByOutIds" parameterType="String">
+        delete from crk_out_management where out_id in 
+        <foreach item="outId" collection="array" open="(" separator="," close=")">
+            #{outId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteCrkOutDetailsByOutIds" parameterType="String">
+        delete from crk_out_details where out_id in 
+        <foreach item="outId" collection="array" open="(" separator="," close=")">
+            #{outId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteCrkOutDetailsByOutId" parameterType="Long">
+        delete from crk_out_details where out_id = #{outId}
+    </delete>
+
+    <insert id="batchCrkOutDetails">
+        insert into crk_out_details( om_id, out_out_id, out_id, order_id, unit, item_quantity, quantity_shipped, undelivered_quantity, curr_out_quantity, batch_number, remark, barcode, create_by, create_time, update_by, update_time, is_delte, sl_id)  values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.omId}, #{item.outOutId}, #{item.outId}, #{item.orderId}, #{item.unit}, #{item.itemQuantity}, #{item.quantityShipped}, #{item.undeliveredQuantity}, #{item.currOutQuantity}, #{item.batchNumber}, #{item.remark}, #{item.barcode}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.isDelte}, #{item.slId})
+        </foreach>
+    </insert>
+</mapper>

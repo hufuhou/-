@@ -241,12 +241,12 @@
         <el-form-item label="预警天数" prop="warningDays">
           <el-input v-model="form.warningDays" placeholder="请输入预警天数" />
         </el-form-item>
-        <el-form-item label="货品上限" prop="itemLimit">
-          <el-input v-model="form.itemLimit" placeholder="请输入货品上限" />
-        </el-form-item>
-        <el-form-item label="货品下限" prop="lowerLimit">
-          <el-input v-model="form.lowerLimit" placeholder="请输入货品下限" />
-        </el-form-item>
+<!--        <el-form-item label="货品上限" prop="itemLimit">-->
+<!--          <el-input v-model="form.itemLimit" placeholder="请输入货品上限" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="货品下限" prop="lowerLimit">-->
+<!--          <el-input v-model="form.lowerLimit" placeholder="请输入货品下限" />-->
+<!--        </el-form-item>-->
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -281,6 +281,7 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      names: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -439,6 +440,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.gId)
+      this.names=selection.map(item=> item.gName)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -481,7 +483,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const gIds = row.gId || this.ids;
-      this.$modal.confirm('是否确认删除货品"' + row.gName + '"的数据项？').then(function() {
+      const gName = row.gName || this.names
+      this.$modal.confirm('是否确认删除货品"' + gName + '"的数据项？').then(function() {
         return delGoods(gIds);
       }).then(() => {
         this.getList();
