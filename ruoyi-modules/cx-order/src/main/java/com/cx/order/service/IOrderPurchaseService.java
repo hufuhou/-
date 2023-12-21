@@ -62,7 +62,7 @@ public interface IOrderPurchaseService {
     public int deleteOrderPurchaseByPoId(Long poId);
 
     /**
-     * 生成供应商编码
+     * 生成进货编码
      */
     public OrderPurchase getPoCode();
 

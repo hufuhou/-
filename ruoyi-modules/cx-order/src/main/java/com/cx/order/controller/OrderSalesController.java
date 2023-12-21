@@ -2,7 +2,15 @@ package com.cx.order.controller;
 
 import java.util.List;
 import java.io.IOException;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
+
+import com.cx.order.domain.OrderPurchase;
+import com.cx.order.domain.OrderPurchaseDetails;
+import com.cx.order.domain.OrderSalesDetails;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,14 +32,13 @@ import com.ruoyi.common.core.web.page.TableDataInfo;
 
 /**
  * 销售订单Controller
- * 
+ *
  * @author LZA
  * @date 2023-12-19
  */
 @RestController
 @RequestMapping("/sales")
-public class OrderSalesController extends BaseController
-{
+public class OrderSalesController extends BaseController {
     @Autowired
     private IOrderSalesService orderSalesService;
 
@@ -40,8 +47,7 @@ public class OrderSalesController extends BaseController
      */
     @RequiresPermissions("order:sales:list")
     @GetMapping("/list")
-    public TableDataInfo list(OrderSales orderSales)
-    {
+    public TableDataInfo list(OrderSales orderSales) {
         startPage();
         List<OrderSales> list = orderSalesService.selectOrderSalesList(orderSales);
         return getDataTable(list);
@@ -53,8 +59,7 @@ public class OrderSalesController extends BaseController
     @RequiresPermissions("order:sales:export")
     @Log(title = "销售订单", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, OrderSales orderSales)
-    {
+    public void export(HttpServletResponse response, OrderSales orderSales) {
         List<OrderSales> list = orderSalesService.selectOrderSalesList(orderSales);
         ExcelUtil<OrderSales> util = new ExcelUtil<OrderSales>(OrderSales.class);
         util.exportExcel(response, list, "销售订单数据");
@@ -65,8 +70,7 @@ public class OrderSalesController extends BaseController
      */
     @RequiresPermissions("order:sales:query")
     @GetMapping(value = "/{sId}")
-    public AjaxResult getInfo(@PathVariable("sId") Long sId)
-    {
+    public AjaxResult getInfo(@PathVariable("sId") Long sId) {
         return success(orderSalesService.selectOrderSalesBySId(sId));
     }
 
@@ -76,9 +80,12 @@ public class OrderSalesController extends BaseController
     @RequiresPermissions("order:sales:add")
     @Log(title = "销售订单", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody OrderSales orderSales)
-    {
-        return toAjax(orderSalesService.insertOrderSales(orderSales));
+    public AjaxResult add(@RequestBody Map<String, Object> requestData) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OrderSales orderSales = mapper.convertValue(requestData.get("orderSales"), OrderSales.class);
+        List<OrderSalesDetails> orderSalesDetails = mapper.convertValue(requestData.get("orderSalesDetails"), TypeFactory.defaultInstance().constructCollectionType(List.class, OrderSalesDetails.class));
+        return toAjax(orderSalesService.insertOrderSales(orderSales, orderSalesDetails));
     }
 
     /**
@@ -87,8 +94,7 @@ public class OrderSalesController extends BaseController
     @RequiresPermissions("order:sales:edit")
     @Log(title = "销售订单", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody OrderSales orderSales)
-    {
+    public AjaxResult edit(@RequestBody OrderSales orderSales) {
         return toAjax(orderSalesService.updateOrderSales(orderSales));
     }
 
@@ -97,9 +103,16 @@ public class OrderSalesController extends BaseController
      */
     @RequiresPermissions("order:sales:remove")
     @Log(title = "销售订单", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{sIds}")
-    public AjaxResult remove(@PathVariable Long[] sIds)
-    {
+    @DeleteMapping("/{sIds}")
+    public AjaxResult remove(@PathVariable Long[] sIds) {
         return toAjax(orderSalesService.deleteOrderSalesBySIds(sIds));
+    }
+
+    /**
+     * 生成销售编码
+     */
+    @GetMapping("/getsCode")
+    public AjaxResult getsCode() {
+        return success(orderSalesService.getsCode());
     }
 }

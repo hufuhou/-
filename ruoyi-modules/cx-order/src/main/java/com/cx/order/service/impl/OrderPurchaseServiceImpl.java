@@ -156,7 +156,7 @@ public class OrderPurchaseServiceImpl implements IOrderPurchaseService {
 
     @Override
     public OrderPurchase getPoCode() {
-        //前缀 (客户)
+        //前缀 (进货)
         String prefix = "JH";
 
         OrderPurchase orderPurchase = orderPurchaseMapper.getPoCode();

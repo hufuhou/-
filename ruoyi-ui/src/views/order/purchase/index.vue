@@ -523,6 +523,8 @@ export default {
       oldCode: null,
       // 弹出层标题
       title: "",
+      // 数量默认为1
+      purchaseQuantity:1,
       // 是否显示弹出层
       open: false,
       openGoodsList: false,

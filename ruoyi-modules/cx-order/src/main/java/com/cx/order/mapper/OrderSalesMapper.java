@@ -1,6 +1,8 @@
 package com.cx.order.mapper;
 
 import java.util.List;
+
+import com.cx.order.domain.OrderPurchase;
 import com.cx.order.domain.OrderSales;
 
 /**
@@ -58,4 +60,9 @@ public interface OrderSalesMapper
      * @return 结果
      */
     public int deleteOrderSalesBySIds(Long[] sIds);
+
+    /**
+     * 生成进货编码
+     */
+    public OrderSales getsCode();
 }

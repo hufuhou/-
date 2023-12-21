@@ -1,7 +1,11 @@
 package com.cx.order.service;
 
 import java.util.List;
+
+import com.cx.order.domain.OrderPurchase;
+import com.cx.order.domain.OrderPurchaseDetails;
 import com.cx.order.domain.OrderSales;
+import com.cx.order.domain.OrderSalesDetails;
 
 /**
  * 销售订单Service接口
@@ -33,7 +37,7 @@ public interface IOrderSalesService
      * @param orderSales 销售订单
      * @return 结果
      */
-    public int insertOrderSales(OrderSales orderSales);
+    public int insertOrderSales(OrderSales orderSales, List<OrderSalesDetails> orderSalesDetails);
 
     /**
      * 修改销售订单
@@ -58,4 +62,9 @@ public interface IOrderSalesService
      * @return 结果
      */
     public int deleteOrderSalesBySId(Long sId);
+
+    /**
+     * 生成销售编码
+     */
+    public OrderSales getsCode();
 }

@@ -115,27 +115,27 @@ public class OrderPurchaseController extends BaseController {
     }
 
     /**
-     * 生成客户编码
+     * 生成进货编码
      */
     @GetMapping("/getPoCode")
     public AjaxResult getPoCode() {
         return success(orderPurchaseService.getPoCode());
     }
 
-    @PostMapping("/preData")
-    public AjaxResult preData(@RequestBody PreData preData) {
-        //log.info("preData：{}",preData);
-        List<OrderPurchaseDetails> preList = new ArrayList<>();
-        if (preData != null) {
-            for (String s : preData.getGoodsCode()) {
-                OrderPurchaseDetails details = new OrderPurchaseDetails();
-                details.setPoCode(preData.getPoCode());
-                details.setgCode(s);
-                preList.add(details);
-            }
-        }
-        return success(preList);
-    }
+//    @PostMapping("/preData")
+//    public AjaxResult preData(@RequestBody PreData preData) {
+//        //log.info("preData：{}",preData);
+//        List<OrderPurchaseDetails> preList = new ArrayList<>();
+//        if (preData != null) {
+//            for (String s : preData.getGoodsCode()) {
+//                OrderPurchaseDetails details = new OrderPurchaseDetails();
+//                details.setPoCode(preData.getPoCode());
+//                details.setgCode(s);
+//                preList.add(details);
+//            }
+//        }
+//        return success(preList);
+//    }
 
     @GetMapping("/{status}/{poIds}")
     public AjaxResult updateAudit(@PathVariable Integer status, @PathVariable Long[] poIds) {

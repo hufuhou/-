@@ -42,3 +42,11 @@ export function delSales(sId) {
     method: 'delete'
   })
 }
+
+// 获取销售编号
+export function getCode() {
+  return request({
+    url: '/order/sales/getsCode',
+    method: 'get'
+  })
+}

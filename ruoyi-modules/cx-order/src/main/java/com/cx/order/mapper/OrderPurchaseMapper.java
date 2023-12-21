@@ -62,7 +62,7 @@ public interface OrderPurchaseMapper {
     public int deleteOrderPurchaseByPoIds(Long[] poIds);
 
     /**
-     * 生成客户编码
+     * 生成进货编码
      */
     public OrderPurchase getPoCode();
 

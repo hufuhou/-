@@ -96,7 +96,7 @@
     <el-table v-loading="loading" :data="salesList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="销售订单ID" align="center" prop="sId"/>-->
-      <el-table-column label="销售单号" align="center" prop="sCode"/>
+      <el-table-column label="销售单号" align="center" prop="sCode" width="200"/>
       <!--      <el-table-column label="客户" align="center" prop="cId"/>-->
       <el-table-column label="单据状态" align="center" prop="status">
         <template slot-scope="scope">
@@ -184,7 +184,7 @@
           <span>{{ parseTime(scope.row.reviewerDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -215,48 +215,205 @@
     />
 
     <!-- 添加或修改销售订单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body @close="cancel">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="销售明细ID" prop="sdId">
-          <el-input v-model="form.sdId" placeholder="请输入销售明细ID"/>
-        </el-form-item>
-        <el-form-item label="销售单号" prop="sCode">
-          <el-input v-model="form.sCode" placeholder="请输入销售单号"/>
-        </el-form-item>
-        <el-form-item label="单据状态" prop="status">
-          <el-select v-model="form.status" placeholder="请选择单据状态">
-            <el-option
-              v-for="dict in dict.type.order_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="销售日期" prop="saleDate">
-          <el-date-picker clearable
-                          v-model="form.saleDate"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择销售日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="联系人" prop="contactPerson">
-          <el-input v-model="form.contactPerson" placeholder="请输入联系人"/>
-        </el-form-item>
-        <el-form-item label="联系方式" prop="contactDetails">
-          <el-input v-model="form.contactDetails" placeholder="请输入联系方式"/>
-        </el-form-item>
-        <el-form-item label="销售负责人" prop="principalId">
-          <el-input v-model="form.principalId" placeholder="请输入销售负责人"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="销售单号" prop="sCode">
+              <el-input v-model="form.sCode" placeholder="自动获取系统编码" :disabled="true"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="销售日期" prop="saleDate">
+              <el-date-picker clearable
+                              v-model="form.saleDate"
+                              type="date"
+                              value-format="yyyy-MM-dd"
+                              style="width: 400px"
+                              placeholder="请选择进货日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="客户名称" prop="cId">
+              <el-select v-model="form.cId" placeholder="请选择供应商" clearable @change="consumerChange"
+                         style="width: 400px;">
+                <el-option
+                  v-for="item in consumerList"
+                  :key="item.cId"
+                  :label="item.cName"
+                  :value="item.cId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系人" prop="contactPerson">
+              <el-input v-model="form.contactPerson" placeholder="请输入联系人" :disabled="true"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="联系方式" prop="contactNumber">
+              <el-input v-model="form.contactNumber" placeholder="请输入联系方式" :disabled="true"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="进货部门" prop="deptId">
+              <treeselect v-model="form.deptId" :options="deptOptions" :normalizer="normalizer" :show-count="true"
+                          placeholder="请选择进货部门"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="销售负责人" prop="principalId">
+              <el-select v-model="form.principalId" placeholder="请选择进货人" style="width: 400px">
+                <el-option
+                  v-for="item in userList"
+                  :key="item.userId"
+                  :label="item.nickName"
+                  :value="item.userId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注"/>
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
+      <el-divider content-position="center">销售货品明细</el-divider>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="addGoods"
+            v-hasPermi="['order:purchase:add']"
+          >添加
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['order:purchase:remove']"
+          >移除
+          </el-button>
+        </el-col>
+      </el-row>
+      <el-table v-loading="goodsLoading" :data="salesDetails" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="45" align="center"/>
+        <el-table-column label="货品名称" align="center" prop="gName"/>
+        <el-table-column label="货品编号" width="75" align="center" prop="gCode"/>
+        <el-table-column label="规格型号" align="center" prop="specCode"/>
+        <el-table-column label="单位" align="center" prop="gUnit">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.g_unit" :value="scope.row.gUnit"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="货品类型" align="center" prop="gtId">
+          <template slot-scope="scope">
+          <span v-for="item in goodsType">
+            <template v-if="scope.row.gtId===item.gtId">
+              {{ item.gtName }}
+            </template>
+          </span>
+          </template>
+        </el-table-column>
+        <el-table-column label="货品数量" align="center" prop="salesVolume" width="120">
+          <template slot-scope="scope">
+            <el-input-number v-model="scope.row.salesVolume" size="mini"
+                             @input="calculateTotal(scope.row)" :min="1" :max="100" label="描述文字"
+                             style="width: 100px"></el-input-number>
+          </template>
+        </el-table-column>
+        <el-table-column label="销售单价" align="center" prop="orPrice"/>
+        <el-table-column label="金额" align="center" width="90">
+          <template slot-scope="scope">
+            {{
+              (scope.row.salesVolume && scope.row.orPrice) ? (scope.row.salesVolume * scope.row.orPrice).toFixed(2) : 0
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="removeRow(scope.$index)"
+            >移除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!--    添加货品对话框-->
+    <el-dialog title="选择产品" :visible.sync="openGoodsList" append-to-body style="width: 1500px;margin: auto"
+               @close="closeGoods">
+      <el-form :model="goodsQueryParams" ref="queryGoodsForm" size="small" :inline="true" v-show="showSearch"
+               label-width="68px">
+        <el-form-item label="货品编号" prop="gCode">
+          <el-input
+            v-model="goodsQueryParams.gCode"
+            placeholder="请输入货品编号"
+            clearable
+            @keyup.enter.native="handleGoodsQuery"
+          />
+        </el-form-item>
+        <el-form-item label="货品名称" prop="gName">
+          <el-input
+            v-model="goodsQueryParams.gName"
+            placeholder="请输入货品名称"
+            clearable
+            @keyup.enter.native="handleGoodsQuery"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleGoodsQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetGoodsQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table ref="multipleTable" v-loading="goodsLoading" :data="goodsList"
+                @selection-change="goodsSelectionChange">
+        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column label="货品编号" align="center" prop="gCode" width="180"/>
+        <el-table-column label="货品名称" align="center" prop="gName"/>
+        <el-table-column label="规格型号" align="center" prop="specCode"/>
+        <el-table-column label="单位" align="center" prop="gUnit">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.g_unit" :value="scope.row.gUnit"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="出库单价" align="center" prop="orPrice"/>
+      </el-table>
+      <pagination
+        v-show="goodsTotal>0"
+        :total="goodsTotal"
+        :page.sync="goodsQueryParams.pageNum"
+        :limit.sync="goodsQueryParams.pageSize"
+        @pagination="getGoodsList"
+      />
+      <div slot="footer">
+        <el-button @click="closeGoods">关 闭</el-button>
+        <el-button type="primary" @click="goodsSubmit" v-hasPermi="['purchasesale:purchaseDetail:add']">确 定
+        </el-button>
       </div>
     </el-dialog>
   </div>
@@ -267,14 +424,20 @@ import {listSales, getSales, delSales, addSales, updateSales} from "@/api/order/
 import {listConsumer} from "@/api/units/consumer";
 import {listDept} from "@/api/cx-ckgl/warehouse";
 import {listUser} from "@/api/system/user";
+import {listGoods, listType} from "@/api/cx-hpxx/goods";
+import {getCode} from "@/api/order/sales";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Sales",
-  dicts: ['order_status'],
+  dicts: ['order_status', 'g_unit'],
+  components: {Treeselect},
   data() {
     return {
       // 遮罩层
       loading: true,
+      goodsLoading: true,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -285,18 +448,30 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      goodsTotal: 0,
       // 销售订单表格数据
       salesList: [],
       // 客户列表数据
       consumerList: [],
       // 部门数组
       deptList: [],
-      //进货人（用户）数据
+      //销售人（用户）数据
       userList: [],
+      // 部门树选项
+      deptOptions: undefined,
+      //夏侯详细信息
+      salesDetails: [],
+      //货品类型
+      goodsType: [],
+      //货品信息数据
+      goodsList: [],
+      // 销售编码
+      code: null,
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      openGoodsList: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -306,19 +481,18 @@ export default {
         status: null,
         saleDate: null,
       },
+      //货品列表查询参数
+      goodsQueryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        gCode: null,
+        gName: null,
+        gUnit: null
+      },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        sdId: [
-          {required: true, message: "销售明细ID不能为空", trigger: "blur"}
-        ],
-        sCode: [
-          {required: true, message: "销售单号不能为空", trigger: "blur"}
-        ],
-        srId: [
-          {required: true, message: "销售退货id不能为空", trigger: "blur"}
-        ],
         cId: [
           {required: true, message: "客户不能为空", trigger: "change"}
         ],
@@ -360,6 +534,24 @@ export default {
     this.getConsumerList();
     this.getDeptTree();
     this.getPrincipal();
+    this.getTypeList();
+    this.getGoodsList();
+  },
+  // 监听器
+  watch: {
+    // 当这个dialogVisible为true的时候做验证
+    openGoodsList(newVal) {
+      if (newVal) {
+        this.$nextTick(() => {
+          console.log("666666666666")
+          this.goodsList.forEach(product => {
+            if (this.salesDetails.some(info => info.gCode === product.gCode)) {
+              this.$refs.multipleTable.toggleRowSelection(product, true);
+            }
+          });
+        });
+      }
+    }
   },
   methods: {
     /** 查询销售订单列表 */
@@ -397,16 +589,26 @@ export default {
         isDelte: null
       };
       this.resetForm("form");
+      this.salesDetails = [];
+      this.updateDetails = [];
     },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
     },
+    handleGoodsQuery() {
+      this.goodsQueryParams.pageNum = 1;
+      this.getGoodsList();
+    },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
       this.handleQuery();
+    },
+    resetGoodsQuery() {
+      this.resetForm("queryGoodsForm");
+      this.handleGoodsQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -414,8 +616,13 @@ export default {
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
+    /** 货品多选框选中数据 */
+    goodsSelectionChange(selection) {
+      this.goods = selection
+    },
     /** 新增按钮操作 */
     handleAdd() {
+      this.getsCode();
       this.reset();
       this.open = true;
       this.title = "添加销售订单";
@@ -433,15 +640,37 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
+        if (this.salesDetails.length > 0) {
+          this.salesDetails.forEach(details => {
+            if (details.salesVolume == undefined) {
+              // 提示用户输入数量
+              this.$message.error('货品数量不能为空');
+              // 阻止提交
+              return;
+            }
+            return;
+          })
+        } else {
+          this.$message.error('请选择销售货品');
+          return;
+        }
+
+        const requestData = {
+          orderPurchase: this.form,
+          orderPurchaseDetails: this.salesDetails,
+          updateDetails: this.updateDetails
+
+        };
+
         if (valid) {
           if (this.form.sId != null) {
-            updateSales(this.form).then(response => {
+            updateSales(requestData).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addSales(this.form).then(response => {
+            addSales(requestData).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -483,6 +712,84 @@ export default {
     /** 查询负责人 */
     getPrincipal() {
       listUser().then(res => this.userList = res.rows);
+    },
+    /** 根据供应商id进行查询联系人和联系方式 */
+    consumerChange() {
+      const selectedContactPerson = this.consumerList.find(item => item.cId === this.form.cId);
+      if (selectedContactPerson) {
+        this.form.contactPerson = selectedContactPerson.contactPerson;
+      }
+
+      const selectedContactNumber = this.consumerList.find(item => item.cId === this.form.cId);
+      if (selectedContactNumber) {
+        this.form.contactNumber = selectedContactNumber.contactNumber;
+      }
+    },
+    /** 转换部门数据结构 */
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.deptId,
+        label: node.deptName,
+        children: node.children
+      };
+    },
+    /** 新增货品信息操作 */
+    addGoods() {
+      // this.getGoodsList();
+      this.openGoodsList = true;
+    },
+    /** 将总金额和进货编码塞入集合 */
+    calculateTotal(row) {
+      if (row.orPrice && row.salesAmount) {
+        this.$set(row, 'salesAmount', (row.orPrice * row.salesAmount).toFixed(2));
+      } else {
+        this.$set(row, 'salesAmount', 0);
+      }
+      this.$set(row, 'sCode', this.code);
+    },
+    /** 移除 */
+    removeRow(index) {
+      // 通过 index 从 purchaseList 数组中移除对应行
+      this.salesDetails.splice(index, 1);
+    },
+    /** 关闭产品选择列表 */
+    closeGoods() {
+      this.$refs.multipleTable.clearSelection()
+      this.resetGoodsQuery();
+      this.openGoodsList = false
+    },
+    /** 获取货品列表 */
+    getGoodsList() {
+      this.goodsLoading = true;
+      listGoods(this.goodsQueryParams).then(response => {
+        this.goodsList = response.rows;
+        this.goodsTotal = response.total;
+        this.goodsLoading = false;
+      });
+    },
+    /**  获取销售编码 */
+    getsCode() {
+      getCode().then(res => this.code = res.data.sCode)
+    },
+    /** 货品选择列表提交 */
+    goodsSubmit() {
+      this.goods = this.goods.filter(selectedProduct => {
+        return !this.salesDetails.some(productInfo => productInfo.gCode === selectedProduct.gCode)
+      });
+      this.salesDetails.push(...this.goods);
+      this.resetGoodsQuery();
+      this.$refs.multipleTable.clearSelection()
+      //关闭货品列表页面
+      this.openGoodsList = false
+    },
+    /** 查询货品类型列表 */
+    getTypeList() {
+      listType(this.queryParams).then(response => {
+        this.goodsType = response.data;
+      });
     },
   }
 };
