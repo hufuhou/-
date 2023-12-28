@@ -78,17 +78,17 @@
           v-hasPermi="['cx-crkgl:outbound:examine']"
         >审核</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-connection"
-          size="mini"
-          :disabled="revoke"
-          @click="handleRevoke"
-          v-hasPermi="['cx-crkgl:outbound:revoke']"
-        >撤销</el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="danger"-->
+<!--          plain-->
+<!--          icon="el-icon-connection"-->
+<!--          size="mini"-->
+<!--          :disabled="revoke"-->
+<!--          @click="handleRevoke"-->
+<!--          v-hasPermi="['cx-crkgl:outbound:revoke']"-->
+<!--        >撤销</el-button>-->
+<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -1193,16 +1193,22 @@ export default {
 </script>
 <style>
 .bg-light-blue {
-  background-color: #C2E0FF;
-  color: #1890ff;
+  background-color: #ecf5ff;
+  border-color: #d9ecff;
+  color: #409eff;
+ border-radius: 4px;
 }
 .bg-light-red {
-  background-color: #FFC2C2;
-  color: #e64242;
+background-color: #fef0f0;
+border-color: #fde2e2;
+color: #f56c6c;
+  border-radius: 4px;
 }
 
 .bg-light-green {
-  background-color: #C2FFC2;
-  color: #11b95c;
+background-color: #f0f9eb;
+border-color: #e1f3d8;
+color: #67c23a;
+  border-radius: 4px;
 }
 </style>
