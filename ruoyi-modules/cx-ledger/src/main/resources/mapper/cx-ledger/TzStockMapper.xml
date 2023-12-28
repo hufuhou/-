@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.ledger.mapper.TzStockMapper">
+
+    <resultMap type="TzStock" id="TzStockResult">
+        <result property="sId" column="s_id"/>
+        <result property="wId" column="w_id"/>
+        <result property="slId" column="sl_id"/>
+        <result property="itemQuantity" column="item_quantity"/>
+        <result property="numberPlans" column="number_plans"/>
+        <result property="gId" column="g_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createBys" column="create_bys"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDelte" column="is_delte"/>
+    </resultMap>
+
+<!--    <resultMap id="TzStockRes" type="TzStock" extends="TzStockResult">-->
+<!--<collection property="HpGoodsList" notNullColumn="h.g_id" javaType="java.util.List" resultMap="HpGoodsResults"></collection>-->
+<!--    </resultMap>-->
+    <resultMap type="TzStock" id="TzStockRes">
+        <result property="sId" column="s_id"/>
+        <result property="wId" column="w_id"/>
+        <result property="slId" column="sl_id"/>
+        <result property="itemQuantity" column="item_quantity"/>
+        <result property="numberPlans" column="number_plans"/>
+        <result property="gId" column="g_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createBys" column="create_bys"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <association property="hpGoods" javaType="HpGoods" resultMap="HpGoodsResults"/>
+    </resultMap>
+    <resultMap id="HpGoodsResults" type="HpGoods">
+        <result property="gId" column="g_id"/>
+        <result property="gtId" column="gt_id"/>
+        <result property="gCode" column="g_code"/>
+        <result property="gName" column="g_name"/>
+        <result property="gUnit" column="g_unit"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="sId" column="s_id"/>
+        <result property="specCode" column="spec_code"/>
+        <result property="orPrice" column="or_price"/>
+        <result property="wrPrice" column="wr_price"/>
+        <result property="hasShelfLife" column="has_shelf_life"/>
+        <result property="warningDays" column="warning_days"/>
+        <result property="itemLimit" column="item_limit"/>
+        <result property="lowerLimit" column="lower_limit"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="qualityG" column="quality_g"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    <sql id="selectTzStockVo">
+        select s_id,
+               w_id,
+               sl_id,
+               item_quantity,
+               number_plans,
+               g_id,
+               remark,
+               create_bys,
+               create_time,
+               is_delte
+        from tz_stock
+    </sql>
+
+    <select id="selectTzStockList" parameterType="TzStock" resultMap="TzStockResult">
+        <include refid="selectTzStockVo"/>
+        <where>
+            <if test="wId != null ">and w_id = #{wId}</if>
+            <if test="slId != null ">and sl_id = #{slId}</if>
+            <if test="itemQuantity != null ">and item_quantity = #{itemQuantity}</if>
+            <if test="numberPlans != null ">and number_plans = #{numberPlans}</if>
+            <if test="gId != null ">and g_id = #{gId}</if>
+            <if test="remark != null  and remark != ''">and remark = #{remark}</if>
+            <if test="createBys != null ">and create_bys = #{createBys}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="isDelte != null ">and is_delte = #{isDelte}</if>
+        </where>
+    </select>
+
+    <select id="selectTzStockBySId" parameterType="Long" resultMap="TzStockResult">
+        <include refid="selectTzStockVo"/>
+        where s_id = #{sId}
+    </select>
+    <select id="listOutGoods" resultMap="TzStockRes">
+        SELECT t.w_id,t.item_quantity,h.g_id,h.g_code,h.g_name,h.g_unit,h.spec_code,h.wr_price FROM `tz_stock` t INNER JOIN hp_goods h on
+        t.g_id=h.g_id
+        <where>
+            <if test="wId!=null">and t.w_id=#{wId}</if>
+            <if test="gCode!=null">or t.g_code=#{gCode}</if>
+            <if test="gName!=null">or h.g_name=#{gName}</if>
+        </where>
+
+    </select>
+    <insert id="insertTzStock" parameterType="TzStock" useGeneratedKeys="true" keyProperty="sId">
+        insert into tz_stock
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="wId != null">w_id,</if>
+            <if test="slId != null">sl_id,</if>
+            <if test="itemQuantity != null">item_quantity,</if>
+            <if test="numberPlans != null">number_plans,</if>
+            <if test="gId != null">g_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBys != null">create_bys,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="isDelte != null">is_delte,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="wId != null">#{wId},</if>
+            <if test="slId != null">#{slId},</if>
+            <if test="itemQuantity != null">#{itemQuantity},</if>
+            <if test="numberPlans != null">#{numberPlans},</if>
+            <if test="gId != null">#{gId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBys != null">#{createBys},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="isDelte != null">#{isDelte},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTzStock" parameterType="TzStock">
+        update tz_stock
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="wId != null">w_id = #{wId},</if>
+            <if test="slId != null">sl_id = #{slId},</if>
+            <if test="itemQuantity != null">item_quantity = #{itemQuantity},</if>
+            <if test="numberPlans != null">number_plans = #{numberPlans},</if>
+            <if test="gId != null">g_id = #{gId},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBys != null">create_bys = #{createBys},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="isDelte != null">is_delte = #{isDelte},</if>
+        </trim>
+        where s_id = #{sId}
+    </update>
+
+    <delete id="deleteTzStockBySId" parameterType="Long">
+        delete
+        from tz_stock
+        where s_id = #{sId}
+    </delete>
+
+    <delete id="deleteTzStockBySIds" parameterType="String">
+        delete from tz_stock where s_id in
+        <foreach item="sId" collection="array" open="(" separator="," close=")">
+            #{sId}
+        </foreach>
+    </delete>
+</mapper>
