@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cx.wms.mapper.StockValuesMapper">
+
+    <resultMap id="StockValuesResultMap" type="StockValues">
+        <result column="SVw_id" property="SVw_id"/>
+        <result column="SVw_name" property="SVw_name"/>
+        <result column="SVsl_id" property="SVsl_id"/>
+        <result column="SVsl_name" property="SVsl_name"/>
+        <result column="SVg_id" property="SVg_id"/>
+        <result column="SVg_name" property="SVg_name"/>
+        <result column="SVitem_quantity" property="SVitem_quantity"/>
+        <result column="SVValues" property="SVValues"/>
+        <result column="allCount" property="AllCount"/>
+        <result column="allValue" property="AllValue"/>
+    </resultMap>
+
+    <!--  获取所有仓库和库位的库存信息。SV:StockValues简写 标记专用POJO对象  -->
+    <select id="findAllInfo" resultMap="StockValuesResultMap">
+        SELECT w.w_id                         AS `SVw_id`,
+               w.w_name                       AS `SVw_name`,
+               sl.sl_id                       AS `SVsl_id`,
+               sl.sl_name                     AS `SVsl_name`,
+               g.g_id                         AS `SVg_id`,
+               g.g_name                       AS `SVg_name`,
+               s.item_quantity                AS `SVitem_quantity`,
+               (s.item_quantity * g.or_price) AS `SVValues`
+        FROM tz_stock s
+                 JOIN
+             warehouse w ON s.w_id = w.w_id
+                 JOIN
+             tj_storage_location sl ON s.sl_id = sl.sl_id
+                 JOIN
+             hp_goods g ON s.g_id = g.g_id
+        WHERE s.is_delte = 0;
+    </select>
+
+    <select id="findCountValue" parameterType="int" resultType="StockValues">
+        SELECT
+        SUM(stock.item_quantity) AS allCount,
+        SUM(imd.money) AS allValue
+        FROM tz_stock stock
+        JOIN crk_im_details imd ON stock.g_id = imd.g_id
+        <where>
+            <if test="wId != null">
+                AND stock.w_id = #{wId}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

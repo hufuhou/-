@@ -342,6 +342,8 @@ export default {
     //this.getCheckinNumber();
   },
   methods: {
+
+
     /**
      * 获取时间参数
      * @param param
@@ -353,10 +355,12 @@ export default {
             // 如果是字符串
             this.TodayOrYesterday = response.data;
             resolve(true);
+            this.$modal.msgSuccess(this.TodayOrYesterday);
           } else if (Array.isArray(response.data)) {
             // 如果是数组
             this.BeginDay = response.data[0];
             this.EndDay = response.data[1];
+            this.$modal.msgSuccess("BeginDay: " + this.BeginDay + ",EndDay : " + this.EndDay);
             resolve(true);
           } else {
             // 处理其他类型的数据，或者抛出错误提示

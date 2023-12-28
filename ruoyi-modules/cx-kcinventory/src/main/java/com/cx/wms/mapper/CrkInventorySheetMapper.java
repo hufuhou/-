@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 库存盘点Mapper接口
@@ -91,13 +90,16 @@ public interface CrkInventorySheetMapper {
 
     /**
      * 查询最新的is_code
+     *
      * @return 最新的is_code
      */
     public String findIsCode();
+
     public String findIsId();
 
     /**
      * 查询仓库name 仓库id
+     *
      * @return 仓库name 仓库id
      */
     public List<WareHouse> findWareHouse();
@@ -112,6 +114,10 @@ public interface CrkInventorySheetMapper {
     public Integer findSheetStatus(Integer isId);
 
     //更新盘点单状态
-    public Integer updateSheetStatus(@Param("isId")Integer isId,@Param("stateCode")Integer stateCode);
+    public Integer updateSheetStatus(@Param("isId") Integer isId, @Param("stateCode") Integer stateCode);
+
+    //更新盘点结果
+    public Integer updateIsResult(@Param("isId") Integer isId, @Param("isResult") Integer isResult);
+
 
 }

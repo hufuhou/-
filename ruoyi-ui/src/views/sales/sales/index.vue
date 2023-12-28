@@ -135,17 +135,17 @@
 
     <el-table v-loading="loading" :data="salesList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-<!--      <el-table-column label="销售明细id" align="center" prop="sdId"/>-->
-<!--      <el-table-column label="退货明细id" align="center" prop="srdId"/>-->
-<!--      <el-table-column label="销售订单id" align="center" prop="sId"/>-->
+      <!--      <el-table-column label="销售明细id" align="center" prop="sdId"/>-->
+      <!--      <el-table-column label="退货明细id" align="center" prop="srdId"/>-->
+      <!--      <el-table-column label="销售订单id" align="center" prop="sId"/>-->
       <el-table-column label="销售单号" align="center" prop="sCode"/>
-      <el-table-column label="货品编号" align="center" prop="goodsNumber"/>
-      <el-table-column label="规格型号" align="center" prop="specCode"/>
-      <el-table-column label="单位" align="center" prop="unit"/>
-      <el-table-column label="货品类型" align="center" prop="goodsType"/>
-      <el-table-column label="进货数量" align="center" prop="purchaseQuantity"/>
-<!--      <el-table-column label="已入库" align="center" prop="aiStock"/>-->
-      <el-table-column label="销售单价" align="center" prop="suPrice"/>
+      <!--      <el-table-column label="货品编号" align="center" prop="goodsNumber"/>-->
+      <!--      <el-table-column label="规格型号" align="center" prop="specCode"/>-->
+      <!--      <el-table-column label="单位" align="center" prop="unit"/>-->
+      <!--      <el-table-column label="货品类型" align="center" prop="goodsType"/>-->
+      <!--      <el-table-column label="进货数量" align="center" prop="purchaseQuantity"/>-->
+      <!--      <el-table-column label="已入库" align="center" prop="aiStock"/>-->
+      <!--      <el-table-column label="销售单价" align="center" prop="suPrice"/>-->
       <el-table-column label="销售金额" align="center" prop="salesAmount"/>
       <el-table-column label="销售数量" align="center" prop="salesVolume"/>
       <el-table-column label="创建人" align="center" prop="create_user_name"/>
@@ -154,13 +154,22 @@
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新人" align="center" prop="update_user_name"/>
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
+      <el-table-column label="更新人" align="center" prop="update_user_name">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          {{ scope.row.update_user_name === null ? '未更改' : scope.row.update_user_name }}
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark"/>
+      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
+        <template slot-scope="scope">
+          <span v-if="scope.row.updateTime">{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          <span v-else>未更改</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" prop="remark">
+        <template slot-scope="scope">
+          {{ scope.row.remark === null || scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -205,18 +214,10 @@
 </template>
 
 <script>
-import {
-  addSales,
-  delSales,
-  getNumbers,
-  getSales,
-  getSumSale,
-  listSalesWithUser,
-  updateSales
-} from "@/api/sales/sales";
+import {addSales, delSales, getNumbers, getSales, getSumSale, listSalesWithUser, updateSales} from "@/api/sales/sales";
 import {updateUser} from "@/api/system/user";
 import {parseTime} from "@/utils/ruoyi";
-import {selectDataParam, selectListUG} from "@/api/opdm/opdm";
+import {selectDataParam} from "@/api/opdm/opdm";
 
 export default {
   name: "Sales",
@@ -229,7 +230,7 @@ export default {
       //周,月结束日
       EndDay: "",
       //售出产品数
-      orderProductionNum : 0,
+      orderProductionNum: 0,
       //售单订单数
       orderSaleNumber: 0,
       //售单总金额
@@ -340,10 +341,12 @@ export default {
             // 如果是字符串
             this.TodayOrYesterday = response.data;
             resolve(true);
+            this.$modal.msgSuccess("查询" + this.TodayOrYesterday + "数据");
           } else if (Array.isArray(response.data)) {
             // 如果是数组
             this.BeginDay = response.data[0];
             this.EndDay = response.data[1];
+            this.$modal.msgSuccess("查询起始日: " + this.BeginDay + ",结束日: " + this.EndDay + "间数据!");
             resolve(true);
           } else {
             // 处理其他类型的数据，或者抛出错误提示
@@ -374,6 +377,7 @@ export default {
         DateParams = [this.TodayOrYesterday, this.BeginDay, this.EndDay];
         console.info(DateParams)
         //TODO : 从这下面添加业务代码
+
       } catch (error) {
         // 处理错误
         console.error('按时间段查询进货信息失败:', error);
@@ -385,7 +389,7 @@ export default {
     /** 查询销售订单总数 **/
     getSaleNumber() {
       this.loading = true;
-      getNumbers().then(respone =>{
+      getNumbers().then(respone => {
         this.orderSaleNumber = respone.data;
         //console.info(respone);
         //this.$modal.msgSuccess("查询成功!");
@@ -397,7 +401,7 @@ export default {
     /** 查询销售订单总额 **/
     getSumSale() {
       this.loading = true;
-      getSumSale().then(respone =>{
+      getSumSale().then(respone => {
         this.sumSale = respone.data;
         //console.info(respone);
         //this.$modal.msgSuccess("查询成功!");

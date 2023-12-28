@@ -37,8 +37,13 @@ import DictTag from '@/components/DictTag'
 import VueMeta from 'vue-meta'
 // 字典数据组件
 import DictData from '@/components/DictData'
+//全局引入echarts
+import * as echarts from 'echarts';
+//需要挂载到Vue原型上
+
 
 // 全局方法挂载
+Vue.prototype.$echarts = echarts;
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
 Vue.prototype.parseTime = parseTime

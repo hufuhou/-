@@ -2,6 +2,7 @@ package com.cx.wms.controller;
 
 import com.cx.wms.domain.OrderPurchaseDetails;
 import com.cx.wms.service.IOrderPurchaseDetailsService;
+import com.cx.wms.service.IStockValuesService;
 import com.cx.wms.utils.DateUtils;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
@@ -30,6 +31,15 @@ import java.util.List;
 public class OrderPurchaseDetailsController extends BaseController {
     @Autowired
     private IOrderPurchaseDetailsService orderPurchaseDetailsService;
+
+    @Autowired
+    private IStockValuesService iStockValuesService;
+
+    //查询所有库存信息
+    @GetMapping("/allInfo")
+    public AjaxResult findAllInfo() {
+        return new AjaxResult(200, "查询成功", iStockValuesService.findAllInfo());
+    }
 
     /**
      * 查询进货明细列表
@@ -168,6 +178,7 @@ public class OrderPurchaseDetailsController extends BaseController {
             return AjaxResult.error("查询异常");
         }
     }
+
 
 
 }

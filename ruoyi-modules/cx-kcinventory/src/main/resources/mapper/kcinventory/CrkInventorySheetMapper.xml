@@ -130,15 +130,15 @@
         insert into crk_inventory_sheet
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="isId != null">is_id,</if>
-            <if test="warWId != null">war_w_id,</if>
             <if test="isCode != null and isCode != ''">is_code,</if>
             <if test="isResult != null">is_result,</if>
             <if test="wId != null">w_id,</if>
-            <if test="isType != null and isType != ''">is_type,</if>
+            <if test="isType != null">is_type,</if>
             <if test="isStartTime != null">is_start_time,</if>
             <if test="isEndTime != null">is_end_time,</if>
             <if test="outStatus != null">out_status,</if>
             <if test="inStatus != null">in_status,</if>
+            <if test="SheetStatus != null">sheet_status,</if>
             <if test="remark != null">remark,</if>
             <if test="isManager != null">is_manager,</if>
             <if test="createBy != null">create_by,</if>
@@ -149,15 +149,15 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="isId != null">#{isId},</if>
-            <if test="warWId != null">#{warWId},</if>
             <if test="isCode != null and isCode != ''">#{isCode},</if>
             <if test="isResult != null">#{isResult},</if>
             <if test="wId != null">#{wId},</if>
-            <if test="isType != null and isType != ''">#{isType},</if>
+            <if test="isType != null">#{isType},</if>
             <if test="isStartTime != null">#{isStartTime},</if>
             <if test="isEndTime != null">#{isEndTime},</if>
             <if test="outStatus != null">#{outStatus},</if>
             <if test="inStatus != null">#{inStatus},</if>
+            <if test="SheetStatus != null">#{SheetStatus},</if>
             <if test="remark != null">#{remark},</if>
             <if test="isManager != null">#{isManager},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -290,6 +290,11 @@
     <!--  更新表状态sheet_status  -->
     <update id="updateSheetStatus">
         UPDATE `crk_inventory_sheet` SET `sheet_status` = #{stateCode} WHERE `is_id` = #{isId}
+    </update>
+
+    <!--  更新盘点结果   -->
+    <update id="updateIsResult">
+        UPDATE `crk_inventory_sheet` SET `is_result` = #{isResult} WHERE `is_id` = #{isId}
     </update>
 
 

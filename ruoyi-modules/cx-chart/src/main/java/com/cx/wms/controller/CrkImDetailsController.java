@@ -2,6 +2,7 @@ package com.cx.wms.controller;
 
 import com.cx.wms.domain.CrkImDetails;
 import com.cx.wms.service.ICrkImDetailsService;
+import com.cx.wms.service.IStockValuesService;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
 import com.ruoyi.common.core.web.domain.AjaxResult;
@@ -29,6 +30,9 @@ import java.util.List;
 public class CrkImDetailsController extends BaseController {
     @Autowired
     private ICrkImDetailsService crkImDetailsService;
+
+    @Autowired
+    private IStockValuesService stockValuesService;
 
     /**
      * 查询入库明细列表
@@ -140,5 +144,15 @@ public class CrkImDetailsController extends BaseController {
             log.error("查询异常", e);
             return AjaxResult.error("查询异常");
         }
+    }
+
+    /**
+     * 查询库存货品数总金额
+     *
+     * @return 查询库存货品数总金额
+     */
+    @GetMapping("/findCountValue")
+    public AjaxResult findCountValue(@RequestParam(required = false) Integer wId) {
+        return AjaxResult.success(stockValuesService.findCountValue(wId));
     }
 }

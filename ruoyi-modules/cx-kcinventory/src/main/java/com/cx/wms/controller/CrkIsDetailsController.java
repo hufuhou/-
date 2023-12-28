@@ -1,6 +1,7 @@
 package com.cx.wms.controller;
 
 import com.cx.wms.domain.CrkIsDetails;
+import com.cx.wms.mapper.CrkInventorySheetMapper;
 import com.cx.wms.service.ICrkIsDetailsService;
 import com.ruoyi.common.core.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.web.controller.BaseController;
@@ -9,6 +10,7 @@ import com.ruoyi.common.core.web.page.TableDataInfo;
 import com.ruoyi.common.log.annotation.Log;
 import com.ruoyi.common.log.enums.BusinessType;
 import com.ruoyi.common.security.annotation.RequiresPermissions;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/inventoryDetail")
+@Slf4j
 public class CrkIsDetailsController extends BaseController {
     @Autowired
     private ICrkIsDetailsService crkIsDetailsService;

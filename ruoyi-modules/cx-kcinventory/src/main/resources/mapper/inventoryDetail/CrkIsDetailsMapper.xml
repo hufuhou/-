@@ -101,4 +101,9 @@
         </foreach>
     </delete>
 
+    <!-- todo:查询库位表内货品信息带货品名称的查询SQL   -->
+    <sql id="temp">
+        SELECT tz.*,hp.g_name FROM `tz_stock` as tz INNER JOIN `hp_goods` as hp WHERE tz.g_id = hp.g_id
+    </sql>
+
 </mapper>
