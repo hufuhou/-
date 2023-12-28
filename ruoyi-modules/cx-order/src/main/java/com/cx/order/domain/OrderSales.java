@@ -25,12 +25,6 @@ public class OrderSales extends BaseEntity {
     private Long sId;
 
     /**
-     * 销售明细ID
-     */
-    @Excel(name = "销售明细ID")
-    private Long sdId;
-
-    /**
      * 销售单号
      */
     @Excel(name = "销售单号")
@@ -114,9 +108,17 @@ public class OrderSales extends BaseEntity {
     private String totalGoodsName;
 
     /**
-     * 进货明细信息
+     * 销售明细信息
      */
     private List<OrderSalesDetails> detailsList;
+
+    public List<OrderSalesDetails> getDetailsList() {
+        return detailsList;
+    }
+
+    public void setDetailsList(List<OrderSalesDetails> detailsList) {
+        this.detailsList = detailsList;
+    }
 
     public BigDecimal getTotalPurchaseQuantity() {
         return totalPurchaseQuantity;
@@ -142,28 +144,12 @@ public class OrderSales extends BaseEntity {
         this.totalGoodsName = totalGoodsName;
     }
 
-    public List<OrderSalesDetails> getDetailsList() {
-        return detailsList;
-    }
-
-    public void setDetailsList(List<OrderSalesDetails> detailsList) {
-        this.detailsList = detailsList;
-    }
-
     public void setsId(Long sId) {
         this.sId = sId;
     }
 
     public Long getsId() {
         return sId;
-    }
-
-    public void setSdId(Long sdId) {
-        this.sdId = sdId;
-    }
-
-    public Long getSdId() {
-        return sdId;
     }
 
     public void setsCode(String sCode) {
@@ -258,7 +244,6 @@ public class OrderSales extends BaseEntity {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("sId", getsId())
-                .append("sdId", getSdId())
                 .append("sCode", getsCode())
                 .append("status", getStatus())
                 .append("saleDate", getSaleDate())

@@ -96,8 +96,8 @@
     <el-table v-loading="loading" :data="consumerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="客户ID" align="center" prop="cId"/>-->
-      <el-table-column label="客户编码" align="center" prop="cCode" width="160"/>
-      <el-table-column label="客户名称" align="center" prop="cName"/>
+      <el-table-column label="客户编码" align="center" prop="cCode" width="160" fixed="left"/>
+      <el-table-column label="客户名称" align="center" prop="cName" fixed="left"/>
       <el-table-column label="所属行业" align="center" prop="industry">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.industry_list" :value="scope.row.industry"/>
@@ -136,7 +136,7 @@
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="110" fixed="right">
         <template slot-scope="scope">
           <el-button
             size="mini"

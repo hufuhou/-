@@ -45,7 +45,7 @@ public interface IOrderSalesService
      * @param orderSales 销售订单
      * @return 结果
      */
-    public int updateOrderSales(OrderSales orderSales);
+    public int updateOrderSales(OrderSales orderSales, List<OrderSalesDetails> orderSalesDetails, List<OrderSalesDetails> updateDetails);
 
     /**
      * 批量删除销售订单
@@ -67,4 +67,9 @@ public interface IOrderSalesService
      * 生成销售编码
      */
     public OrderSales getsCode();
+
+    /**
+     * 审核
+     */
+    public int updateAudit(Integer status, Long sId, String reviewer);
 }

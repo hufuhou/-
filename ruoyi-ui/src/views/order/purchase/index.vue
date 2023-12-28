@@ -523,8 +523,6 @@ export default {
       oldCode: null,
       // 弹出层标题
       title: "",
-      // 数量默认为1
-      purchaseQuantity:1,
       // 是否显示弹出层
       open: false,
       openGoodsList: false,
@@ -888,13 +886,6 @@ export default {
       this.poIds = row.poId || this.ids;
       console.log(this.poIds)
       this.openAudit = true;
-      // this.$modal.confirm('是否确认审核进货订单编号为"' + poIds + '"的数据项？').then(function () {
-      //   return delPurchase(poIds);
-      // }).then(() => {
-      //   this.getList();
-      //   this.$modal.msgSuccess("审核成功");
-      // }).catch(() => {
-      // });
     },
     /** 审核页面关闭 */
     closeAudit() {

@@ -5,39 +5,65 @@
 <mapper namespace="com.cx.order.mapper.OrderSalesDetailsMapper">
 
     <resultMap type="OrderSalesDetails" id="OrderSalesDetailsResult">
-        <result property="sdId"    column="sd_id"    />
-        <result property="srdId"    column="srd_id"    />
-        <result property="sCode"    column="s_code"    />
-        <result property="gCode"    column="g_code"    />
-        <result property="purchaseQuantity"    column="purchase_quantity"    />
-        <result property="aiStock"    column="ai_stock"    />
-        <result property="suPrice"    column="su_price"    />
-        <result property="salesVolume"    column="sales_volume"    />
-        <result property="salesAmount"    column="sales_amount"    />
-        <result property="remark"    column="remark"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="isDelte"    column="is_delte"    />
+        <result property="sdId" column="sd_id"/>
+        <result property="sCode" column="s_code"/>
+        <result property="gCode" column="g_code"/>
+        <result property="salesVolume" column="sales_volume"/>
+        <result property="salesAmount" column="sales_amount"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <association property="hpGoods" javaType="HpGoods" resultMap="HpGoodsResult"/>
     </resultMap>
 
+    <resultMap type="HpGoods" id="HpGoodsResult">
+        <result property="gId" column="g_id"/>
+        <result property="gtId" column="gt_id"/>
+        <result property="gCode" column="g_code"/>
+        <result property="gName" column="g_name"/>
+        <result property="gUnit" column="g_unit"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="specCode" column="spec_code"/>
+        <result property="sId" column="s_id"/>
+        <result property="remark" column="remark"/>
+        <result property="orPrice" column="or_price"/>
+        <result property="wrPrice" column="wr_price"/>
+        <result property="hasShelfLife" column="has_shelf_life"/>
+        <result property="warningDays" column="warning_days"/>
+        <result property="itemLimit" column="item_limit"/>
+        <result property="lowerLimit" column="lower_limit"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="qualityG" column="quality_g"/>
+    </resultMap>
     <sql id="selectOrderSalesDetailsVo">
-        select sd_id, srd_id, s_code, g_code, purchase_quantity, ai_stock, su_price, sales_volume, sales_amount, remark, create_by, create_time, update_by, update_time, is_delte from order_d_sales
+        select sd_id,
+               s_code,
+               g_code,
+               sales_volume,
+               sales_amount,
+               remark,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from order_d_sales
     </sql>
 
     <select id="selectOrderSalesDetailsList" parameterType="OrderSalesDetails" resultMap="OrderSalesDetailsResult">
         <include refid="selectOrderSalesDetailsVo"/>
         <where>
-            <if test="srdId != null "> and srd_id = #{srdId}</if>
-            <if test="sCode != null  and sCode != ''"> and s_code = #{sCode}</if>
-            <if test="gCode != null  and gCode != ''"> and g_code = #{gCode}</if>
-            <if test="purchaseQuantity != null "> and purchase_quantity = #{purchaseQuantity}</if>
-            <if test="aiStock != null "> and ai_stock = #{aiStock}</if>
-            <if test="suPrice != null "> and su_price = #{suPrice}</if>
-            <if test="salesVolume != null "> and sales_volume = #{salesVolume}</if>
-            <if test="salesAmount != null "> and sales_amount = #{salesAmount}</if>
-            <if test="isDelte != null "> and is_delte = #{isDelte}</if>
+            <if test="sCode != null  and sCode != ''">and s_code = #{sCode}</if>
+            <if test="gCode != null  and gCode != ''">and g_code = #{gCode}</if>
+            <if test="salesVolume != null ">and sales_volume = #{salesVolume}</if>
+            <if test="salesAmount != null ">and sales_amount = #{salesAmount}</if>
+            <if test="isDelte != null ">and is_delte = #{isDelte}</if>
         </where>
     </select>
 
@@ -47,50 +73,17 @@
     </select>
 
     <insert id="insertOrderSalesDetails" parameterType="OrderSalesDetails" useGeneratedKeys="true" keyProperty="sdId">
-        insert into order_d_sales
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="srdId != null">srd_id,</if>
-            <if test="sCode != null and sCode != ''">s_code,</if>
-            <if test="gCode != null and gCode != ''">g_code,</if>
-            <if test="purchaseQuantity != null">purchase_quantity,</if>
-            <if test="aiStock != null">ai_stock,</if>
-            <if test="suPrice != null">su_price,</if>
-            <if test="salesVolume != null">sales_volume,</if>
-            <if test="salesAmount != null">sales_amount,</if>
-            <if test="remark != null and remark != ''">remark,</if>
-            <if test="createBy != null">create_by,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateBy != null">update_by,</if>
-            <if test="updateTime != null">update_time,</if>
-            <if test="isDelte != null">is_delte,</if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="srdId != null">#{srdId},</if>
-            <if test="sCode != null and sCode != ''">#{sCode},</if>
-            <if test="gCode != null and gCode != ''">#{gCode},</if>
-            <if test="purchaseQuantity != null">#{purchaseQuantity},</if>
-            <if test="aiStock != null">#{aiStock},</if>
-            <if test="suPrice != null">#{suPrice},</if>
-            <if test="salesVolume != null">#{salesVolume},</if>
-            <if test="salesAmount != null">#{salesAmount},</if>
-            <if test="remark != null and remark != ''">#{remark},</if>
-            <if test="createBy != null">#{createBy},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateBy != null">#{updateBy},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-            <if test="isDelte != null">#{isDelte},</if>
-        </trim>
+        insert into order_d_sales(s_code,g_code,sales_volume,sales_amount,create_by,create_time,update_by,update_time) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.sCode},#{item.gCode},#{item.salesVolume},#{item.salesAmount},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime})
+        </foreach>
     </insert>
 
     <update id="updateOrderSalesDetails" parameterType="OrderSalesDetails">
         update order_d_sales
         <trim prefix="SET" suffixOverrides=",">
-            <if test="srdId != null">srd_id = #{srdId},</if>
             <if test="sCode != null and sCode != ''">s_code = #{sCode},</if>
             <if test="gCode != null and gCode != ''">g_code = #{gCode},</if>
-            <if test="purchaseQuantity != null">purchase_quantity = #{purchaseQuantity},</if>
-            <if test="aiStock != null">ai_stock = #{aiStock},</if>
-            <if test="suPrice != null">su_price = #{suPrice},</if>
             <if test="salesVolume != null">sales_volume = #{salesVolume},</if>
             <if test="salesAmount != null">sales_amount = #{salesAmount},</if>
             <if test="remark != null and remark != ''">remark = #{remark},</if>
@@ -104,7 +97,9 @@
     </update>
 
     <delete id="deleteOrderSalesDetailsBySdId" parameterType="Long">
-        delete from order_d_sales where sd_id = #{sdId}
+        delete
+        from order_d_sales
+        where sd_id = #{sdId}
     </delete>
 
     <delete id="deleteOrderSalesDetailsBySdIds" parameterType="String">

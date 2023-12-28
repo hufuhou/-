@@ -54,7 +54,7 @@ public class OrderSalesDetailsServiceImpl implements IOrderSalesDetailsService
     public int insertOrderSalesDetails(OrderSalesDetails orderSalesDetails)
     {
         orderSalesDetails.setCreateTime(DateUtils.getNowDate());
-        return orderSalesDetailsMapper.insertOrderSalesDetails(orderSalesDetails);
+        return 0;
     }
 
     /**

@@ -136,7 +136,7 @@
         from order_purchase_order o
                  left join order_purchase_details d on o.po_code = d.po_code
                  left join hp_goods g on g.g_code = d.g_code
-        where po_id = #{poId}
+        where o.po_id = #{poId}
     </select>
 
     <insert id="insertOrderPurchase" parameterType="OrderPurchase">

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cx.order.domain.OrderPurchase;
 import com.cx.order.domain.OrderSales;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 销售订单Mapper接口
@@ -65,4 +66,6 @@ public interface OrderSalesMapper
      * 生成进货编码
      */
     public OrderSales getsCode();
+
+    public int updateAudit(@Param("status") Integer status, @Param("sId") Long sId, @Param("reviewer") String reviewer);
 }

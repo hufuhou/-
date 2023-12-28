@@ -11,6 +11,7 @@ import com.cx.order.domain.OrderSalesDetails;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -94,8 +95,13 @@ public class OrderSalesController extends BaseController {
     @RequiresPermissions("order:sales:edit")
     @Log(title = "销售订单", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody OrderSales orderSales) {
-        return toAjax(orderSalesService.updateOrderSales(orderSales));
+    public AjaxResult edit(@RequestBody Map<String, Object> requestData) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        OrderSales orderSales = mapper.convertValue(requestData.get("orderSales"), OrderSales.class);
+        List<OrderSalesDetails> orderSalesDetails = mapper.convertValue(requestData.get("orderSalesDetails"), TypeFactory.defaultInstance().constructCollectionType(List.class, OrderSalesDetails.class));
+        List<OrderSalesDetails> updateDetails = mapper.convertValue(requestData.get("updateDetails"), TypeFactory.defaultInstance().constructCollectionType(List.class, OrderSalesDetails.class));
+        return toAjax(orderSalesService.updateOrderSales(orderSales, orderSalesDetails, updateDetails));
     }
 
     /**
@@ -114,5 +120,11 @@ public class OrderSalesController extends BaseController {
     @GetMapping("/getsCode")
     public AjaxResult getsCode() {
         return success(orderSalesService.getsCode());
+    }
+
+    @GetMapping("/{status}/{sId}")
+    public AjaxResult updateAudit(@PathVariable Integer status, @PathVariable Long sId) {
+        String reviewer = String.valueOf(SecurityUtils.getUserId());
+        return success(orderSalesService.updateAudit(status, sId, reviewer));
     }
 }

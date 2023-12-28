@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.cx.order.mapper.OrderSalesMapper;
 import com.cx.order.domain.OrderSales;
 import com.cx.order.service.IOrderSalesService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 销售订单Service业务层处理
@@ -62,6 +63,7 @@ public class OrderSalesServiceImpl implements IOrderSalesService {
      * @param orderSales 销售订单
      * @return 结果
      */
+    @Transactional
     @Override
     public int insertOrderSales(OrderSales orderSales, List<OrderSalesDetails> orderSalesDetails) {
         orderSales.setCreateTime(DateUtils.getNowDate());
@@ -88,9 +90,47 @@ public class OrderSalesServiceImpl implements IOrderSalesService {
      * @param orderSales 销售订单
      * @return 结果
      */
+    @Transactional
     @Override
-    public int updateOrderSales(OrderSales orderSales) {
+    public int updateOrderSales(OrderSales orderSales, List<OrderSalesDetails> orderSalesDetails, List<OrderSalesDetails> updateDetails) {
         orderSales.setUpdateTime(DateUtils.getNowDate());
+        orderSales.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
+        List<Long> sdIds = new ArrayList<>();
+        for (OrderSalesDetails details : updateDetails) {
+            sdIds.add(details.getSdId());
+        }
+        Long[] sdIdsArray = sdIds.toArray(new Long[0]);
+        if (sdIdsArray.length > 0) {
+            //删除旧数据
+            orderSalesDetailsMapper.deleteOrderSalesDetailsBySdIds(sdIdsArray);
+        }
+
+        //添加新数据
+        if (StringUtils.isNotNull(orderSalesDetails)) {
+            System.out.println(orderSalesDetails);
+            List<OrderSalesDetails> list = new ArrayList<>();
+            for (OrderSalesDetails details : orderSalesDetails) {
+                details.setsCode(orderSales.getsCode());
+                for (OrderSalesDetails updateDetail : updateDetails) {
+                    if (details.getgCode().equals(updateDetail.getgCode())) {
+                        details.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
+                        details.setUpdateTime(DateUtils.getNowDate());
+                        details.setCreateTime(updateDetail.getCreateTime());
+                        System.out.println("创建人" + updateDetail.getCreateBy());
+                        details.setCreateBy(updateDetail.getCreateBy());
+                        break;  // 找到匹配项后跳出内层循环
+                    } else {
+                        details.setCreateBy(String.valueOf(SecurityUtils.getUserId()));
+                        details.setCreateTime(DateUtils.getNowDate());
+                    }
+                }
+                list.add(details);
+            }
+            if (list.size() > 0) {
+                System.out.println("list" + list);
+                orderSalesDetailsMapper.insertOrderSalesDetails(orderSalesDetails);
+            }
+        }
         return orderSalesMapper.updateOrderSales(orderSales);
     }
 
@@ -155,5 +195,17 @@ public class OrderSalesServiceImpl implements IOrderSalesService {
 
         System.out.println(resultString);
         return orderSales;
+    }
+
+    /**
+     * 审核
+     *
+     * @param
+     * @param status
+     * @return
+     */
+    @Override
+    public int updateAudit(Integer status, Long sId, String reviewer) {
+        return orderSalesMapper.updateAudit(status, sId,reviewer);
     }
 }

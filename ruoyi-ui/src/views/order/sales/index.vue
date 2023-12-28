@@ -12,7 +12,7 @@
       <el-form-item label="单据状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择单据状态" clearable>
           <el-option
-            v-for="dict in dict.type.order_status"
+            v-for="dict in dict.type.sales_status"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -93,17 +93,19 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="salesList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
+    <el-table stripe v-loading="loading" :data="salesList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" fixed="left"/>
       <!--      <el-table-column label="销售订单ID" align="center" prop="sId"/>-->
-      <el-table-column label="销售单号" align="center" prop="sCode" width="200"/>
+      <el-table-column label="销售单号" align="center" prop="sCode" width="160" fixed="left"/>
       <!--      <el-table-column label="客户" align="center" prop="cId"/>-->
-      <el-table-column label="单据状态" align="center" prop="status">
+      <el-table-column label="单据状态" align="center" prop="status" fixed="left">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.order_status" :value="scope.row.status"/>
+          <el-tag :type="getStatusTagType(scope.row.status)">
+            {{ getStatusLabel(scope.row.status) }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="销售日期" align="center" prop="saleDate" width="180">
+      <el-table-column label="销售日期" align="center" prop="saleDate" width="100" fixed="left">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.saleDate, '{y}-{m}-{d}') }}</span>
         </template>
@@ -144,7 +146,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="销售负责人" align="center" prop="nickName">
+      <el-table-column label="销售负责人" align="center" prop="nickName" width="90">
         <template slot-scope="scope">
         <span v-for="item in userList" :key="item.userId">
           <template v-if="scope.row.principalId===item.userId">
@@ -155,7 +157,7 @@
       </el-table-column>
       <el-table-column label="销售数量" align="center" prop="totalPurchaseQuantity"/>
       <el-table-column label="销售金额" align="center" prop="totalMoney"/>
-      <el-table-column label="销售货品" align="center" prop="totalGoodsName" width="180"/>
+      <el-table-column label="销售货品" align="center" :formatter="truncateText" width="180" prop="totalGoodsName"/>
       <el-table-column label="制单人" align="center" prop="createBy" width="100">
         <template slot-scope="scope">
         <span v-for="item in userList" :key="item.userId">
@@ -184,7 +186,7 @@
           <span>{{ parseTime(scope.row.reviewerDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="110" fixed="right">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -192,15 +194,39 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['order:sales:edit']"
+            :disabled="scope.row.status === 1 ||scope.row.status === 2 || scope.row.status === 3 || scope.row.status === 4"
           >修改
           </el-button>
+
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['order:sales:remove']"
+            :disabled="scope.row.status === 1 ||scope.row.status === 2 ||scope.row.status === 3 || scope.row.status === 4"
           >删除
+          </el-button>
+
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-message"
+            @click="handleAudit(scope.row)"
+            v-hasPermi="['order:sales:audit']"
+            style="margin: 0"
+            :disabled="scope.row.status === 1 ||scope.row.status === 2 || scope.row.status === 3 || scope.row.status === 4"
+          >审核
+          </el-button>
+
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleRevoke(scope.row)"
+            v-hasPermi="['order:sales:revoke']"
+            :disabled="scope.row.status === 0 || scope.row.status === 3 || scope.row.status === 4"
+          >撤销
           </el-button>
         </template>
       </el-table-column>
@@ -306,7 +332,7 @@
             icon="el-icon-delete"
             size="mini"
             :disabled="multiple"
-            @click="handleDelete"
+            @click="handleRemove"
             v-hasPermi="['order:purchase:remove']"
           >移除
           </el-button>
@@ -338,7 +364,7 @@
                              style="width: 100px"></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column label="销售单价" align="center" prop="orPrice"/>
+        <el-table-column label="销售单价" align="center" :formatter="formatPrice" prop="orPrice"/>
         <el-table-column label="金额" align="center" width="90">
           <template slot-scope="scope">
             {{
@@ -401,7 +427,7 @@
             <dict-tag :options="dict.type.g_unit" :value="scope.row.gUnit"/>
           </template>
         </el-table-column>
-        <el-table-column label="出库单价" align="center" prop="orPrice"/>
+        <el-table-column label="出库单价" align="center" :formatter="formatPrice" prop="orPrice"/>
       </el-table>
       <pagination
         v-show="goodsTotal>0"
@@ -416,11 +442,133 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <!--审核-->
+    <el-drawer
+      title="详情"
+      :visible.sync="openAudit"
+      :direction="direction"
+      :before-close="handleClose"
+      :size="1000">
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="销售单号" prop="sCode">
+              <el-input v-model="form.sCode" placeholder="自动获取系统编码" :disabled="true" style="width: 400px;"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="销售日期" prop="saleDate">
+              <el-date-picker clearable
+                              v-model="form.saleDate"
+                              type="date"
+                              value-format="yyyy-MM-dd"
+                              style="width: 400px"
+                              placeholder="请选择进货日期" :disabled="true">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="客户名称" prop="cId">
+              <el-select v-model="form.cId" placeholder="请选择供应商" clearable @change="consumerChange"
+                         style="width: 400px;" :disabled="true">
+                <el-option
+                  v-for="item in consumerList"
+                  :key="item.cId"
+                  :label="item.cName"
+                  :value="item.cId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系人" prop="contactPerson">
+              <el-input v-model="form.contactPerson" placeholder="请输入联系人" :disabled="true" style="width: 400px;"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="联系方式" prop="contactNumber">
+              <el-input v-model="form.contactNumber" placeholder="请输入联系方式" :disabled="true"
+                        style="width: 400px;"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="进货部门" prop="deptId">
+              <treeselect v-model="form.deptId" :options="deptOptions" :normalizer="normalizer" :show-count="true"
+                          placeholder="请选择进货部门" :disabled="true" style="width: 400px;"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="销售负责人" prop="principalId">
+              <el-select v-model="form.principalId" placeholder="请选择进货人" style="width: 400px" :disabled="true">
+                <el-option
+                  v-for="item in userList"
+                  :key="item.userId"
+                  :label="item.nickName"
+                  :value="item.userId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" :disabled="true"
+                    style="width: 900px;"/>
+        </el-form-item>
+      </el-form>
+      <el-divider content-position="center">销售货品明细</el-divider>
+      <el-table v-loading="goodsLoading" :data="salesDetails" @selection-change="handleSelectionChange"
+                style="margin-bottom: 22px">
+        <el-table-column label="货品名称" align="center" prop="gName"/>
+        <el-table-column label="货品编号" align="center" prop="gCode"/>
+        <el-table-column label="规格型号" align="center" prop="specCode" width="120"/>
+        <el-table-column label="单位" align="center" prop="gUnit" width="75">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.g_unit" :value="scope.row.gUnit"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="货品类型" align="center" prop="gtId" width="75">
+          <template slot-scope="scope">
+          <span v-for="item in goodsType">
+            <template v-if="scope.row.gtId===item.gtId">
+              {{ item.gtName }}
+            </template>
+          </span>
+          </template>
+        </el-table-column>
+        <el-table-column label="货品数量" align="center" prop="salesVolume" width="120">
+          <template slot-scope="scope">
+            <el-input-number v-model="scope.row.salesVolume" size="mini"
+                             @input="calculateTotal(scope.row)" :min="1" :max="100" label="描述文字"
+                             style="width: 100px" :disabled="true"></el-input-number>
+          </template>
+        </el-table-column>
+        <el-table-column label="销售单价" align="center" :formatter="formatPrice" prop="orPrice" width="80"/>
+        <el-table-column label="金额" align="center" width="90">
+          <template slot-scope="scope">
+            {{
+              (scope.row.salesVolume && scope.row.orPrice) ? (scope.row.salesVolume * scope.row.orPrice).toFixed(2) : 0
+            }}
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 8px; margin-right: 22px;">
+        <el-button type="warning" @click="handleAction('reject')">驳 回</el-button>
+        <el-button type="primary" @click="handleAction('approve')">通 过</el-button>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
 <script>
-import {listSales, getSales, delSales, addSales, updateSales} from "@/api/order/sales";
+import {listSales, getSales, delSales, addSales, updateSales, updateAudit} from "@/api/order/sales";
 import {listConsumer} from "@/api/units/consumer";
 import {listDept} from "@/api/cx-ckgl/warehouse";
 import {listUser} from "@/api/system/user";
@@ -431,7 +579,7 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Sales",
-  dicts: ['order_status', 'g_unit'],
+  dicts: ['sales_status', 'g_unit'],
   components: {Treeselect},
   data() {
     return {
@@ -465,13 +613,18 @@ export default {
       goodsType: [],
       //货品信息数据
       goodsList: [],
+      // 修改（删除）的数据
+      updateDetails: [],
       // 销售编码
       code: null,
+      // 订单id
+      sId: null,
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
       openGoodsList: false,
+      openAudit: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -633,7 +786,16 @@ export default {
       const sId = row.sId || this.ids
       getSales(sId).then(response => {
         this.form = response.data;
+        this.salesDetails = response.data.detailsList.map(item => ({
+          ...item.hpGoods,
+          salesVolume: item.salesVolume,
+          sdId: item.sdId,
+          createBy: item.createBy,
+          createTime: item.createTime
+        }));
+        this.updateDetails.push(...this.salesDetails);
         this.open = true;
+        this.goodsLoading = false;
         this.title = "修改销售订单";
       });
     },
@@ -656,8 +818,8 @@ export default {
         }
 
         const requestData = {
-          orderPurchase: this.form,
-          orderPurchaseDetails: this.salesDetails,
+          orderSales: this.form,
+          orderSalesDetails: this.salesDetails,
           updateDetails: this.updateDetails
 
         };
@@ -670,6 +832,7 @@ export default {
               this.getList();
             });
           } else {
+            this.form.sCode = this.code
             addSales(requestData).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -703,7 +866,7 @@ export default {
     /** 查询部门下拉树结构 */
     getDeptTree() {
       listDept().then(response => {
-        const filteredDept = response.data.filter(dept => dept.deptId === 200 || dept.parentId === 200);
+        const filteredDept = response.data.filter(dept => dept.deptId === 208 || dept.parentId === 208);
         this.deptOptions = this.handleTree(filteredDept, "deptId");
         this.deptList = response.data
         console.log(this.deptList)
@@ -743,17 +906,31 @@ export default {
     },
     /** 将总金额和进货编码塞入集合 */
     calculateTotal(row) {
-      if (row.orPrice && row.salesAmount) {
-        this.$set(row, 'salesAmount', (row.orPrice * row.salesAmount).toFixed(2));
+      if (row.orPrice && row.salesVolume) {
+        this.$set(row, 'salesAmount', (row.orPrice * row.salesVolume).toFixed(2));
       } else {
         this.$set(row, 'salesAmount', 0);
       }
       this.$set(row, 'sCode', this.code);
+      console.log(this.salesDetails)
     },
     /** 移除 */
     removeRow(index) {
       // 通过 index 从 purchaseList 数组中移除对应行
       this.salesDetails.splice(index, 1);
+    },
+    handleRemove() {
+      const sIds = this.ids;
+      // 从 salesDetails 中移除选中的行数据
+      sIds.forEach(row => {
+        const index = this.salesDetails.findIndex(item => item.id === row.id);
+        if (index !== -1) {
+          this.salesDetails.splice(index, 1);
+        }
+      });
+
+      // 清空选中状态
+      this.$refs.salesTable.clearSelection();
     },
     /** 关闭产品选择列表 */
     closeGoods() {
@@ -765,6 +942,7 @@ export default {
     getGoodsList() {
       this.goodsLoading = true;
       listGoods(this.goodsQueryParams).then(response => {
+        console.log(response.rows)
         this.goodsList = response.rows;
         this.goodsTotal = response.total;
         this.goodsLoading = false;
@@ -791,6 +969,99 @@ export default {
         this.goodsType = response.data;
       });
     },
+    /** 审核 */
+    handleAudit(row) {
+      const sId = row.sId || this.ids;
+      this.sId = sId
+      console.log(this.sId)
+      this.openAudit = true;
+      getSales(sId).then(response => {
+        this.form = response.data;
+        this.salesDetails = response.data.detailsList.map(item => ({
+          ...item.hpGoods,
+          salesVolume: item.salesVolume,
+          sdId: item.sdId,
+          createBy: item.createBy,
+          createTime: item.createTime
+        }));
+        this.goodsLoading = false;
+      });
+    },
+    /** 省略字符串 */
+    truncateText(row, column, cellValue) {
+      const maxLength = 12; // 设置最大长度
+      if (cellValue && cellValue.length > maxLength) {
+        return cellValue.substring(0, maxLength) + '等...';
+      }
+      return cellValue;
+    },
+    /** 显示两位小数 */
+    formatPrice(row, column, cellValue) {
+      // 使用 Number.prototype.toFixed 方法将数值格式化为两位小数
+      return Number(cellValue).toFixed(2);
+    },
+    /** 单据标签 */
+    getStatusTagType(status) {
+      // 根据不同的status值返回不同的el-tag类型
+      if (status === 0) {
+        return 'info'; // 待审核状态
+      } else if (status === 1) {
+        return 'danger'; // 驳回状态
+      } else if (status === 2) {
+        return ''; // 待出库状态
+      } else if (status === 3) {
+        return 'warning'; // 部分出库状态
+      } else if (status === 4) {
+        return 'success'; // 已完成状态
+      }
+    },
+    getStatusLabel(status) {
+      // 根据不同的status值返回不同的标签显示文本
+      if (status === 0) {
+        return '待审核';
+      } else if (status === 1) {
+        return '驳回';
+      } else if (status === 2) {
+        return '待出库';
+      } else if (status === 3) {
+        return '部分出库';
+      } else if (status === 4) {
+        return '已完成';
+      }
+    },
+    handleAction(actionType) {
+      // actionType 可以是 'reject' 或 'approve'
+      let newStatus = actionType === 'reject' ? 1 : actionType === 'approve' ? 2 : 0;
+      console.log(this.sId)
+      // 执行修改订单状态的操作，例如通过接口发送请求等
+      updateAudit(newStatus, this.sId).then(res => {
+        this.getList();
+        this.$modal.msgSuccess("审核成功");
+        this.openAudit = false;
+      });
+    },
+    /** 撤销 */
+    handleRevoke(row) {
+      const sId = row.sId;
+      this.$confirm('是否撤回所选单据?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        updateAudit(0, sId).then(res => {
+          this.getList();
+          this.$message({
+            type: 'success',
+            message: '撤销成功!'
+          });
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消撤销'
+        });
+      });
+    }
   }
 };
 </script>

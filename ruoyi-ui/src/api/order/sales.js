@@ -50,3 +50,11 @@ export function getCode() {
     method: 'get'
   })
 }
+
+// 审核状态修改
+export function updateAudit(status, sId) {
+  return request({
+    url: '/order/sales/' + status + '/' + sId,
+    method: 'get'
+  })
+}
