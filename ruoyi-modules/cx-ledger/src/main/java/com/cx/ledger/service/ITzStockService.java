@@ -58,4 +58,6 @@ public interface ITzStockService
      * @return 结果
      */
     public int deleteTzStockBySId(Long sId);
+
+    public List<TzStock> listOutGoods(TzStock tz);
 }

@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <!--      <el-form-item label="货品编码" prop="gCode">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.gCode"-->
+      <!--          placeholder="请输入货品编码"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <el-form-item label="货品名称" prop="gName">
         <el-input
           v-model="queryParams.gName"
@@ -19,6 +27,14 @@
           />
         </el-select>
       </el-form-item>
+      <!--      <el-form-item label="排序" prop="sort">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.sort"-->
+      <!--          placeholder="请输入排序"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
           <el-option
@@ -29,6 +45,14 @@
           />
         </el-select>
       </el-form-item>
+      <!--      <el-form-item label="供应商id" prop="sId">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.sId"-->
+      <!--          placeholder="请输入供应商id"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <el-form-item label="规格型号" prop="specCode">
         <el-input
           v-model="queryParams.specCode"
@@ -37,6 +61,32 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <!--      <el-form-item label="出库参考价" prop="orPrice">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.orPrice"-->
+      <!--          placeholder="请输入出库参考价"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="入库参考价" prop="wrPrice">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.wrPrice"-->
+      <!--          placeholder="请输入入库参考价"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="保质期管理" prop="hasShelfLife">-->
+      <!--        <el-select v-model="queryParams.hasShelfLife" placeholder="请选择保质期管理" clearable>-->
+      <!--          <el-option-->
+      <!--            v-for="dict in dict.type.has_shelf_life"-->
+      <!--            :key="dict.value"-->
+      <!--            :label="dict.label"-->
+      <!--            :value="dict.value"-->
+      <!--          />-->
+      <!--        </el-select>-->
+      <!--      </el-form-item>-->
       <el-form-item label="预警天数" prop="warningDays">
         <el-input
           v-model="queryParams.warningDays"
@@ -45,6 +95,30 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <!--      <el-form-item label="货品上限" prop="itemLimit">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.itemLimit"-->
+      <!--          placeholder="请输入货品上限"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="货品下限" prop="lowerLimit">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.lowerLimit"-->
+      <!--          placeholder="请输入货品下限"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="是否删除" prop="isDelte">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.isDelte"-->
+      <!--          placeholder="请输入是否删除"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <el-form-item label="保质期" prop="qualityG">
         <el-input
           v-model="queryParams.qualityG"
@@ -60,39 +134,6 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <!--      <el-col :span="1.5">-->
-      <!--        <el-button-->
-      <!--          type="primary"-->
-      <!--          plain-->
-      <!--          icon="el-icon-plus"-->
-      <!--          size="mini"-->
-      <!--          @click="handleAdd"-->
-      <!--          v-hasPermi="['cx-ledger:shelflife:add']"-->
-      <!--        >新增</el-button>-->
-      <!--      </el-col>-->
-      <!--      <el-col :span="1.5">-->
-      <!--        <el-button-->
-      <!--          type="success"-->
-      <!--          plain-->
-      <!--          icon="el-icon-edit"-->
-      <!--          size="mini"-->
-      <!--          :disabled="single"-->
-      <!--          @click="handleUpdate"-->
-      <!--          v-hasPermi="['cx-ledger:shelflife:edit']"-->
-      <!--        >修改</el-button>-->
-      <!--      </el-col>-->
-      <!--      <el-col :span="1.5">-->
-      <!--        <el-button-->
-      <!--          type="danger"-->
-      <!--          plain-->
-      <!--          icon="el-icon-delete"-->
-      <!--          size="mini"-->
-      <!--          :disabled="multiple"-->
-      <!--          @click="handleDelete"-->
-      <!--          v-hasPermi="['cx-ledger:shelflife:remove']"-->
-      <!--        >删除-->
-      <!--        </el-button>-->
-      <!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -127,18 +168,75 @@
         </template>
       </el-table-column>
       <el-table-column label="排序" align="center" prop="sort"/>
+      <el-table-column label="仓库名称" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.gId">
+            {{getWname(scope.row.gId)}}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="仓位名称" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.gId">
+            {{getSlname(scope.row.gId)}}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.goods_states" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="当前库存" align="center">
+      <el-table-column label="保质期管理" align="center" prop="hasShelfLife">
         <template slot-scope="scope">
-          <span v-if="scope.row.gId">
-              {{getTotalQuantity(scope.row.gId)}}
-          </span>
+          <dict-tag :options="dict.type.has_shelf_life" :value="scope.row.hasShelfLife"/>
         </template>
       </el-table-column>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="110">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="结束时间" align="center" width="110">
+        <template slot-scope="scope">
+          <template v-if="scope.row.qualityG.includes('天')">
+                <span>{{
+                    parseTime(new Date(scope.row.createTime).setDate(new Date(scope.row.createTime).getDate() + parseInt(scope.row.qualityG)), '{y}-{m}-{d}')
+                  }}</span>
+          </template>
+          <template v-else-if="scope.row.qualityG.includes('月')">
+            <span>{{
+                parseTime(new Date(scope.row.createTime).setMonth(new Date(scope.row.createTime).getMonth() + parseInt(scope.row.qualityG)), '{y}-{m}-{d}')
+              }}</span>
+          </template>
+          <template v-else-if="scope.row.qualityG.includes('年')">
+            <span>{{
+                parseTime(new Date(scope.row.createTime).setFullYear(new Date(scope.row.createTime).getFullYear() + parseInt(scope.row.qualityG)), '{y}-{m}-{d}')
+              }}</span>
+          </template>
+        </template>
+      </el-table-column>
+      <el-table-column label="保质期" align="center" prop="qualityG"/>
+      <el-table-column label="剩余天数" align="center">
+        <template slot-scope="scope">
+          <template v-if="scope.row.qualityG.includes('天')">
+                <span>{{
+                    Math.floor((new Date(scope.row.createTime).setDate(new Date(scope.row.createTime).getDate() + parseInt(scope.row.qualityG)) - new Date()) / (1000 * 60 * 60 * 24))
+                  }}</span>
+          </template>
+          <template v-else-if="scope.row.qualityG.includes('月')">
+              <span>{{
+                  Math.floor((new Date(scope.row.createTime).setMonth(new Date(scope.row.createTime).getMonth() + parseInt(scope.row.qualityG)) - new Date()) / (1000 * 60 * 60 * 24))
+                }}</span>
+          </template>
+          <template v-else-if="scope.row.qualityG.includes('年')">
+               <span>{{
+                   Math.floor((new Date(scope.row.createTime).setFullYear(new Date(scope.row.createTime).getFullYear() + parseInt(scope.row.qualityG)) - new Date()) / (1000 * 60 * 60 * 24))
+                 }}</span>
+          </template>
+        </template>
+      </el-table-column>
+      <el-table-column label="预警天数" align="center" prop="warningDays"/>
 
       <!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->
       <!--        <template slot-scope="scope">-->
@@ -295,19 +393,32 @@ export default {
         this.loading = false;
       });
     },
-    getTotalQuantity(gId){
-      let total = 0;
-      for (let item of this.stockList) {
-        if (item.gId === gId) {
-          total += item.itemQuantity;
-        }
-      }
-      return total;
-    },
     // 取消按钮
     cancel() {
       this.open = false;
       this.reset();
+    },
+    getWname(gid){
+      let wname="暂无";
+      for(let item of this.stockList){
+        for(let i of this.warehouseList){
+          if(item.gId===gid && item.wId===i.wId){
+           wname= i.wName;
+          }
+        }
+      }
+      return wname;
+    },
+    getSlname(gid){
+      let slname="暂无";
+      for(let item of this.stockList){
+        for(let i of this.locationList){
+          if(item.gId===gid && item.slId===i.slId){
+              slname=i.slName;
+          }
+        }
+      }
+      return slname;
     },
     // 表单重置
     reset() {

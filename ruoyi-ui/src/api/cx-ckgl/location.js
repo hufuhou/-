@@ -39,7 +39,13 @@ export function getLocation(slId) {
     method: 'get'
   })
 }
-
+//根据仓库ID查询仓位
+export function getLocas(wId) {
+  return request({
+    url: '/cx-ckgl/location/getLocas/' + wId,
+    method: 'get'
+  })
+}
 // 新增仓库详情
 export function addLocation(data) {
   return request({
@@ -48,6 +54,7 @@ export function addLocation(data) {
     data: data
   })
 }
+
 
 // 修改仓库详情
 export function updateLocation(data) {

@@ -92,4 +92,10 @@ public class TzStockServiceImpl implements ITzStockService
     {
         return tzStockMapper.deleteTzStockBySId(sId);
     }
+
+    @Override
+    public List<TzStock> listOutGoods(TzStock tz) {
+        List<TzStock> list=tzStockMapper.listOutGoods(tz);
+        return list;
+    }
 }

@@ -42,3 +42,11 @@ export function delStock(sId) {
     method: 'delete'
   })
 }
+export function listOutGoods(query) {
+  return request({
+    url: '/cx-ledger/stock/listOutGoods',
+    method: 'get',
+    params:query
+  })
+}
+

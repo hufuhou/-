@@ -47,6 +47,17 @@ public class TjStorageLocationServiceImpl implements ITjStorageLocationService
         return tjStorageLocationMapper.selectTjStorageLocationList(tjStorageLocation);
     }
 
+    /**
+     * 根据仓库ID查询仓位信息
+     * @param wId
+     * @return
+     */
+    @Override
+    public List<TjStorageLocation> selectTjStorageLocationBywId(Long wId) {
+        List<TjStorageLocation> tj=tjStorageLocationMapper.selectTjStorageLocationBywId(wId);
+        return tj;
+    }
+
     @Override
     public TjStorageLocation getTjStorageLocationBySlCode() {
         return tjStorageLocationMapper.getTjStorageLocationBySlCode();

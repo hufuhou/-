@@ -28,6 +28,13 @@ public interface ITjStorageLocationService
     public List<TjStorageLocation> selectTjStorageLocationList(TjStorageLocation tjStorageLocation);
 
     /**
+     * 根据仓库ID查询仓位信息
+     * @param wId
+     * @return
+     */
+    public List<TjStorageLocation> selectTjStorageLocationBywId(Long wId);
+
+    /**
      * 获取最新的仓位编码
      * @return
      */

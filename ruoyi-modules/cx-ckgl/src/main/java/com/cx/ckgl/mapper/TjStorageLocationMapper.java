@@ -21,6 +21,12 @@ public interface TjStorageLocationMapper
     public TjStorageLocation selectTjStorageLocationBySlId(Long slId);
 
     /**
+     * 根据仓库ID查询数据
+     * @param wId
+     * @return
+     */
+    public List<TjStorageLocation> selectTjStorageLocationBywId(Long wId);
+    /**
      * 查询仓库详情列表
      * 
      * @param tjStorageLocation 仓库详情

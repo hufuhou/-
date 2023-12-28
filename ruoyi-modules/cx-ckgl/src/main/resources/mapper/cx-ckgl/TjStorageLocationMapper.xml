@@ -40,6 +40,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTjStorageLocationVo"/>
         where sl_id = #{slId}
     </select>
+
+    <select id="selectTjStorageLocationBywId" parameterType="Long" resultMap="TjStorageLocationResult">
+        <include refid="selectTjStorageLocationVo"/>
+        where w_id = #{wId}
+    </select>
     <select id="getTjStorageLocationBySlCode" resultMap="TjStorageLocationResult">
         select sl_code from tj_storage_location order by sl_id desc limit 1;
     </select>
