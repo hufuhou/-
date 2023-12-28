@@ -150,7 +150,6 @@
 
     <el-table v-loading="loading" :data="shelflifeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="货品ID " align="center" prop="gId"/>
       <el-table-column label="货品编码" align="center" prop="gCode" width="180"/>
       <el-table-column label="货品名称" align="center" prop="gName"/>
       <el-table-column label="货品类型" align="center" prop="gtId">

@@ -355,10 +355,10 @@
         <el-divider content-position="center">调拨明细信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="addGoods" disabled="isDe2">添加</el-button>
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="addGoods" :disabled="isDe2">添加</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteCrkTransferDetails" disabled="isDe2">删除
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteCrkTransferDetails" :disabled="isDe2">删除
             </el-button>
           </el-col>
         </el-row>
@@ -598,9 +598,9 @@ export default {
         // tdCode: [
         //   { required: true, message: "调拨单号不能为空", trigger: "blur" }
         // ],
-        docStatus: [
-          {required: true, message: "单据状态不能为空", trigger: "change"}
-        ],
+        // docStatus: [
+        //   {required: true, message: "单据状态不能为空", trigger: "change"}
+        // ],
         tDate: [
           {required: true, message: "调拨申请日期不能为空", trigger: "blur"}
         ],
@@ -758,11 +758,6 @@ export default {
           goodsId: item.hpGoods.gId
         })
       })
-      this.form.crkTransferDetailsList.forEach(item => {
-        if (!item.tQuantity) {
-          item.tQuantity = 1
-        }
-      })
       // this.resetGoodsQuery();
       // this.$refs.multipleTable.clearSelection()
       //关闭货品列表页面
@@ -873,10 +868,9 @@ export default {
         } else {
           this.form = response.data;
           this.form.docStatus = 3;
-          updateTransfer(this.form).then(item => {
-            this.$modal.msgSuccess("审核成功");
-            this.getList();
-          });
+          this.crkTransferDetailsList = response.data.crkTransferDetailsList;
+          this.open = true;
+          this.trWarehousingLocation(response.data.inWId);
         }
       });
     },

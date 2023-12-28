@@ -38,14 +38,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="计划数量" prop="numberPlans">
-        <el-input
-          v-model="queryParams.numberPlans"
-          placeholder="请输入计划数量"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="计划数量" prop="numberPlans">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.numberPlans"-->
+<!--          placeholder="请输入计划数量"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="货品id" prop="gId">
         <el-select
           v-model="queryParams.gId"
@@ -130,18 +130,18 @@
       <!--        >修改-->
       <!--        </el-button>-->
       <!--      </el-col>-->
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['cx-ledger:stock:remove']"
-        >删除
-        </el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="danger"-->
+<!--          plain-->
+<!--          icon="el-icon-delete"-->
+<!--          size="mini"-->
+<!--          :disabled="multiple"-->
+<!--          @click="handleDelete"-->
+<!--          v-hasPermi="['cx-ledger:stock:remove']"-->
+<!--        >删除-->
+<!--        </el-button>-->
+<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -223,7 +223,7 @@
         </template>
       </el-table-column>
       <el-table-column label="货品数量" align="center" prop="itemQuantity"/>
-      <el-table-column label="计划数量" align="center" prop="numberPlans"/>
+<!--      <el-table-column label="计划数量" align="center" prop="numberPlans"/>-->
       <el-table-column label="备注" align="center" prop="remark">
         <template slot-scope="scope">
           <div :class="['truncate-text', isOverLength(scope.row.remark)]">
