@@ -27,27 +27,27 @@
         <p>
           <b>当前版本:</b> <span>v{{ version }}</span>
         </p>
-        <p>
-          <el-tag type="danger">感谢若依开源</el-tag>
-        </p>
-        <p>
-          <el-button type="primary" size="mini" icon="el-icon-cloudy" plain
-                     @click="goTarget('https://gitee.com/y_project/RuoYi-Cloud')">访问👉🏻若依码云
-          </el-button>
-          <el-button size="mini" icon="el-icon-s-home" plain @click="goTarget('http://ruoyi.vip')">访问若依👍🏻主页
-          </el-button>
-        </p>
+<!--        <p>-->
+<!--          <el-tag type="danger">感谢若依开源</el-tag>-->
+<!--        </p>-->
+<!--        <p>-->
+<!--          <el-button type="primary" size="mini" icon="el-icon-cloudy" plain-->
+<!--                     @click="goTarget('https://gitee.com/y_project/RuoYi-Cloud')">访问👉🏻若依码云-->
+<!--          </el-button>-->
+<!--          <el-button size="mini" icon="el-icon-s-home" plain @click="goTarget('http://ruoyi.vip')">访问若依👍🏻主页-->
+<!--          </el-button>-->
+<!--        </p>-->
       </el-col>
 
       <el-col :sm="24" :lg="12" style="padding-left: 50px">
         <el-row>
           <el-col :span="12">
-            <h2>技术选型</h2>
+            <h2>技术框架</h2>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="6">
-            <h4>后端技术</h4>
+            <h4>后端框架</h4>
             <ul>
               <li>SpringBoot</li>
               <li>SpringCloud</li>
@@ -59,7 +59,7 @@
             </ul>
           </el-col>
           <el-col :span="6">
-            <h4>前端技术</h4>
+            <h4>前端框架</h4>
             <ul>
               <li>Vue</li>
               <li>Vuex</li>
@@ -105,18 +105,23 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="30">
-      <el-card style="width: 1315px; height: 400px; position: relative; left: 15px">
-        <el-card v-for="sv in WareHouseStockValue" :key="sv.warehouseId" shadow="hover">
-          <div>
-            仓库: {{ warehouseName[sv.warehouseId - 1] }}
-            <!-- 这里假设 warehouseId 是从 1 开始的，如果是从 0 开始的，请修改为 warehouseName[sv.warehouseId] -->
-            库存价值 : {{ sv.allValue }}
-            库存数量 : {{ sv.allCount }}
-          </div>
-        </el-card>
-      </el-card>
-    </el-row>
+<!--    <el-row :gutter="30">-->
+<!--      <el-card style="width: 1315px; height: 400px; position: relative; left: 15px">-->
+<!--        <el-card v-for="sv in WareHouseStockValue" :key="sv.warehouseId" shadow="hover">-->
+<!--          <div>-->
+<!--&lt;!&ndash;            库存价值 : {{ sv.allValue }}&ndash;&gt;-->
+<!--&lt;!&ndash;            库存数量 : {{ sv.allCount }}&ndash;&gt;-->
+<!--            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ warehouseName[sv.warehouseId - 1] }}</p>-->
+<!--            <el-col :span="4">-->
+<!--                <div>-->
+<!--                  <p style="color: #00afff;font-size: 35px;line-height: 1px"> 库存价值 : {{ sv.allValue }}</p>-->
+<!--                  <p style="color: #00afff;font-size: 35px;line-height: 1px"> 库存数量 : {{ sv.allCount }}</p>-->
+<!--                </div>-->
+<!--            </el-col>-->
+<!--            </div>-->
+<!--        </el-card>-->
+<!--      </el-card>-->
+<!--    </el-row>-->
 
 
     <el-row :gutter="30">
@@ -151,7 +156,7 @@ export default {
   name: "Index",
   data() {
     return {
-      version: "1.1.4.514 獣の先祖特別版",
+      version: "1.1.4.514 下北泽特別版", //1.1.4.514 獣の先祖特別版
       KcDetail: [],
       groupedData: [],
       chartIds: ['main0', 'main1', 'main2', 'main3'],

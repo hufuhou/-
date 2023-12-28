@@ -1,55 +1,75 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cx.ckgl.mapper.WarehouseMapper">
-    
+
     <resultMap type="Warehouse" id="WarehouseResult">
-        <result property="wId"    column="w_id"    />
-        <result property="tId"    column="t_id"    />
-        <result property="inId"    column="in_id"    />
-        <result property="wCode"    column="w_code"    />
-        <result property="wName"    column="w_name"    />
-        <result property="wCapacity"    column="w_capacity"    />
-        <result property="wStatus"    column="w_status"    />
-        <result property="wAddress"    column="w_address"    />
-        <result property="isDefault"    column="is_default"    />
-        <result property="wSupervisor"    column="w_supervisor"    />
-        <result property="remark"    column="remark"    />
-        <result property="sort"    column="sort"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="isDelte"    column="is_delte"    />
-        <result property="warehouseMD"    column="Warehouse_m_d"    />
+        <result property="wId" column="w_id"/>
+        <result property="tId" column="t_id"/>
+        <result property="inId" column="in_id"/>
+        <result property="wCode" column="w_code"/>
+        <result property="wName" column="w_name"/>
+        <result property="wCapacity" column="w_capacity"/>
+        <result property="wStatus" column="w_status"/>
+        <result property="wAddress" column="w_address"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="wSupervisor" column="w_supervisor"/>
+        <result property="remark" column="remark"/>
+        <result property="sort" column="sort"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="warehouseMD" column="Warehouse_m_d"/>
     </resultMap>
 
     <sql id="selectWarehouseVo">
-        select w_id, t_id, in_id, w_code, w_name, w_capacity, w_status, w_address, is_default, w_supervisor, remark, sort, create_by, create_time, update_by, update_time, is_delte, Warehouse_m_d from warehouse
+        select w_id,
+               t_id,
+               in_id,
+               w_code,
+               w_name,
+               w_capacity,
+               w_status,
+               w_address,
+               is_default,
+               w_supervisor,
+               remark,
+               sort,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte,
+               Warehouse_m_d
+        from warehouse
     </sql>
 
     <select id="selectWarehouseList" parameterType="Warehouse" resultMap="WarehouseResult">
         <include refid="selectWarehouseVo"/>
-        <where>  
-            <if test="wCode != null  and wCode != ''"> and w_code = #{wCode}</if>
-            <if test="wName != null  and wName != ''"> and w_name like concat('%', #{wName}, '%')</if>
-            <if test="wCapacity != null  and wCapacity != ''"> and w_capacity = #{wCapacity}</if>
-            <if test="wStatus != null "> and w_status = #{wStatus}</if>
-            <if test="wAddress != null  and wAddress != ''"> and w_address = #{wAddress}</if>
-            <if test="wSupervisor != null "> and w_supervisor = #{wSupervisor}</if>
-            <if test="warehouseMD != null  and warehouseMD != ''"> and Warehouse_m_d = #{warehouseMD}</if>
+        <where>
+            <if test="wCode != null  and wCode != ''">and w_code = #{wCode}</if>
+            <if test="wName != null  and wName != ''">and w_name like concat('%', #{wName}, '%')</if>
+            <if test="wCapacity != null  and wCapacity != ''">and w_capacity = #{wCapacity}</if>
+            <if test="wStatus != null ">and w_status = #{wStatus}</if>
+            <if test="wAddress != null  and wAddress != ''">and w_address = #{wAddress}</if>
+            <if test="wSupervisor != null ">and w_supervisor = #{wSupervisor}</if>
+            <if test="warehouseMD != null  and warehouseMD != ''">and Warehouse_m_d = #{warehouseMD}</if>
         </where>
     </select>
-    
+
     <select id="selectWarehouseByWId" parameterType="Long" resultMap="WarehouseResult">
         <include refid="selectWarehouseVo"/>
         where w_id = #{wId}
     </select>
     <select id="getWarehouseByWCode" resultMap="WarehouseResult">
-        select w_code from warehouse order by w_id desc limit 1;
+        select w_code
+        from warehouse
+        order by w_id desc limit 1;
     </select>
-        
+
     <insert id="insertWarehouse" parameterType="Warehouse" useGeneratedKeys="true" keyProperty="wId">
         insert into warehouse
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -70,7 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
             <if test="isDelte != null">is_delte,</if>
             <if test="warehouseMD != null and warehouseMD != ''">Warehouse_m_d,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tId != null">#{tId},</if>
             <if test="inId != null">#{inId},</if>
@@ -89,7 +109,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="isDelte != null">#{isDelte},</if>
             <if test="warehouseMD != null and warehouseMD != ''">#{warehouseMD},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateWarehouse" parameterType="Warehouse">
@@ -116,44 +136,52 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where w_id = #{wId}
     </update>
     <update id="enableWarehouse" parameterType="Long">
-        update warehouse set w_status =0  where w_id = #{wId}
+        update warehouse
+        set w_status =0
+        where w_id = #{wId}
     </update>
 
     <update id="deactivateWarehouse" parameterType="Long">
-        update warehouse set w_status =1  where w_id = #{wId}
+        update warehouse
+        set w_status =1
+        where w_id = #{wId}
     </update>
 
     <update id="lockWarehouse" parameterType="Long">
-        update warehouse set w_status =2  where w_id = #{wId}
+        update warehouse
+        set w_status =2
+        where w_id = #{wId}
     </update>
 
     <update id="enablesWarehouse" parameterType="String">
-        update warehouse set w_status =0  where w_id in
+        update warehouse set w_status =0 where w_id in
         <foreach item="wId" collection="array" open="(" separator="," close=")">
             #{wId}
         </foreach>
     </update>
 
     <update id="deactivatesWarehouse" parameterType="String">
-        update warehouse set w_status =1  where w_id in
+        update warehouse set w_status =1 where w_id in
         <foreach item="wId" collection="array" open="(" separator="," close=")">
             #{wId}
         </foreach>
     </update>
 
     <update id="locksWarehouse" parameterType="String">
-        update warehouse set w_status =2  where w_id in
+        update warehouse set w_status =2 where w_id in
         <foreach item="wId" collection="array" open="(" separator="," close=")">
             #{wId}
         </foreach>
     </update>
 
     <delete id="deleteWarehouseByWId" parameterType="Long">
-        delete from warehouse where w_id = #{wId}
+        delete
+        from warehouse
+        where w_id = #{wId}
     </delete>
 
     <delete id="deleteWarehouseByWIds" parameterType="String">
-        delete from warehouse where w_id in 
+        delete from warehouse where w_id in
         <foreach item="wId" collection="array" open="(" separator="," close=")">
             #{wId}
         </foreach>
