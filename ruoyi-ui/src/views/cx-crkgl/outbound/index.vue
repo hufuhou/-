@@ -123,7 +123,7 @@
       </el-table-column>
       <el-table-column label="出库状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.status" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.status" :value="scope.row.status" :class="getStatusClass(scope.row.status)"/>
         </template>
       </el-table-column>
       <el-table-column label="出库日期" align="center" prop="outDate" width="180">
@@ -543,6 +543,28 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!--审核对话框-->
+    <el-dialog title="审核" :visible.sync="openAudit" append-to-body style="width: 500px; margin: auto"
+               @close="closeAudit">
+      <el-form :model="auditForm" ref="queryGoodsForm" size="small" :inline="true" v-show="showSearch"
+               label-width="68px">
+        <el-form-item label="审核结果" prop="auditResult">
+          <el-col :span="24">
+            <el-radio-group v-model="auditForm.auditResult">
+              <el-radio label="true">通过</el-radio>
+              <el-radio label="false">驳回</el-radio>
+            </el-radio-group>
+          </el-col>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="closeAudit">关 闭</el-button>
+        <el-button type="primary" @click="auditSubmit">确 定
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -567,6 +589,7 @@ import {listConsumer} from "@/api/units/consumer";
 import {listSales} from "@/api/order/sales";
 import {listDept} from "@/api/cx-ckgl/warehouse";
 import {listLocation} from "@/api/cx-ckgl/location";
+import {updateAudit} from "@/api/order/purchase";
 
 export default {
   computed: {
@@ -649,6 +672,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      openAudit: false,
       dialogMaterial1:false,
       dialogMaterial:false,
       // 查询参数
@@ -671,6 +695,10 @@ export default {
       },
       // 表单参数
       form: {},
+
+      auditForm: {
+        auditResult: true
+      },
       // 表单校验
       rules: {
         outType: [
@@ -1038,45 +1066,65 @@ export default {
         ...this.queryParams
       }, `outbound_${new Date().getTime()}.xlsx`)
     },
-    /** 审核按钮操作 */
-    handleExamine() {
+    /** 审核 */
+    handleExamine(row) {
+      this.openAudit = true;
+    },
+    /** 审核页面关闭 */
+    closeAudit() {
+      this.openAudit = false;
+    },
+    /** 审核提交*/
+    auditSubmit() {
       const outCodes = [];
       const outIds = this.ids;
       outCodes.push(...this.outCode);
-      let isCancelled = false;
-      this.$confirm(`审核单号为"${outCodes}"的数据项？`, '审核数据项', {
-        distinguishCancelAndClose: true,
-        confirmButtonText: '审核通过',
-        cancelButtonText: '审核不通过',
-        type: 'warning',
-      }).then(() => {
-        if (!isCancelled) {
-          // 执行审核通过操作
-          AuditOutbound(outCodes, outIds, true)
-            .then(() => {
-              this.getList();
-              this.$message.success('审核完成！');
-            })
-            .catch(() => {
-              // 处理审核操作失败
-            });
-        }
-      }).catch(action => {
-        if (action === 'close') {
-          isCancelled = true;
-        } else {
-          // 执行审核不通过操作
-          AuditOutbound(outCodes, outIds, false)
-            .then(() => {
-              this.getList();
-              this.$message.success('审核完成！');
-            })
-            .catch(() => {
-              // 处理审核操作失败
-            });
-        }
+      const isApproved=this.auditForm.auditResult;
+      AuditOutbound(outCodes,outIds,isApproved).then(res => {
+        this.getList();
+        this.$modal.msgSuccess("审核成功");
+        this.openAudit = false;
       });
     },
+    /** 审核按钮操作 */
+    // handleExamine() {
+    //   const outCodes = [];
+    //   const outIds = this.ids;
+    //   outCodes.push(...this.outCode);
+    //   let isCancelled = false;
+    //   this.$confirm(`审核单号为"${outCodes}"的数据项？`, '审核数据项', {
+    //     distinguishCancelAndClose: true,
+    //     confirmButtonText: '审核通过',
+    //     cancelButtonText: '审核不通过',
+    //     type: 'warning',
+    //   }).then(() => {
+    //     if (!isCancelled) {
+    //       // 执行审核通过操作
+    //       AuditOutbound(outCodes, outIds, true)
+    //         .then(() => {
+    //           this.getList();
+    //           this.$message.success('审核完成！');
+    //         })
+    //         .catch(() => {
+    //           // 处理审核操作失败
+    //         });
+    //     }
+    //   }).catch(action => {
+    //     if (action === 'close') {
+    //       isCancelled = true;
+    //     } else {
+    //       // 执行审核不通过操作
+    //       AuditOutbound(outCodes, outIds, false)
+    //         .then(() => {
+    //           this.getList();
+    //           this.$message.success('审核完成！');
+    //         })
+    //         .catch(() => {
+    //           // 处理审核操作失败
+    //         });
+    //     }
+    //   });
+    // },
     /** 撤销按钮操作 */
     handleRevoke() {
       const outIds = this.ids;
@@ -1129,6 +1177,32 @@ export default {
       this.form.contactDetails = row.contactNumber;
       this.dialogMaterial1 = false; // 关闭对话框
     },
+    getStatusClass(status) {
+      if (status === 1) {
+        return 'bg-light-blue'; // 浅蓝色背景样式类名
+      } else if (status === 2) {
+        return 'bg-light-red'; // 浅红色背景样式类名
+      } else if (status === 3) {
+        return 'bg-light-green'; // 浅绿色背景样式类名
+      } else {
+        return ''; // 默认样式类名或空字符串
+      }
+    },
   }
 };
 </script>
+<style>
+.bg-light-blue {
+  background-color: #C2E0FF;
+  color: #1890ff;
+}
+.bg-light-red {
+  background-color: #FFC2C2;
+  color: #e64242;
+}
+
+.bg-light-green {
+  background-color: #C2FFC2;
+  color: #11b95c;
+}
+</style>

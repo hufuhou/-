@@ -1,53 +1,69 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cx.wms.mapper.CrkTransferMapper">
-    
+
     <resultMap type="CrkTransfer" id="CrkTransferResult">
-        <result property="tId"    column="t_id"    />
-        <result property="tdCode"    column="td_code"    />
-        <result property="docStatus"    column="doc_status"    />
-        <result property="tDate"    column="t_date"    />
-        <result property="outWId"    column="out_w_id"    />
-        <result property="inWId"    column="in_w_id"    />
-        <result property="outStatus"    column="out_status"    />
-        <result property="tType"    column="t_type"    />
-        <result property="remark"    column="remark"    />
-        <result property="inStatus"    column="in_status"    />
-        <result property="tManager"    column="t_manager"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="isDelte"    column="is_delte"    />
+        <result property="tId" column="t_id"/>
+        <result property="tdCode" column="td_code"/>
+        <result property="docStatus" column="doc_status"/>
+        <result property="tDate" column="t_date"/>
+        <result property="outWId" column="out_w_id"/>
+        <result property="inWId" column="in_w_id"/>
+        <result property="outStatus" column="out_status"/>
+        <result property="tType" column="t_type"/>
+        <result property="remark" column="remark"/>
+        <result property="inStatus" column="in_status"/>
+        <result property="tManager" column="t_manager"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
     </resultMap>
 
     <sql id="selectCrkTransferVo">
-        select t_id, td_code, doc_status, t_date, out_w_id, in_w_id, out_status, t_type, remark, in_status, t_manager, create_by, create_time, update_by, update_time, is_delte from crk_transfer
+        select t_id,
+               td_code,
+               doc_status,
+               t_date,
+               out_w_id,
+               in_w_id,
+               out_status,
+               t_type,
+               remark,
+               in_status,
+               t_manager,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from crk_transfer
     </sql>
 
     <select id="selectCrkTransferList" parameterType="CrkTransfer" resultMap="CrkTransferResult">
         <include refid="selectCrkTransferVo"/>
-        <where>  
-            <if test="tdCode != null  and tdCode != ''"> and td_code = #{tdCode}</if>
-            <if test="docStatus != null  and docStatus != ''"> and doc_status = #{docStatus}</if>
-            <if test="tDate != null "> and t_date = #{tDate}</if>
-            <if test="outWId != null  and outWId != ''"> and out_w_id = #{outWId}</if>
-            <if test="inWId != null  and inWId != ''"> and in_w_id = #{inWId}</if>
-            <if test="outStatus != null "> and out_status = #{outStatus}</if>
-            <if test="tType != null  and tType != ''"> and t_type = #{tType}</if>
-            <if test="inStatus != null "> and in_status = #{inStatus}</if>
-            <if test="tManager != null  and tManager != ''"> and t_manager = #{tManager}</if>
-            <if test="isDelte != null "> and is_delte = #{isDelte}</if>
+        <where>
+            <if test="tdCode != null  and tdCode != ''">and td_code = #{tdCode}</if>
+            <if test="docStatus != null  and docStatus != ''">and doc_status = #{docStatus}</if>
+            <if test="tDate != null ">and t_date = #{tDate}</if>
+            <if test="outWId != null  and outWId != ''">and out_w_id = #{outWId}</if>
+            <if test="inWId != null  and inWId != ''">and in_w_id = #{inWId}</if>
+            <if test="outStatus != null ">and out_status = #{outStatus}</if>
+            <if test="tType != null  and tType != ''">and t_type = #{tType}</if>
+            <if test="inStatus != null ">and in_status = #{inStatus}</if>
+            <if test="tManager != null  and tManager != ''">and t_manager = #{tManager}</if>
+            <if test="isDelte != null ">and is_delte = #{isDelte}</if>
         </where>
     </select>
-    
+
     <select id="selectCrkTransferByTId" parameterType="Long" resultMap="CrkTransferResult">
         <include refid="selectCrkTransferVo"/>
         where t_id = #{tId}
     </select>
-        
+
     <insert id="insertCrkTransfer" parameterType="CrkTransfer">
         insert into crk_transfer
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -67,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="isDelte != null">is_delte,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tId != null">#{tId},</if>
             <if test="tdCode != null and tdCode != ''">#{tdCode},</if>
@@ -85,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="isDelte != null">#{isDelte},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateCrkTransfer" parameterType="CrkTransfer">
@@ -111,17 +127,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteCrkTransferByTId" parameterType="Long">
-        delete from crk_transfer where t_id = #{tId}
+        delete
+        from crk_transfer
+        where t_id = #{tId}
     </delete>
 
     <delete id="deleteCrkTransferByTIds" parameterType="String">
-        delete from crk_transfer where t_id in 
+        delete from crk_transfer where t_id in
         <foreach item="tId" collection="array" open="(" separator="," close=")">
             #{tId}
         </foreach>
     </delete>
 
     <select id="findCrkTransferCount">
-        select count(*) from crk_transfer where is_delte = 0
+        select count(*)
+        from crk_transfer
+        where is_delte = 0
     </select>
 </mapper>

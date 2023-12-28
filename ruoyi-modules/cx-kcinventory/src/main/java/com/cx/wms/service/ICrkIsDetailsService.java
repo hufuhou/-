@@ -58,4 +58,7 @@ public interface ICrkIsDetailsService {
      * @return 结果
      */
     public int deleteCrkIsDetailsByIsdId(Long isdId);
+
+
+
 }

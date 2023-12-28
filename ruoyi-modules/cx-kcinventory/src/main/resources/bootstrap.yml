@@ -23,6 +23,6 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-logging:
-  level:
-    org.mybatis.spring: debug
+#logging:
+#  level:
+#    org.mybatis.spring: debug

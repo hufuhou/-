@@ -342,10 +342,8 @@ export default {
     //this.getCheckinNumber();
   },
   methods: {
-    /**
-     * 获取时间参数
-     * @param param
-     */
+
+
     async getDateParam(param) {
       return new Promise((resolve, reject) => {
         selectDataParam(param).then(response => {
@@ -353,10 +351,12 @@ export default {
             // 如果是字符串
             this.TodayOrYesterday = response.data;
             resolve(true);
+            this.$modal.msgSuccess("查询" + this.TodayOrYesterday + "数据");
           } else if (Array.isArray(response.data)) {
             // 如果是数组
             this.BeginDay = response.data[0];
             this.EndDay = response.data[1];
+            this.$modal.msgSuccess("查询起始日: " + this.BeginDay + ",结束日: " + this.EndDay + "间数据!");
             resolve(true);
           } else {
             // 处理其他类型的数据，或者抛出错误提示

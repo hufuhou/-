@@ -121,6 +121,16 @@
           v-hasPermi="['kcinventory:kcinventory:edit']"
         >审核
         </el-button>
+        <el-button
+          type="info"
+          plain
+          icon="el-icon-finished"
+          size="mini"
+          :disabled="single"
+          @click="handleFinish"
+          v-hasPermi="['kcinventory:kcinventory:edit']"
+        >完成
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -140,7 +150,7 @@
           <dict-tag :options="dict.type.is_type" :value="scope.row.isType"/>
         </template>
       </el-table-column>
-      <el-table-column label="盘点单状态" align="center" prop="sheetStatus" width="100">
+      <el-table-column label="审核状态" align="center" prop="sheetStatus" width="100">
         <template slot-scope="scope">
           <el-tag size="mini" v-if="scope.row.sheetStatus === 0">待审核</el-tag>
           <el-tag type="success" size="mini" v-else-if="scope.row.sheetStatus === 1">审核通过</el-tag>
@@ -204,16 +214,17 @@
     />
 
     <!-- 添加或修改库存盘点对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="550px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="盘点ID" prop="isId">
           <el-input v-model="form.isId" placeholder="盘点id" disabled="disabled"/>
         </el-form-item>
         <el-form-item label="盘点单号" prop="isCode">
-          <el-input v-model="form.isCode" placeholder="请输入盘点单号"/>
+          <el-input v-model="form.isCode" placeholder="请输入盘点单号" disabled="disabled"/>
         </el-form-item>
         <el-form-item label="盘点结果" prop="isResult">
-          <el-select v-model="form.isResult" placeholder="请选择盘点结果">
+          <el-select v-model="form.isResult" placeholder="请选择盘点结果"
+                     :disabled="this.title === '添加库存盘点'">
             <el-option
               v-for="dict in dict.type.is_result"
               :key="dict.value"
@@ -295,78 +306,93 @@
         <el-divider content-position="center">盘点明细信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddCrkIsDetails">添加</el-button>
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="openDetailDialog">添加</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteCrkIsDetails">删除
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="">删除
             </el-button>
           </el-col>
         </el-row>
-        <el-table :data="crkIsDetailsList" :row-class-name="rowCrkIsDetailsIndex"
-                  @selection-change="handleCrkIsDetailsSelectionChange" ref="crkIsDetails">
-          <el-table-column type="selection" width="50" align="center"/>
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="单号ID" align="center" prop="isId" width="50"/>
-          <el-table-column label="盘点单号" prop="isCode" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.isCode" placeholder="请输入盘点单号"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="相关订单ID" prop="orderId" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.orderId" placeholder="请输入相关订单ID"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="盘点数量" prop="countQuantity" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.countQuantity" placeholder="请输入盘点数量"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="盈亏数量" prop="profitLossQuantity" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.profitLossQuantity" placeholder="请输入盈亏数量"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="盘点状态" prop="isStatus" width="150">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.isStatus" placeholder="请选择盘点状态">
-                <el-option
-                  v-for="dict in dict.type.inventory_status"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="盘点金额" prop="countAmount" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.countAmount" placeholder="请输入盘点金额"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="入库单价" prop="iuPrice" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.iuPrice" placeholder="请输入入库单价"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="备注" prop="remark" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" placeholder="请输入备注"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="货品code" prop="gCode" width="150">
-            <template slot-scope="scope">
-              <el-select v-model="scope.row.gCode" placeholder="请选择货品">
-                <el-option
-                  v-for="good in allHpGoods"
-                  :key="good.g_code"
-                  :label="good.g_name"
-                  :value="good.g_code"
-                ></el-option>
-              </el-select>
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-dialog title="添加盘点明细信息" :visible.sync="openDetail" width="800px" append-to-body>
+          <el-row :gutter="10" class="mb8">
+            <el-col :span="1.5">
+              <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddCrkIsDetails">添加</el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteCrkIsDetails">删除
+              </el-button>
+            </el-col>
+          </el-row>
+          <el-table :data="crkIsDetailsList" :row-class-name="rowCrkIsDetailsIndex"
+                    @selection-change="handleCrkIsDetailsSelectionChange" ref="crkIsDetails">
+            <el-table-column type="selection" width="50" align="center"/>
+            <el-table-column label="序号" align="center" prop="index" width="50"/>
+            <el-table-column label="单号ID" align="center" prop="isId" width="100"/>
+            <el-table-column label="盘点单号" prop="isCode" width="150">
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.isCode" placeholder="请输入盘点单号"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="相关订单ID" prop="orderId" width="150">
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.orderId" placeholder="请输入相关订单ID"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="盘点数量" prop="countQuantity" width="210">
+              <template slot-scope="scope">
+                <el-input-number v-model="scope.row.countQuantity" placeholder="请输入盘点数量"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="盈亏数量" prop="profitLossQuantity" width="210">
+              <template slot-scope="scope">
+                <el-input-number v-model="scope.row.profitLossQuantity" placeholder="请输入盈亏数量"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="盘点状态" prop="isStatus" width="210">
+              <template slot-scope="scope">
+                <el-select v-model="scope.row.isStatus" placeholder="请选择盘点状态">
+                  <el-option
+                    v-for="dict in dict.type.inventory_status"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  ></el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column label="盘点金额" prop="countAmount" width="210">
+              <template slot-scope="scope">
+                <el-input-number v-model="scope.row.countAmount" placeholder="请输入盘点金额"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="入库单价" prop="iuPrice" width="210">
+              <template slot-scope="scope">
+                <el-input-number v-model="scope.row.iuPrice" placeholder="请输入入库单价"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="备注" prop="remark" width="150">
+              <template slot-scope="scope">
+                <el-input v-model="scope.row.remark" placeholder="请输入备注"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="货品" prop="gCode" width="210">
+              <template slot-scope="scope">
+                <el-select v-model="scope.row.gCode" placeholder="请选择货品">
+                  <el-option
+                    v-for="good in allHpGoods"
+                    :key="good.g_code"
+                    :label="good.g_name"
+                    :value="good.g_code"
+                  ></el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="submitForm">确 定</el-button>
+            <el-button @click="Detailcancel">取 消</el-button>
+          </div>
+        </el-dialog>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -472,7 +498,13 @@ export default {
   dicts: ['is_result', 'is_type', 'out_status', 'in_status', 'inventory_status'],
   data() {
     return {
+      //添加明细弹出层状态
+      openDetail: false,
+      //全局isId判断
+      isId: 0,
+      //抽屉状态
       drawer: false,
+      //右到左
       direction: 'rtl',
       //货品
       allHpGoods: [],
@@ -534,22 +566,7 @@ export default {
           {required: true, message: "盘点结束时间不能为空", trigger: "blur"}
         ],
         isManager: [
-          {required: true, message: "关联用户表不能为空", trigger: "blur"}
-        ],
-        createBy: [
-          {required: true, message: "关联至用户表不能为空", trigger: "blur"}
-        ],
-        createTime: [
-          {required: true, message: "创建时间不能为空", trigger: "blur"}
-        ],
-        updateBy: [
-          {required: true, message: "关联至用户表不能为空", trigger: "blur"}
-        ],
-        updateTime: [
-          {required: true, message: "修改时间不能为空", trigger: "blur"}
-        ],
-        isDelte: [
-          {required: true, message: "0：存在；1：已删除，不存在不能为空", trigger: "blur"}
+          {required: true, message: "经办人不能为空", trigger: "blur"}
         ],
       }
     };
@@ -593,7 +610,7 @@ export default {
       //this.$modal.msg(isId);
       const stateCode = 2;
       updateSheetStatus(isId, stateCode).then(response => {
-        console.info(response);
+        //console.info(response);
         const res = response.code;
         if (res === 200) {
           this.$modal.msgSuccess("操作成功!");
@@ -616,7 +633,7 @@ export default {
       //this.$modal.msg(isId);
       const stateCode = 1;
       updateSheetStatus(isId, stateCode).then(response => {
-        console.info(response);
+        //console.info(response);
         const res = response.code;
         if (res === 200) {
           this.$modal.msgSuccess("操作成功!");
@@ -639,7 +656,7 @@ export default {
       this.form = {
         isId: null,
         isCode: null,
-        isResult: null,
+        isResult: 3,
         wId: null,
         isType: null,
         isStartTime: null,
@@ -684,26 +701,38 @@ export default {
       genIsCode().then(response => {
         //console.info(response);
         this.form.isCode = response.data;
+        this.form.isResult = 3;
       });
-
       findIsId().then(response => {
         //console.info(response);
-        this.form.isId = response.data + 1;
+        // 将字符串转换为整数
+        let isId = parseInt(response.data, 10);
+        // 如果转换成功，则加1，否则默认为1
+        isId = isNaN(isId) ? 1 : isId + 1;
+        this.isId = isId;
+        this.form.isId = isId;
       });
 
     },
     /** 修改按钮操作 */
-    //TODO: 在这里添加盘点单状态逻辑判断,已完成的盘点单不能修改
     handleUpdate(row) {
-      this.reset();
-      const isId = row.isId || this.ids
-      getKcinventory(isId).then(response => {
-        this.form = response.data;
-        this.crkIsDetailsList = response.data.crkIsDetailsList;
-        this.open = true;
-        this.title = "修改库存盘点";
+      const isId = row.isId || this.ids;
+      findSheetStatus(isId).then(response => {
+        const status = response.data;
+        if (status === 3) {
+          this.$modal.msgWarning("此订单已完成，不允许修改");
+        } else {
+          this.reset();
+          getKcinventory(isId).then(response => {
+            this.form = response.data;
+            this.crkIsDetailsList = response.data.crkIsDetailsList;
+            this.open = true;
+            this.title = "修改库存盘点";
+          });
+        }
       });
     },
+
     /** 审核按钮操作 */
     /* 0:待审核 1:审核通过 2:驳回 3:已完成  */
     handleExam(row) {
@@ -714,10 +743,10 @@ export default {
         let message = "";
         /* 如果订单已完成或者已经审核 */
         if (status === 1 || status === 3) {
-          message = status === 1 ? "此单已经审核!" : "此单已经完成!";
+          message = status === 1 ? "此单已经审核" : "此单已经完成";
           this.$modal.msgSuccess(message);
         } else if (status === 0 || status === 2) {
-          message = status === 0 ? "初单审核!" : "驳回单重新审核";
+          message = status === 0 ? "初单审核" : "驳回单重新审核";
           this.$modal.msg(message);
           getKcinventory(isId).then(response => {
             const {data} = response;
@@ -731,6 +760,32 @@ export default {
       });
     },
 
+    /*完成盘点单*/
+    handleFinish(row) {
+      const isId = row.isId || this.ids;
+      findSheetStatus(isId).then(response => {
+        const status = response.data;
+        let message = "";
+        /* 如果订单已完成 */
+        if (status === 3) {
+          message = "已完成单不可操作";
+          this.$modal.msgSuccess(message);
+        } else {
+          //修改主表状态为已完成
+          const stateCode = 3;
+          updateSheetStatus(isId, stateCode).then(response => {
+            if (response.code === 200) {
+              message = "盘点单已完成";
+              this.$modal.msgSuccess(message);
+              this.getList();
+            } else {
+              message = "发生错误";
+              this.$modal.msgError(message);
+            }
+          })
+        }
+      });
+    },
 
     //关闭抽屉
     handleClose(done) {
@@ -744,22 +799,33 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           this.form.crkIsDetailsList = this.crkIsDetailsList;
-          if (this.form.isId != null) {
+          if (this.form.isId != this.isId) {
+            //this.$modal.msg("updateKcinventory方法!");
             updateKcinventory(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.openDetail = false;
               this.getList();
             });
           } else {
+            //this.$modal.msg("addKcinventory方法!");
             addKcinventory(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
+              this.openDetail = false;
               this.getList();
             });
           }
         }
       });
     },
+
+    Detailcancel() {
+      this.open = false;
+      this.openDetail = false;
+    },
+
+
     /** 删除按钮操作 */
     handleDelete(row) {
       const isIds = row.isId || this.ids;
@@ -771,12 +837,40 @@ export default {
       }).catch(() => {
       });
     },
+
+
     /** 盘点明细序号 */
     rowCrkIsDetailsIndex({row, rowIndex}) {
       row.index = rowIndex + 1;
     },
+
+    openDetailDialog() {
+      const isId = this.form.isId;
+      findSheetStatus(isId).then(response => {
+        const status = response.data;
+        if (status === 0 || status === 2) {
+          this.$modal.msgWarning(status === 0 ? "此单待审核!" : "此单已驳回!");
+        } else if (status === 3) {
+          this.$modal.msgWarning("此单已完成!");
+        } else if (status === 1) {
+          getKcinventory(isId).then(response => {
+            const {data} = response;
+            this.form = data;
+            this.crkIsDetailsList = data.crkIsDetailsList;
+            this.openDetail = true;
+          });
+        } else if (status == null) {
+          this.$modal.msgError("此表还未提交!");
+        } else {
+          this.$modal.msgError("未知状态!");
+        }
+      });
+    },
+
+
     /** 盘点明细添加按钮操作 */
     handleAddCrkIsDetails() {
+      this.openDetail = true;
       let obj = {};
       obj.isCode = this.form.isCode;
       obj.isId = this.form.isId;
@@ -790,7 +884,7 @@ export default {
       obj.iuPrice = "";
       obj.remark = "";
       obj.isDelte = "";
-      obj.gCode = "";
+      obj.gCode = "HPXX202311241034001";
       obj.isDelte = 0;
       obj.specCode = null;
       obj.unit = null;

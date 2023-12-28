@@ -90,4 +90,7 @@ public interface ICrkInventorySheetService {
 
     //更新盘点单状态
     public Integer updateSheetStatus(@Param("isId")Integer isId, @Param("stateCode")Integer stateCode);
+
+    //更新盘点结果
+    public Integer updateIsResult(@Param("isId") Integer isId, @Param("isResult") Integer isResult);
 }

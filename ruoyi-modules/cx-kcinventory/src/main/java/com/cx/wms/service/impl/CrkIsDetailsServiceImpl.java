@@ -1,6 +1,7 @@
 package com.cx.wms.service.impl;
 
 import com.cx.wms.domain.CrkIsDetails;
+import com.cx.wms.mapper.CrkInventorySheetMapper;
 import com.cx.wms.mapper.CrkIsDetailsMapper;
 import com.cx.wms.service.ICrkIsDetailsService;
 import com.ruoyi.common.core.utils.DateUtils;
@@ -20,6 +21,9 @@ import java.util.List;
 public class CrkIsDetailsServiceImpl implements ICrkIsDetailsService {
     @Autowired
     private CrkIsDetailsMapper crkIsDetailsMapper;
+
+    @Autowired
+    private CrkInventorySheetMapper crkInventorySheetMapper;
 
     /**
      * 查询盘点明细
@@ -53,6 +57,12 @@ public class CrkIsDetailsServiceImpl implements ICrkIsDetailsService {
     public int insertCrkIsDetails(CrkIsDetails crkIsDetails) {
         crkIsDetails.setCreateTime(DateUtils.getNowDate());
         crkIsDetails.setCreateBy(String.valueOf(SecurityUtils.getUserId()));
+        int isId = 0;
+        Integer isResult = 0;
+        isId = Math.toIntExact(crkIsDetails.getIsId());
+        isResult = crkIsDetails.getIsStatus();
+        System.out.println("isId:" + isId + "isResult:" + isResult);
+        crkInventorySheetMapper.updateIsResult(isId, isResult);
         return crkIsDetailsMapper.insertCrkIsDetails(crkIsDetails);
     }
 

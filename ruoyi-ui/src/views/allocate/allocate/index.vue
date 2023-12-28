@@ -23,10 +23,10 @@
       </el-form-item>
       <el-form-item label="申请日" prop="tDate">
         <el-date-picker clearable
-          v-model="queryParams.tDate"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择调拨申请日期">
+                        v-model="queryParams.tDate"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="请选择调拨申请日期">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="仓库ID" prop="outWId">
@@ -76,7 +76,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['allocate:allocate:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -87,7 +88,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['allocate:allocate:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -98,7 +100,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['allocate:allocate:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -108,29 +111,73 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['allocate:allocate:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="allocateList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="调拨ID" align="center" prop="tId" />
-      <el-table-column label="调拨单号" align="center" prop="tdCode" />
-      <el-table-column label="单据状态" align="center" prop="docStatus" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="调拨ID" align="center" prop="tId"/>
+      <el-table-column label="调拨单号" align="center" prop="tdCode"/>
+      <el-table-column label="单据状态" align="center" prop="docStatus">
+        <template slot-scope="scope">
+          <span v-if="scope.row.docStatus === '1'">待审核</span>
+          <span v-else-if="scope.row.docStatus === '2'">驳回</span>
+          <span v-else-if="scope.row.docStatus === '3'">已完成</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
       <el-table-column label="调拨申请日期" align="center" prop="tDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.tDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="调出仓库 ID" align="center" prop="outWId" />
-      <el-table-column label="调入仓库" align="center" prop="inWId" />
-      <el-table-column label="出库状态" align="center" prop="outStatus" />
-      <el-table-column label="数据字典" align="center" prop="tType" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="入库状态" align="center" prop="inStatus" />
-      <el-table-column label="调拨负责人" align="center" prop="tManager" />
-      <el-table-column label="是否存在" align="center" prop="isDelte" />
+      <el-table-column label="调出仓库" align="center" prop="outWId">
+        <template slot-scope="scope">
+          <span v-if="scope.row.outWId === '1'">仓库一</span>
+          <span v-else-if="scope.row.outWId === '2'">仓库二</span>
+          <span v-else-if="scope.row.outWId === '3'">仓库三</span>
+          <span v-else-if="scope.row.outWId === '4'">懒财仓库</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="调入仓库" align="center" prop="inWId">
+        <template slot-scope="scope">
+          <span v-if="scope.row.inWId === '1'">仓库一</span>
+          <span v-else-if="scope.row.inWId === '2'">仓库二</span>
+          <span v-else-if="scope.row.inWId === '3'">仓库三</span>
+          <span v-else-if="scope.row.inWId === '4'">懒财仓库</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="出库状态" align="center" prop="outStatus">
+        <template slot-scope="scope">
+          <span v-if="scope.row.outStatus === 1">已出库</span>
+          <span v-else-if="scope.row.outStatus === 2">部分出库</span>
+          <span v-else-if="scope.row.outStatus === 3">已出库</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="数据字典" align="center" prop="tType"/>-->
+      <el-table-column label="备注" align="center" prop="remark">
+        <template slot-scope="scope">
+          {{ scope.row.remark === null ||  scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
+        </template>
+      </el-table-column>
+      <el-table-column label="入库状态" align="center" prop="inStatus">
+        <template slot-scope="scope">
+          <span v-if="scope.row.inStatus === 0">待审核</span>
+          <span v-else-if="scope.row.inStatus === 1">驳回</span>
+          <span v-else-if="scope.row.inStatus === 2">未入库</span>
+          <span v-else-if="scope.row.inStatus === 3">部分入库</span>
+          <span v-else-if="scope.row.inStatus === 4">已完成</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="调拨负责人" align="center" prop="tManager"/>
+<!--      <el-table-column label="是否存在" align="center" prop="isDelte"/>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -139,14 +186,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['allocate:allocate:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['allocate:allocate:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -162,7 +211,7 @@
     <!-- 添加或修改调拨明细对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <h1> 绝赞开发中!  </h1>
+        <h1> 绝赞开发中! </h1>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm" disabled="disabled">确 定</el-button>
@@ -173,7 +222,7 @@
 </template>
 
 <script>
-import { listAllocate, getAllocate, delAllocate, addAllocate, updateAllocate } from "@/api/allocate/allocate";
+import {addAllocate, delAllocate, getAllocate, listAllocate, updateAllocate} from "@/api/allocate/allocate";
 import {parseTime} from "@/utils/ruoyi";
 import {selectDataParam} from "@/api/opdm/opdm";
 
@@ -225,46 +274,46 @@ export default {
       // 表单校验
       rules: {
         tdCode: [
-          { required: true, message: "调拨单号不能为空", trigger: "blur" }
+          {required: true, message: "调拨单号不能为空", trigger: "blur"}
         ],
         docStatus: [
-          { required: true, message: "单据状态不能为空", trigger: "change" }
+          {required: true, message: "单据状态不能为空", trigger: "change"}
         ],
         tDate: [
-          { required: true, message: "调拨申请日期不能为空", trigger: "blur" }
+          {required: true, message: "调拨申请日期不能为空", trigger: "blur"}
         ],
         outWId: [
-          { required: true, message: "调出仓库 ID不能为空", trigger: "blur" }
+          {required: true, message: "调出仓库 ID不能为空", trigger: "blur"}
         ],
         inWId: [
-          { required: true, message: "调入仓库不能为空", trigger: "blur" }
+          {required: true, message: "调入仓库不能为空", trigger: "blur"}
         ],
         outStatus: [
-          { required: true, message: "出库状态不能为空", trigger: "change" }
+          {required: true, message: "出库状态不能为空", trigger: "change"}
         ],
         tType: [
-          { required: true, message: "数据字典不能为空", trigger: "change" }
+          {required: true, message: "数据字典不能为空", trigger: "change"}
         ],
         inStatus: [
-          { required: true, message: "入库状态不能为空", trigger: "change" }
+          {required: true, message: "入库状态不能为空", trigger: "change"}
         ],
         tManager: [
-          { required: true, message: "外键，关联用户表不能为空", trigger: "blur" }
+          {required: true, message: "外键，关联用户表不能为空", trigger: "blur"}
         ],
         createBy: [
-          { required: true, message: "关联至用户表不能为空", trigger: "blur" }
+          {required: true, message: "关联至用户表不能为空", trigger: "blur"}
         ],
         createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+          {required: true, message: "创建时间不能为空", trigger: "blur"}
         ],
         updateBy: [
-          { required: true, message: "关联至用户表不能为空", trigger: "blur" }
+          {required: true, message: "关联至用户表不能为空", trigger: "blur"}
         ],
         updateTime: [
-          { required: true, message: "修改时间不能为空", trigger: "blur" }
+          {required: true, message: "修改时间不能为空", trigger: "blur"}
         ],
         isDelte: [
-          { required: true, message: "0：存在；1：已删除，不存在不能为空", trigger: "blur" }
+          {required: true, message: "0：存在；1：已删除，不存在不能为空", trigger: "blur"}
         ]
       }
     };
@@ -274,21 +323,23 @@ export default {
   },
   methods: {
 
-     /**
+    /**
      * 获取时间参数
      * @param param
      */
-     async getDateParam(param) {
+    async getDateParam(param) {
       return new Promise((resolve, reject) => {
         selectDataParam(param).then(response => {
           if (typeof response.data === 'string') {
             // 如果是字符串
             this.TodayOrYesterday = response.data;
             resolve(true);
+            this.$modal.msgSuccess("查询" + this.TodayOrYesterday + "数据");
           } else if (Array.isArray(response.data)) {
             // 如果是数组
             this.BeginDay = response.data[0];
             this.EndDay = response.data[1];
+            this.$modal.msgSuccess("查询起始日: " + this.BeginDay + ",结束日: " + this.EndDay + "间数据!");
             resolve(true);
           } else {
             // 处理其他类型的数据，或者抛出错误提示
@@ -375,7 +426,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.tId)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -417,12 +468,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const tIds = row.tId || this.ids;
-      this.$modal.confirm('是否确认删除调拨明细编号为"' + tIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除调拨明细编号为"' + tIds + '"的数据项？').then(function () {
         return delAllocate(tIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {

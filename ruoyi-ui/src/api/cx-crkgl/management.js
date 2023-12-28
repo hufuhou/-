@@ -109,8 +109,7 @@ export function delManagement(inId) {
   })
 }
 // 审核入库
-export function InventoryReview(inCode,inIds, isApproved) {
-  const reviewStatus = isApproved ? 'true' : 'false';
+export function InventoryReview(inCode,inIds, reviewStatus) {
   return request({
     url: '/cx-crkgl/management/sh/',
     method: 'post',

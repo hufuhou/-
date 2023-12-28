@@ -226,6 +226,5 @@
 连接更新人信息： 同样使用左连接将表 sys_user 与 crk_im_details 关联，通过 update_by 列连接，将更新人的昵称 (nick_name) 作为 update_user_name 别名返回。
 连接库存位置信息： 使用左连接将表 tj_storage_location 与 crk_im_details 关联，通过 sl_id 列连接，将库存位置的名称 (sl_name) 作为 location 别名返回。
 连接仓库信息： 使用左连接将表 warehouse 与 tj_storage_location 关联，通过 w_id 列连接，将仓库的名称 (w_name) 作为 warehouseName 别名返回。   -->
-    <!--  TODO:SQL写好了,明天再写Controller Service Mapper  -->
 
 </mapper>
