@@ -102,4 +102,12 @@ public class TzStockController extends BaseController
     {
         return toAjax(tzStockService.deleteTzStockBySIds(sIds));
     }
+
+    @RequiresPermissions("cx-ledger:stock:listOutGoods")
+    @GetMapping("/listOutGoods")
+    public TableDataInfo listOutGoods(TzStock tz){
+        startPage();
+        List<TzStock> list =tzStockService.listOutGoods(tz);
+        return getDataTable(list);
+    }
 }

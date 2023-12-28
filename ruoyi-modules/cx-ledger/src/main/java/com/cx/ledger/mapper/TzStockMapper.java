@@ -58,4 +58,6 @@ public interface TzStockMapper
      * @return 结果
      */
     public int deleteTzStockBySIds(Long[] sIds);
+
+    public List<TzStock> listOutGoods(TzStock tz);
 }

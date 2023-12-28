@@ -71,6 +71,17 @@ public class TjStorageLocationController extends BaseController
     }
 
     /**
+     * 根据仓库ID查询仓位信息
+     * @param wId
+     * @return
+     */
+    @GetMapping(value = "/getLocas/{wId}")
+    public AjaxResult getInfos(@PathVariable("wId")Long wId)
+    {
+        List<TjStorageLocation> list=tjStorageLocationService.selectTjStorageLocationBywId(wId);
+        return success(list);
+    }
+    /**
      * 新增仓库详情
      */
     @RequiresPermissions("cx-ckgl:location:add")

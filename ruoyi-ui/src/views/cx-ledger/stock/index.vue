@@ -2,20 +2,33 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="仓库id" prop="wId">
-        <el-input
+        <el-select
           v-model="queryParams.wId"
           placeholder="请输入仓库id"
           clearable
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in warehouseList"
+            :key="item.wId"
+            :label="item.wName"
+            :value="item.wId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="库位id" prop="slId">
-        <el-input
+        <el-select
           v-model="queryParams.slId"
           placeholder="请输入库位id"
           clearable
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in locationList"
+            :key="item.slId"
+            :label="item.slName"
+            :value="item.slId"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="货品数量" prop="itemQuantity">
         <el-input
@@ -34,12 +47,19 @@
         />
       </el-form-item>
       <el-form-item label="货品id" prop="gId">
-        <el-input
+        <el-select
           v-model="queryParams.gId"
           placeholder="请输入货品id"
           clearable
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in goodsList"
+            :key="item.gId"
+            :label="item.gName"
+            :value="item.gId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input
@@ -50,12 +70,19 @@
         />
       </el-form-item>
       <el-form-item label="创建人" prop="createBys">
-        <el-input
+        <el-select
           v-model="queryParams.createBys"
           placeholder="请输入创建人"
           clearable
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in userList"
+            :key="item.userId"
+            :label="item.nickName"
+            :value="item.userId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
         <el-date-picker clearable
@@ -65,14 +92,14 @@
                         placeholder="请选择创建时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="状态" prop="isDelte">
-        <el-input
-          v-model="queryParams.isDelte"
-          placeholder="请输入0：存在；1：已删除，不存在"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="状态" prop="isDelte">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.isDelte"-->
+<!--          placeholder="请输入0：启用；1：停用"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -80,29 +107,29 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['cx-ledger:stock:add']"
-        >新增
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['cx-ledger:stock:edit']"
-        >修改
-        </el-button>
-      </el-col>
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="primary"-->
+      <!--          plain-->
+      <!--          icon="el-icon-plus"-->
+      <!--          size="mini"-->
+      <!--          @click="handleAdd"-->
+      <!--          v-hasPermi="['cx-ledger:stock:add']"-->
+      <!--        >新增-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="success"-->
+      <!--          plain-->
+      <!--          icon="el-icon-edit"-->
+      <!--          size="mini"-->
+      <!--          :disabled="single"-->
+      <!--          @click="handleUpdate"-->
+      <!--          v-hasPermi="['cx-ledger:stock:edit']"-->
+      <!--        >修改-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -163,23 +190,41 @@
         <template slot-scope="scope">
           <span v-for="item in warehouseList">
             <template v-if="scope.row.wId===item.wId">
-              {{item.wName}}
+              {{ item.wName }}
             </template>
           </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="规格型号" align="center">
+        <template slot-scope="scope">
+            <span v-for="i in goodsList">
+              <template v-if="scope.row.gId===i.gId ">
+               {{ i.specCode }}
+             </template>
+            </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="单位" align="center">
+        <template slot-scope="scope">
+          <template v-for="i in goodsList">
+            <template v-if="scope.row.gId===i.gId">
+              <dict-tag :options="dict.type.g_unit" :value="i.gUnit"/>
+            </template>
+          </template>
         </template>
       </el-table-column>
       <el-table-column label="仓位名称" align="center">
         <template slot-scope="scope">
           <span v-for="item in locationList">
             <template v-if="scope.row.slId===item.slId">
-              {{irem.slName}}
+              {{ item.slName }}
             </template>
           </span>
         </template>
       </el-table-column>
       <el-table-column label="货品数量" align="center" prop="itemQuantity"/>
       <el-table-column label="计划数量" align="center" prop="numberPlans"/>
-      <el-table-column label="备注" align="center" prop="remark" >
+      <el-table-column label="备注" align="center" prop="remark">
         <template slot-scope="scope">
           <div :class="['truncate-text', isOverLength(scope.row.remark)]">
             {{ scope.row.remark }}
@@ -200,26 +245,17 @@
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="isDelte">
-        <template slot-scope="scope">
-          <template v-if="scope.row.isDelte===0">
-            存在
-          </template>
-          <template v-else>
-            删除
-          </template>
-        </template>
-      </el-table-column>
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['cx-ledger:stock:edit']"
-          >修改
-          </el-button>
+          <!--          <el-button-->
+          <!--            size="mini"-->
+          <!--            type="text"-->
+          <!--            icon="el-icon-edit"-->
+          <!--            @click="handleUpdate(scope.row)"-->
+          <!--            v-hasPermi="['cx-ledger:stock:edit']"-->
+          <!--          >修改-->
+          <!--          </el-button>-->
           <el-button
             size="mini"
             type="text"
@@ -245,10 +281,10 @@
         <el-form-item label="仓库id" prop="wId">
           <el-select v-model="form.wId" placeholder="请输入仓库id">
             <el-option
-            v-for="item in warehouseList"
-            :key="item.wId"
-            :label="item.wName"
-            :value="item.wId"
+              v-for="item in warehouseList"
+              :key="item.wId"
+              :label="item.wName"
+              :value="item.wId"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -310,14 +346,18 @@
 }
 </style>
 <script>
-import {listStock, getStock, delStock, addStock, updateStock} from "@/api/cx-ledger/stock";
+import {listStock, getStock, delStock, addStock, updateStock,} from "@/api/cx-ledger/stock";
 import {listUser} from "@/api/system/user";
 import {listGoods} from "@/api/cx-hpxx/goods";
 import {listType} from "@/api/cx-hpxx/type";
 import {listWarehouse} from "@/api/cx-ckgl/warehouse";
 import {listLocation} from "@/api/cx-ckgl/location";
+import Config from "@/views/system/config";
+
 export default {
   name: "Stock",
+  dicts: ['g_unit'],
+  components: {Config},
   data() {
     return {
       // 遮罩层
@@ -339,9 +379,9 @@ export default {
       //货品类型数据
       goodsType: [],
       //仓库信息
-      warehouseList:[],
+      warehouseList: [],
       //仓位信息
-      locationList:[],
+      locationList: [],
       // 库存查询表格数据
       stockList: [],
       // 弹出层标题
@@ -421,12 +461,12 @@ export default {
       this.reset();
     },
     //仓库信息
-    getWarehouse(){
-      listWarehouse().then(res=>this.warehouseList=res.rows);
+    getWarehouse() {
+      listWarehouse().then(res => this.warehouseList = res.rows);
     },
     //仓位信息
-    getLocation(){
-      listLocation().then(res=>this.locationList=res.rows);
+    getLocation() {
+      listLocation().then(res => this.locationList = res.rows);
     },
     //货品数据
     getGoods() {
