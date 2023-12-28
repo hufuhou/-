@@ -65,8 +65,7 @@ export function listOutDetails(outId) {
   })
 }
 // 审核出库
-export function AuditOutbound(outCode,outIds, isApproved) {
-  const reviewStatus = isApproved ? 'true' : 'false';
+export function AuditOutbound(outCode,outIds, reviewStatus) {
   return request({
     url: '/cx-crkgl/outbound/sh/',
     method: 'post',
