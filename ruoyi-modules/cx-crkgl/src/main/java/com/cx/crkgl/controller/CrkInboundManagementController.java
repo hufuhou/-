@@ -77,9 +77,9 @@ public class CrkInboundManagementController extends BaseController {
     /**
      * 获取入库数量
      */
-    @GetMapping(value = "/rksl/{gCode}")
-    public AjaxResult getRksl(@PathVariable("gCode") String gCode) {
-        return success(crkInboundManagementService.InventoryQuantity(gCode));
+    @GetMapping(value = "/rksl/{gCode}/{odId}")
+    public AjaxResult getRksl(@PathVariable("gCode") String gCode,@PathVariable("odId") String odId) {
+        return success(crkInboundManagementService.InventoryQuantity(gCode,odId));
     }
 
     /**

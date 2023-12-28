@@ -142,9 +142,10 @@
       </el-table-column>
       <el-table-column label="入库货品" align="center" width="200px">
         <template slot-scope="scope">
-    <span v-for="item in scope.row.childItems">
-      {{ item.goodsName }}
+    <span v-if="scope.row.childItems && scope.row.childItems.length">
+      {{ scope.row.childItems.map(item => item.goodsName).join(',') }}
     </span>
+          <span v-else>-</span> <!-- 无子项时显示占位符或空字符串 -->
         </template>
       </el-table-column>
 <!--      <el-table-column label="供应商 ID" align="center" prop="sId" />-->
@@ -154,6 +155,15 @@
           <span v-for="item in userList">
             <template v-if="parseInt(scope.row.wManager)===item.userId">
               {{ item.nickName }}
+            </template>
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="部门" align="center" prop="wManager" width="100px">
+        <template slot-scope="scope">
+          <span v-for="item in deptList">
+            <template v-if="scope.row.wManager===item.deptId">
+              {{ item.deptName }}
             </template>
           </span>
         </template>
@@ -238,7 +248,7 @@
         <el-table-column type="selection" align="center" width="50px">
         </el-table-column>
         <el-table-column label="货品编号" align="center" prop="gCode" width="200px"/>
-        <el-table-column label="货品名称" align="center" prop="gName" />
+        <el-table-column label="货品名称" align="center" prop="gName" width="140px"/>
         <el-table-column label="规格型号" align="center" prop="specCode" />
         <el-table-column label="单位" align="center" prop="gUnit" >
           <template slot-scope="scope">
@@ -276,7 +286,7 @@
     <!-- 添加进货订单 -->
     <el-dialog :visible.sync="dialogMaterial1" title="进货订单" :modal="false">
       <el-table :data="purchaseList" v-loading="loading" @row-click="handleRowClickMaterial1">
-        <el-table-column label="进货单号" align="center" prop="poCode" />
+        <el-table-column label="进货单号" align="center" prop="poCode" width="180px"/>
         <el-table-column label="供应商" align="center" prop="sId">
           <template slot-scope="scope">
         <span v-for="item in supplierList"  :key="item.sId">
@@ -300,6 +310,16 @@
         <span v-for="item in supplierList" >
           <template v-if="scope.row.sId===item.sId">
             {{ item.contactNumber }}
+          </template>
+        </span>
+          </template>
+        </el-table-column>
+        <el-table-column label="进货日期" align="center" prop="purchaseDate" />
+        <el-table-column label="进货部门" align="center" prop="deptId">
+          <template slot-scope="scope">
+        <span v-for="item in deptList" :key="item.deptId">
+          <template v-if="scope.row.deptId===item.deptId">
+            {{ item.deptName }}
           </template>
         </span>
           </template>
@@ -446,7 +466,7 @@
 <!--              <el-input v-model="scope.row.odId" placeholder="关联单号" />-->
 <!--            </template>-->
 <!--          </el-table-column>-->
-          <el-table-column label="货品名称" align="center" prop="gName" >
+          <el-table-column label="货品名称" align="center" prop="gName" width="140px">
             <template slot-scope="scope">
               {{ scope.row.gName }}
             </template>
@@ -481,17 +501,17 @@
               {{ scope.row.money }}
             </template>
           </el-table-column>
-          <el-table-column label="已入库数量" prop="quantityInStock" width="90px">
+          <el-table-column label="已入库数量" prop="quantityInStock" width="90px" align="center">
             <template slot-scope="scope">
               {{ scope.row.quantityInStock }}
             </template>
           </el-table-column>
-          <el-table-column label="未入库数量" prop="unstockedQuantity" width="90px">
+          <el-table-column label="未入库数量" prop="unstockedQuantity" width="90px" align="center">
             <template slot-scope="scope">
               {{ scope.row.unstockedQuantity }}
             </template>
           </el-table-column>
-          <el-table-column label="入库仓位" prop="slId" width="150">
+          <el-table-column label="入库仓位" prop="slId" width="150" align="center">
             <template slot-scope="scope">
               <el-select v-model="scope.row.slId" placeholder="请选择入库仓位">
                 <el-option
@@ -503,17 +523,18 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="本次入库数量" prop="thisQuantity" width="150">
+          <el-table-column label="本次入库数量" prop="thisQuantity" width="150" align="center">
             <template slot-scope="scope">
               <el-input
                 v-model.number="scope.row.thisQuantity"
                 placeholder="请输入本次入库数量"
                 type="number"
                 :min="0"
+                :max="scope.row.unstockedQuantity"
               />
             </template>
           </el-table-column>
-          <el-table-column label="生产日期" prop="productionDate" width="240">
+          <el-table-column label="生产日期" prop="productionDate" width="240" align="center">
             <template slot-scope="scope">
               <el-date-picker clearable v-model="scope.row.productionDate" type="date" value-format="yyyy-MM-dd" placeholder="请选择生产日期" />
             </template>
@@ -523,7 +544,7 @@
 <!--              <el-input v-model="scope.row.barcode" placeholder="请输入条形码" />-->
 <!--            </template>-->
 <!--          </el-table-column>-->
-          <el-table-column label="备注" prop="remark" width="150">
+          <el-table-column label="备注" prop="remark" width="150" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" placeholder="请输入备注" />
             </template>
@@ -538,11 +559,11 @@
   </div>
 </template>
 
-<Management @examine="performExamine"></Management>
 <script>
 import { listManagement, getManagement, delManagement, addManagement, updateManagement,listWarehouse,InventoryReview,WithdrawalStorage,listSupplier,listUser,listPurchase,getInventoryDetail,getRksl,listManagement1,listDetails,listGoods } from "@/api/cx-crkgl/management";
 import {listLocation} from "@/api/cx-ckgl/location"
 import item from "@/layout/components/Sidebar/Item";
+import {listDept} from "@/api/cx-ckgl/warehouse";
 
 
 export default {
@@ -598,7 +619,7 @@ export default {
       // 查询参数
       caqueryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 5,
       },
       // 查询参数明细
       caqueryParammx: {
@@ -615,6 +636,8 @@ export default {
       tzStockList:[],
       //仓库信息
       warehouseList:[],
+      //部门
+      deptList:[],
       //供应商
       supplierList:[],
       //用户表格数据
@@ -643,6 +666,10 @@ export default {
         poCode:null,
         gName: null,
         gUnit: null,
+      },
+      queryParams2: {
+        pageNum: 1,
+        pageSize: 20,
       },
       // 表单参数
       form: {},
@@ -676,6 +703,7 @@ export default {
     this.getList();
     this.getList1();
     this.getWList();
+    this.getBmList();
     this.getCWList();
     this.getJHList();
     this.getUserList();
@@ -697,10 +725,13 @@ export default {
             const rksls = response.rows.map(childItem => childItem.thisQuantity);
             const moneys = response.rows.map(childItem => childItem.money);
             // 查询货品表获取货品名称
-            return listGoods().then(goodsResponse => {
+            return listGoods(this.queryParams2).then(goodsResponse => {
               const goodsList = goodsResponse.rows;
               response.rows.forEach(childItem => {
                 const goods = goodsList.find(good => good.gCode === childItem.gCode);
+                if (childItem.inId===57){
+                  console.info(goods)
+                }
                 if (goods) {
                   childItem.goodsName = goods.gName; // 将货品名称附加到子表对象上
                 }
@@ -716,7 +747,6 @@ export default {
             const totalMoney =result.moneys.reduce((acc, val) => acc + val, 0);
             item.totalRksl = totalRksl;
             item.totalMoney = totalMoney;
-
             item.childItems=result.response.rows;
           });
           this.totals = response.total;
@@ -731,7 +761,7 @@ export default {
       getInventoryDetail(this.queryParams1).then(response => {
         this.inventoryDetail = response.rows;
         const promises = this.inventoryDetail.map(item => {
-          return getRksl(item.gCode).then(response => {
+          return getRksl(item.gCode,item.poCode).then(response => {
             const rksl = response.data;
             const wrksl = item.purchaseQuantity - rksl;
             item.rksl = rksl;
@@ -779,11 +809,18 @@ export default {
         this.userList = response.rows;
       });
     },
+    //部门
+    getBmList() {
+      listDept().then(response => {
+        this.deptList = response.data;
+      });
+    },
     // 取消按钮
     cancel() {
       this.open = false;
       this.dialogMaterial1 = false;
       this.reset();
+      this.pdList=[];
     },
     // 表单重置
     reset() {
@@ -832,8 +869,8 @@ export default {
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.inId)
       this.in_code=selection.map(item=> item.inCode)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.single = selection.length!==1 || selection.some(item => item.status !== 1);
+      this.multiple = !selection.length || selection.some(item => item.status !== 1);
       this.examine = selection.some(item => item.status !== 1);
       this.revoke = selection.some(item => item.status !==3);
     },
@@ -856,7 +893,7 @@ export default {
       getManagement(inId).then(response => {
         this.crkImDetailsList = response.data.crkImDetailsList;
         this.form = response.data;
-        console.info(this.crkImDetailsList)
+        this.updateLocationList();
           this.crkImDetailsList.forEach(item => {
             item.dj=(item.money/item.purchaseQuantity).toFixed(2);
           })
@@ -867,9 +904,20 @@ export default {
     /** 提交按钮 */
     submitForm() {
       let pd=true;
+      this.tzStockList=[];
       this.crkImDetailsList.forEach(row => {
         if(row.thisQuantity===""||row.slId===""||row.productionDate===""){
           this.$message.warning('基本信息不能为空！');
+          pd=false;
+          return;
+        }
+        if (row.purchaseQuantity===row.quantityInStock){
+          this.$message.warning(''+row.gName+'已经入库完毕！');
+          pd=false;
+          return;
+        }
+        if (row.purchaseQuantity===0){
+          this.$message.warning('入库数量不能为0！');
           pd=false;
           return;
         }
@@ -877,7 +925,7 @@ export default {
           wId:this.form.wId,
           slId:row.slId,
           itemQuantity:0,
-          numberPlans:row.thisQuantity,
+          numberPlans:0,
           gId:row.gId,
           remark:row.remark,
         };
@@ -895,12 +943,14 @@ export default {
             updateManagement(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.pdList=[];
               this.getList();
             });
           } else {
             addManagement(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
+              this.pdList=[];
               this.getList();
             });
           }
@@ -910,6 +960,11 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const inIds = row.inId || this.ids;
+      const managementList = this.managementList.filter(item => item.inId === inIds);
+      if (managementList.some(item => item.status !== 1)) {
+        this.$message.warning('该单号不能删除！');
+        return;
+      }
       this.$modal.confirm('是否确认删除入库管理编号为"' + inIds + '"的数据项？').then(function() {
         return delManagement(inIds);
       }).then(() => {
@@ -922,12 +977,6 @@ export default {
       const inCodes = [];
       const inIds = this.ids;
       inCodes.push(...this.in_code);
-      // this.gIds = [];
-      // listDetails(inId)
-      //   .then(response => {
-      //     response.rows.forEach(row => {
-      //       this.gIds.push(row.gId + '');
-      //     });
           let isCancelled = false;
           this.$confirm(`审核单号为"${inCodes}"的数据项？`, '审核数据项', {
             distinguishCancelAndClose: true,
@@ -968,14 +1017,6 @@ export default {
     handleRevoke() {
       const inIds = this.ids;
       const inCode = this.in_code;
-      // let gIds = []; // 存储获取的 gIds
-
-      // listDetails(inIds).then(response => {
-      //   // 在回调函数内部进行遍历操作
-      //   response.rows.forEach(row => {
-      //     gIds.push(row.gId + '');
-      //   });
-
         this.$modal.confirm('是否撤销单号为"' + inCode + '"的数据项？')
           .then(() => {
             return WithdrawalStorage(inIds);
@@ -1027,12 +1068,14 @@ export default {
           productionDate: "",
           barcode: "",
           remark: "",
+          money:row.money,
           gName: row.gName,
           gCode: row.gCode,
           specCode: row.specCode,
           gUnit: row.gUnit,
           dj: row.money / row.purchaseQuantity.toFixed(2),
           purchaseQuantity: row.purchaseQuantity,
+          isDelte:"",
         };
         this.pdList.push(obj);
         this.crkImDetailsList.push(obj);
@@ -1048,6 +1091,7 @@ export default {
         const crkImDetailsList = this.crkImDetailsList;
         const checkedCrkImDetails = this.checkedCrkImDetails;
         this.crkImDetailsList = crkImDetailsList.filter((item) => {
+          this.pdList=[];
           // 删除选中的入库明细
           if (checkedCrkImDetails.indexOf(item.index) !== -1) {
             // 将相应的数据从 pdList 数组中删除

@@ -11,6 +11,8 @@ import com.ruoyi.common.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Objects;
+
 import com.ruoyi.common.core.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import com.cx.crkgl.domain.CrkImDetails;
@@ -43,8 +45,8 @@ public class CrkInboundManagementServiceImpl implements ICrkInboundManagementSer
     }
 
     @Override
-    public long InventoryQuantity(String gCode) {
-        return crkInboundManagementMapper.InventoryQuantity(gCode);
+    public long InventoryQuantity(String gCode,String odId) {
+        return crkInboundManagementMapper.InventoryQuantity(gCode,odId);
     }
 
     /**
@@ -121,7 +123,6 @@ public class CrkInboundManagementServiceImpl implements ICrkInboundManagementSer
         crkInboundManagement.setUpdateTime(DateUtils.getNowDate());
         crkInboundManagement.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
         crkInboundManagementMapper.deleteCrkImDetailsByInId(crkInboundManagement.getInId());
-        crkInboundManagementMapper.deleteReviews(crkInboundManagement.getCrkImDetailsList());
         insertCrkImDetails(crkInboundManagement);
         insertTzStock(crkInboundManagement);
         return crkInboundManagementMapper.updateCrkInboundManagement(crkInboundManagement);
@@ -137,8 +138,6 @@ public class CrkInboundManagementServiceImpl implements ICrkInboundManagementSer
     @Override
     public int deleteCrkInboundManagementByInIds(Long[] inIds)
     {
-        List<CrkImDetails> crkImDetailsList= crkInboundManagementMapper.selectCrkImDetails(inIds);
-        crkInboundManagementMapper.deleteReviews(crkImDetailsList);
         crkInboundManagementMapper.deleteCrkImDetailsByInIds(inIds);
         return crkInboundManagementMapper.deleteCrkInboundManagementByInIds(inIds);
     }
@@ -169,7 +168,7 @@ public class CrkInboundManagementServiceImpl implements ICrkInboundManagementSer
         crkInboundManagement.setReviewerTime(DateUtils.getNowDate());
         return crkInboundManagementMapper.InventoryReview(crkInboundManagement,isApproved);
     }
-//审核
+//审核入库
     @Override
     @Transactional
     public int InventoryReviews(List<CrkInboundManagement> crkInboundManagement,List<String> inIds, boolean isApproved) {
@@ -184,9 +183,33 @@ public class CrkInboundManagementServiceImpl implements ICrkInboundManagementSer
         {
             if (isApproved){
               List<CrkImDetails> crkImDetailsList= crkInboundManagementMapper.selectCrkImDetail(inIds);
-                crkInboundManagementMapper.productReviews(crkImDetailsList);
+              for (CrkImDetails crkImDetails:crkImDetailsList){
+                  crkInboundManagementMapper.productReviews(crkImDetails);
+              }
+                Long rksls= Long.valueOf(0);
+                Long wrksls= Long.valueOf(0);
+                for (CrkImDetails crkImDetails : crkImDetailsList)
+                {
+                    rksls+=crkImDetails.getQuantityInStock();
+                    wrksls+=crkImDetails.getUnstockedQuantity();
+                }
+                String[] poCd = new String[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    CrkInboundManagement crkInboundManagement1 = list.get(i);
+                    poCd[i] = crkInboundManagement1.getOrderId();
+                }
+                if (rksls == wrksls){
+                    crkInboundManagementMapper.purchasingStatus(poCd);
+                }else {
+                    crkInboundManagementMapper.purchasingStatus1(poCd);
+                }
+
             }
-            return   crkInboundManagementMapper.InventoryReviews(list,isApproved);
+            int row=0;
+            for (CrkInboundManagement crkInboundManagement1:list){
+                row+=crkInboundManagementMapper.InventoryReviews(crkInboundManagement1,isApproved);
+            }
+            return  row;
         }
         return 0;
     }
@@ -205,7 +228,16 @@ public class CrkInboundManagementServiceImpl implements ICrkInboundManagementSer
     @Transactional
     public int WithdrawalStorages(List<String> inIds) {
         List<CrkImDetails> crkImDetailsList= crkInboundManagementMapper.selectCrkImDetail(inIds);
-        crkInboundManagementMapper.reduceReviews(crkImDetailsList);
+        List<CrkInboundManagement> list=crkInboundManagementMapper.selectCrkInboundManagementList2(inIds);
+        String[] poCd = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            CrkInboundManagement crkInboundManagement1 = list.get(i);
+            poCd[i] = crkInboundManagement1.getOrderId();
+        }
+        crkInboundManagementMapper.purchasingStatus2(poCd);
+        for (CrkImDetails crkImDetails:crkImDetailsList){
+            crkInboundManagementMapper.reduceReviews(crkImDetails);
+        }
         return crkInboundManagementMapper.WithdrawalStorages(inIds);
     }
 
@@ -249,11 +281,7 @@ public class CrkInboundManagementServiceImpl implements ICrkInboundManagementSer
             {
                 tzStock.setCreateBys(SecurityUtils.getUserId());
                 tzStock.setCreateTime(DateUtils.getNowDate());
-                list.add(tzStock);
-            }
-            if (list.size() > 0)
-            {
-                crkInboundManagementMapper.addInventory(list);
+                crkInboundManagementMapper.addInventory(tzStock);
             }
         }
     }

@@ -104,7 +104,7 @@
         </template>
       </el-table-column>
       <el-table-column label="货品编码" align="center" prop="gCode" width="250" />
-      <el-table-column label="货品名称" align="center" prop="gName" />
+      <el-table-column label="货品名称" align="center" prop="gName" width="180px"/>
       <el-table-column label="单位" align="center" prop="gUnit">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.g_unit" :value="scope.row.gUnit"/>
@@ -126,7 +126,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="备注" align="center" prop="remark" width="100px" />
       <el-table-column label="出库参考价/元" align="center" prop="orPrice" width="105"/>
       <el-table-column label="入库参考价/元" align="center" prop="wrPrice" width="105"/>
       <el-table-column label="保质期管理" align="center" prop="hasShelfLife" width="85">
@@ -256,6 +256,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -263,6 +264,7 @@
 import { listGoods, getGoods, delGoods, addGoods, updateGoods ,listType,listSupplier} from "@/api/cx-hpxx/goods";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+
 
 export default {
   name: "Goods",
@@ -358,6 +360,7 @@ export default {
       this.loading = true;
       listGoods(this.queryParams).then(response => {
         this.goodsList = response.rows;
+        this.total = response.total;
         this.loading = false;
       });
     },
@@ -500,3 +503,4 @@ export default {
   }
 };
 </script>
+

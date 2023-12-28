@@ -67,9 +67,9 @@ export function getManagement(inId) {
 }
 
 // 查询入库数量
-export function getRksl(gCode) {
+export function getRksl(gCode,odId) {
   return request({
-    url: '/cx-crkgl/management/rksl/' + gCode,
+    url: '/cx-crkgl/management/rksl/' + gCode+'/'+odId,
     method: 'get'
   })
 }

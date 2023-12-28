@@ -27,7 +27,7 @@ public interface ICrkInboundManagementService
      *
      * @param gCode
      */
-    public long InventoryQuantity(String gCode);
+    public long InventoryQuantity(String gCode,String odId);
 
     /**
      * 查询进货明细
@@ -107,7 +107,7 @@ public interface ICrkInboundManagementService
      * @param
      * @return 结果
      */
-    public int InventoryReviews(List<CrkInboundManagement> crkInboundManagements,List<String> gId ,boolean isApproved);
+    public int InventoryReviews(List<CrkInboundManagement> crkInboundManagements,List<String> outIds ,boolean isApproved);
 
 
     /**

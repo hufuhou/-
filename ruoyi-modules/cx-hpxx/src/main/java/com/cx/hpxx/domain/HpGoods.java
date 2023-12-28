@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.core.annotation.Excel;
 import com.ruoyi.common.core.web.domain.BaseEntity;
 
+import java.math.BigDecimal;
+
 /**
  * 货品信息对象 hp_goods
  * 
@@ -52,11 +54,11 @@ public class HpGoods extends BaseEntity
 
     /** 出库参考价 */
     @Excel(name = "出库参考价")
-    private Long orPrice;
+    private BigDecimal orPrice;
 
     /** 入库参考价 */
     @Excel(name = "入库参考价")
-    private Long wrPrice;
+    private BigDecimal wrPrice;
 
     /** 保质期管理 */
     @Excel(name = "保质期管理")
@@ -163,25 +165,24 @@ public class HpGoods extends BaseEntity
     {
         return specCode;
     }
-    public void setOrPrice(Long orPrice) 
-    {
+
+    public BigDecimal getOrPrice() {
+        return orPrice;
+    }
+
+    public void setOrPrice(BigDecimal orPrice) {
         this.orPrice = orPrice;
     }
 
-    public Long getOrPrice() 
-    {
-        return orPrice;
+    public BigDecimal getWrPrice() {
+        return wrPrice;
     }
-    public void setWrPrice(Long wrPrice) 
-    {
+
+    public void setWrPrice(BigDecimal wrPrice) {
         this.wrPrice = wrPrice;
     }
 
-    public Long getWrPrice() 
-    {
-        return wrPrice;
-    }
-    public void setHasShelfLife(Integer hasShelfLife) 
+    public void setHasShelfLife(Integer hasShelfLife)
     {
         this.hasShelfLife = hasShelfLife;
     }

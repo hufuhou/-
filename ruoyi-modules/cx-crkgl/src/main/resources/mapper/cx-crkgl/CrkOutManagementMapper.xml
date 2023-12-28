@@ -1,89 +1,354 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cx.crkgl.mapper.CrkOutManagementMapper">
-    
+
     <resultMap type="CrkOutManagement" id="CrkOutManagementResult">
-        <result property="outId"    column="out_id"    />
-        <result property="outCode"    column="out_code"    />
-        <result property="outType"    column="out_type"    />
-        <result property="outStatus"    column="out_status"    />
-        <result property="outDate"    column="out_date"    />
-        <result property="orderId"    column="order_id"    />
-        <result property="cId"    column="c_id"    />
-        <result property="personId"    column="person_id"    />
-        <result property="contactDetails"    column="contact_details"    />
-        <result property="remark"    column="remark"    />
-        <result property="outManager"    column="out_manager"    />
-        <result property="wId"    column="w_id"    />
-        <result property="reviewer"    column="reviewer"    />
-        <result property="reviewerTime"    column="reviewer_time"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="isDelte"    column="is_delte"    />
+        <result property="outId" column="out_id"/>
+        <result property="outCode" column="out_code"/>
+        <result property="outType" column="out_type"/>
+        <result property="status" column="status"/>
+        <result property="outDate" column="out_date"/>
+        <result property="orderId" column="order_id"/>
+        <result property="cId" column="c_id"/>
+        <result property="personId" column="person_id"/>
+        <result property="contactDetails" column="contact_details"/>
+        <result property="remark" column="remark"/>
+        <result property="outManager" column="out_manager"/>
+        <result property="wId" column="w_id"/>
+        <result property="reviewer" column="reviewer"/>
+        <result property="reviewerTime" column="reviewer_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
     </resultMap>
 
     <resultMap id="CrkOutManagementCrkOutDetailsResult" type="CrkOutManagement" extends="CrkOutManagementResult">
-        <collection property="crkOutDetailsList" notNullColumn="sub_om_id" javaType="java.util.List" resultMap="CrkOutDetailsResult" />
+        <collection property="crkOutDetailsList" notNullColumn="sub_om_id" javaType="java.util.List"
+                    resultMap="CrkOutDetailsResult"/>
     </resultMap>
 
     <resultMap type="CrkOutDetails" id="CrkOutDetailsResult">
-        <result property="omId"    column="sub_om_id"    />
-        <result property="outOutId"    column="sub_out_out_id"    />
-        <result property="outId"    column="sub_out_id"    />
-        <result property="orderId"    column="sub_order_id"    />
-        <result property="unit"    column="sub_unit"    />
-        <result property="slId"    column="sub_sl_id"    />
-        <result property="itemQuantity"    column="sub_item_quantity"    />
-        <result property="quantityShipped"    column="sub_quantity_shipped"    />
-        <result property="undeliveredQuantity"    column="sub_undelivered_quantity"    />
-        <result property="currOutQuantity"    column="sub_curr_out_quantity"    />
-        <result property="batchNumber"    column="sub_batch_number"    />
-        <result property="remark"    column="sub_remark"    />
-        <result property="barcode"    column="sub_barcode"    />
-        <result property="createBy"    column="sub_create_by"    />
-        <result property="createTime"    column="sub_create_time"    />
-        <result property="updateBy"    column="sub_update_by"    />
-        <result property="updateTime"    column="sub_update_time"    />
-        <result property="isDelte"    column="sub_is_delte"    />
+        <result property="omId" column="sub_om_id"/>
+        <result property="outOutId" column="sub_out_out_id"/>
+        <result property="outId" column="sub_out_id"/>
+        <result property="orderId" column="sub_order_id"/>
+        <result property="unit" column="sub_unit"/>
+        <result property="slId" column="sub_sl_id"/>
+        <result property="itemQuantity" column="sub_item_quantity"/>
+        <result property="quantityShipped" column="sub_quantity_shipped"/>
+        <result property="undeliveredQuantity" column="sub_undelivered_quantity"/>
+        <result property="currOutQuantity" column="sub_curr_out_quantity"/>
+        <result property="batchNumber" column="sub_batch_number"/>
+        <result property="remark" column="sub_remark"/>
+        <result property="barcode" column="sub_barcode"/>
+        <result property="createBy" column="sub_create_by"/>
+        <result property="createTime" column="sub_create_time"/>
+        <result property="updateBy" column="sub_update_by"/>
+        <result property="updateTime" column="sub_update_time"/>
+        <result property="isDelte" column="sub_is_delte"/>
+        <result property="gCode" column="g_code"/>
+        <result property="gId" column="g_id"/>
+        <result property="outBound" column="out_bound"/>
+        <result property="notShipped" column="not_shipped"/>
+        <result property="money" column="money"/>
+        <result property="kcsl" column="kcsl"/>
+        <result property="gName" column="g_name"/>
+        <result property="gUnit" column="g_unit"/>
+        <result property="specCode" column="spec_code"/>
+        <result property="salesVolume" column="sales_volume"/>
+    </resultMap>
+
+    <resultMap type="OrderSalesDetails" id="OrderSalesDetailsResult">
+        <result property="sdId" column="sd_id"/>
+        <result property="sCode" column="s_code"/>
+        <result property="gCode" column="g_code"/>
+        <result property="cksl" column="cksl"/>
+        <result property="wcksl" column="wcksl"/>
+        <result property="salesVolume" column="sales_volume"/>
+        <result property="salesAmount" column="sales_amount"/>
+        <result property="purchaseQuantity" column="purchase_quantity"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
+        <result property="kcsl" column="kcsl"/>
+        <result property="gId" column="g_id"/>
+        <result property="gtId" column="gt_id"/>
+        <result property="gName" column="g_name"/>
+        <result property="gUnit" column="g_unit"/>
+        <result property="specCode" column="spec_code"/>
+        <result property="wId" column="w_id"/>
     </resultMap>
 
     <sql id="selectCrkOutManagementVo">
-        select out_id, out_code, out_type, out_status, out_date, order_id, c_id, person_id, contact_details, remark, out_manager, w_id, reviewer, reviewer_time, create_by, create_time, update_by, update_time, is_delte from crk_out_management
+        select out_id,
+               out_code,
+               out_type,
+               status,
+               out_date,
+               order_id,
+               c_id,
+               person_id,
+               contact_details,
+               remark,
+               out_manager,
+               w_id,
+               reviewer,
+               reviewer_time,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from crk_out_management
     </sql>
 
     <select id="getCrkOutManagementBySlCode" resultMap="CrkOutManagementResult">
-        select out_code from crk_out_management order by out_code desc limit 1;
+        select out_code
+        from crk_out_management
+        order by out_code desc limit 1;
     </select>
 
     <select id="selectCrkOutManagementList" parameterType="CrkOutManagement" resultMap="CrkOutManagementResult">
         <include refid="selectCrkOutManagementVo"/>
-        <where>  
-            <if test="outCode != null  and outCode != ''"> and out_code = #{outCode}</if>
-            <if test="outType != null  and outType != ''"> and out_type = #{outType}</if>
-            <if test="outStatus != null "> and out_status = #{outStatus}</if>
-            <if test="wId != null "> and w_id = #{wId}</if>
+        <where>
+            <if test="outCode != null  and outCode != ''">and out_code = #{outCode}</if>
+            <if test="outType != null  and outType != ''">and out_type = #{outType}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="wId != null ">and w_id = #{wId}</if>
         </where>
     </select>
-    
+
     <select id="selectCrkOutManagementByOutId" parameterType="Long" resultMap="CrkOutManagementCrkOutDetailsResult">
-        select a.out_id, a.out_code, a.out_type, a.out_status, a.out_date, a.order_id, a.c_id, a.person_id, a.contact_details, a.remark, a.out_manager, a.w_id, a.reviewer, a.reviewer_time, a.create_by, a.create_time, a.update_by, a.update_time, a.is_delte,
- b.om_id as sub_om_id, b.out_out_id as sub_out_out_id, b.out_id as sub_out_id, b.order_id as sub_order_id, b.unit as sub_unit, b.item_quantity as sub_item_quantity, b.quantity_shipped as sub_quantity_shipped, b.undelivered_quantity as sub_undelivered_quantity, b.curr_out_quantity as sub_curr_out_quantity, b.batch_number as sub_batch_number, b.remark as sub_remark, b.barcode as sub_barcode, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.is_delte as sub_is_delte, sl_id as sub_sl_id
+        select a.out_id,
+               a.out_code,
+               a.out_type,
+               a.status,
+               a.out_date,
+               a.order_id,
+               a.c_id,
+               a.person_id,
+               a.contact_details,
+               a.remark,
+               a.out_manager,
+               a.w_id,
+               a.reviewer,
+               a.reviewer_time,
+               a.create_by,
+               a.create_time,
+               a.update_by,
+               a.update_time,
+               a.is_delte,
+               b.om_id                as sub_om_id,
+               b.out_out_id           as sub_out_out_id,
+               b.out_id               as sub_out_id,
+               b.order_id             as sub_order_id,
+               b.unit                 as sub_unit,
+               b.item_quantity        as sub_item_quantity,
+               b.quantity_shipped     as sub_quantity_shipped,
+               b.undelivered_quantity as sub_undelivered_quantity,
+               b.curr_out_quantity    as sub_curr_out_quantity,
+               b.batch_number         as sub_batch_number,
+               b.remark               as sub_remark,
+               b.barcode              as sub_barcode,
+               b.create_by            as sub_create_by,
+               b.create_time          as sub_create_time,
+               b.update_by            as sub_update_by,
+               b.update_time          as sub_update_time,
+               b.is_delte             as sub_is_delte,
+               b.sl_id                as sub_sl_id,
+               b.g_code               as g_code,
+               b.g_id                 as g_id,
+               b.out_bound            as out_bound,
+               b.not_shipped          as not_shipped,
+               b.money                as money,
+               (  SELECT CASE WHEN sum(item_quantity) IS NULL THEN 0 ELSE sum(item_quantity) END AS kcsl
+                  FROM tz_stock
+                  WHERE sl_id =b.sl_id
+                    and g_id =b.g_id )as kcsl,
+               c.sales_volume,
+               d.g_name, d.g_unit, d.spec_code
         from crk_out_management a
-        left join crk_out_details b on b.out_id = a.out_id
+                 left join crk_out_details b on b.out_id = a.out_id
+                 left join order_d_sales c on c.g_code = b.g_code and b.order_id=c.s_code
+                 left join hp_goods d on d.g_id = b.g_id
         where a.out_id = #{outId}
     </select>
-        
-    <insert id="insertCrkOutManagement" parameterType="CrkOutManagement">
+
+    <select id="selectSalesDetails" resultMap="OrderSalesDetailsResult">
+        SELECT DISTINCT a.sd_id, a.s_code, a.g_code, a.sales_volume, a.sales_amount, a.remark,
+        b.g_id, b.gt_id, b.g_name, b.g_unit, b.spec_code,
+        (SELECT CASE WHEN SUM(d.item_quantity) IS NULL THEN 0 ELSE SUM(d.item_quantity) END FROM tz_stock d INNER JOIN
+        hp_goods h ON h.g_id = d.g_id WHERE h.g_code = a.g_code) AS kcsl,
+        (SELECT CASE WHEN SUM(e.item_quantity) IS NULL THEN 0 ELSE SUM(e.item_quantity) END FROM crk_out_details e WHERE
+        e.g_code = a.g_code and e.order_id=a.s_code) AS cksl
+        FROM order_d_sales a
+        LEFT JOIN hp_goods b ON b.g_code = a.g_code
+        LEFT JOIN (
+        SELECT g_id, w_id
+        FROM tz_stock
+        GROUP BY g_id, w_id
+        ) d ON d.g_id = b.g_id
+        LEFT JOIN order_sales_order i ON i.s_code = a.s_code
+        <where>
+            <if test="sCode != null and sCode != ''">
+                AND a.s_code = #{sCode}
+            </if>
+            <if test="gName != null and gName != ''">
+                AND b.g_name = #{gName}
+            </if>
+            <if test="gUnit != null and gUnit != ''">
+                AND b.g_unit = #{gUnit}
+            </if>
+            <if test="wId != null and wId != ''">
+                AND d.w_id = #{wId}
+            </if>
+            AND (i.status = 2 || i.status = 3)
+        </where>
+    </select>
+
+    <select id="currentInventory" resultType="long">
+        SELECT CASE WHEN sum(item_quantity) IS NULL THEN 0 ELSE sum(item_quantity) END AS kcsl
+        FROM tz_stock
+        WHERE sl_id = #{slId}
+          and g_id = #{gId}
+    </select>
+
+    <select id="selectCrkOutDetails2" resultMap="CrkOutDetailsResult" parameterType="long">
+        select om_id as sub_om_id,
+        out_out_id as sub_out_out_id,
+        out_id as sub_out_id,
+        order_id as sub_order_id,
+        unit as sub_unit,
+        item_quantity as sub_item_quantity,
+        quantity_shipped as sub_quantity_shipped,
+        undelivered_quantity as sub_undelivered_quantity,
+        curr_out_quantity as sub_curr_out_quantity,
+        batch_number as sub_batch_number,
+        remark as sub_remark,
+        barcode as sub_barcode,
+        create_by as sub_create_by,
+        create_time as sub_create_time,
+        update_by as sub_update_by,
+        update_time as sub_update_time,
+        is_delte as sub_is_delte,
+        sl_id as sub_sl_id,
+        g_code as g_code,
+        g_id as g_id,
+        out_bound as out_bound,
+        not_shipped as not_shipped,
+        money as money
+        from crk_out_details
+        where out_id=#{outId}
+    </select>
+
+    <select id="selectCrkOutDetails" resultMap="CrkOutDetailsResult">
+        select om_id as sub_om_id,
+        out_out_id as sub_out_out_id,
+        out_id as sub_out_id,
+        order_id as sub_order_id,
+        unit as sub_unit,
+        item_quantity as sub_item_quantity,
+        quantity_shipped as sub_quantity_shipped,
+        undelivered_quantity as sub_undelivered_quantity,
+        curr_out_quantity as sub_curr_out_quantity,
+        batch_number as sub_batch_number,
+        remark as sub_remark,
+        barcode as sub_barcode,
+        create_by as sub_create_by,
+        create_time as sub_create_time,
+        update_by as sub_update_by,
+        update_time as sub_update_time,
+        is_delte as sub_is_delte,
+        sl_id as sub_sl_id,
+        g_code as g_code,
+        g_id as g_id,
+        out_bound as out_bound,
+        not_shipped as not_shipped,
+        money as money
+        from crk_out_details
+        <where>
+            <if test="array != null and array.length > 0">
+                AND out_id IN
+                <foreach item="item" collection="array" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCrkOutDetail" resultMap="CrkOutDetailsResult">
+        select om_id as sub_om_id,
+        out_out_id as sub_out_out_id,
+        out_id as sub_out_id,
+        order_id as sub_order_id,
+        unit as sub_unit,
+        item_quantity as sub_item_quantity,
+        quantity_shipped as sub_quantity_shipped,
+        undelivered_quantity as sub_undelivered_quantity,
+        curr_out_quantity as sub_curr_out_quantity,
+        batch_number as sub_batch_number,
+        remark as sub_remark,
+        barcode as sub_barcode,
+        create_by as sub_create_by,
+        create_time as sub_create_time,
+        update_by as sub_update_by,
+        update_time as sub_update_time,
+        is_delte as sub_is_delte,
+        sl_id as sub_sl_id,
+        g_code as g_code,
+        g_id as g_id,
+        out_bound as out_bound,
+        not_shipped as not_shipped,
+        money as money
+        from crk_out_details
+        <where>
+            <if test="list != null and list.size() > 0">
+                AND out_id IN
+                <foreach item="item" collection="list" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCrkOutManagementList1" resultMap="CrkOutManagementResult">
+        <include refid="selectCrkOutManagementVo"/>
+        <where>
+            <if test="list != null and list.size() > 0">
+                AND out_code IN
+                <foreach item="item" collection="list" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCrkOutManagementList2" resultMap="CrkOutManagementResult">
+        <include refid="selectCrkOutManagementVo"/>
+        <where>
+            <if test="list != null and list.size() > 0">
+                AND out_id IN
+                <foreach item="item" collection="list" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertCrkOutManagement" parameterType="CrkOutManagement" useGeneratedKeys="true" keyProperty="outId">
         insert into crk_out_management
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="outId != null">out_id,</if>
             <if test="outCode != null and outCode != ''">out_code,</if>
             <if test="outType != null and outType != ''">out_type,</if>
-            <if test="outStatus != null">out_status,</if>
+            <if test="status != null">status,</if>
             <if test="outDate != null">out_date,</if>
             <if test="orderId != null">order_id,</if>
             <if test="cId != null">c_id,</if>
@@ -99,12 +364,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="isDelte != null">is_delte,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="outId != null">#{outId},</if>
             <if test="outCode != null and outCode != ''">#{outCode},</if>
             <if test="outType != null and outType != ''">#{outType},</if>
-            <if test="outStatus != null">#{outStatus},</if>
+            <if test="status != null">#{status},</if>
             <if test="outDate != null">#{outDate},</if>
             <if test="orderId != null">#{orderId},</if>
             <if test="cId != null">#{cId},</if>
@@ -120,7 +385,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="isDelte != null">#{isDelte},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateCrkOutManagement" parameterType="CrkOutManagement">
@@ -128,7 +393,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="outCode != null and outCode != ''">out_code = #{outCode},</if>
             <if test="outType != null and outType != ''">out_type = #{outType},</if>
-            <if test="outStatus != null">out_status = #{outStatus},</if>
+            <if test="status != null">status = #{status},</if>
             <if test="outDate != null">out_date = #{outDate},</if>
             <if test="orderId != null">order_id = #{orderId},</if>
             <if test="cId != null">c_id = #{cId},</if>
@@ -148,32 +413,139 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where out_id = #{outId}
     </update>
 
+    <update id="InventoryOutbound">
+        update tz_stock
+        set number_plans = number_plans + #{itemQuantity}
+        where g_id = #{gId}
+          and sl_id = #{slId}
+    </update>
+
+    <update id="InventoryOutbound1">
+        update tz_stock
+        set number_plans = number_plans - #{itemQuantity}
+        where g_id = #{gId}
+          and sl_id = #{slId}
+    </update>
+
+    <update id="AuditOutbounds">
+        <choose>
+            <when test="isApproved">
+                update crk_out_management
+                set status = 3,
+                reviewer = #{crkOutManagements.reviewer},
+                reviewer_time = #{crkOutManagements.reviewerTime}
+                where out_id = #{crkOutManagements.outId}
+            </when>
+            <otherwise>
+                update crk_out_management
+                set status = 2,
+                reviewer = #{crkOutManagements.reviewer},
+                reviewer_time = #{crkOutManagements.reviewerTime}
+                where out_id = #{crkOutManagements.outId}
+            </otherwise>
+        </choose>
+    </update>
+
+    <update id="reduceReviews">
+        update tz_stock
+        set item_quantity = item_quantity - #{itemQuantity}
+        where g_id = #{gId}
+          and sl_id = #{slId}
+    </update>
+
+    <update id="saleStatus">
+        update order_sales_order set status = 4
+        <where>
+            <if test="array != null and array.length > 0">
+                AND s_code IN
+                <foreach item="item" collection="array" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <update id="saleStatus1">
+        update order_sales_order set status = 3
+        <where>
+            <if test="array != null and array.length > 0">
+                AND s_code IN
+                <foreach item="item" collection="array" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <update id="saleStatus2">
+        update order_sales_order set status = 2
+        <where>
+            <if test="array != null and array.length > 0">
+                AND s_code IN
+                <foreach item="item" collection="array" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <update id="productReviews">
+        update tz_stock
+        set item_quantity = item_quantity + #{itemQuantity}
+        where g_id = #{gId}
+          and sl_id = #{slId}
+    </update>
+
+    <update id="InventoryOutbound2">
+        update tz_stock
+        set number_plans = number_plans - #{itemQuantity}
+        where g_id = #{gId}
+          and sl_id = #{slId}
+    </update>
+
+    <update id="WithdrawalStorages" parameterType="String">
+        update crk_out_management set status =1 , reviewer =null,
+        reviewer_time =null where out_id in
+        <foreach item="outIds" collection="list" open="(" separator="," close=")">
+            #{outIds}
+        </foreach>
+    </update>
+
     <delete id="deleteCrkOutManagementByOutId" parameterType="Long">
-        delete from crk_out_management where out_id = #{outId}
+        delete
+        from crk_out_management
+        where out_id = #{outId}
     </delete>
 
     <delete id="deleteCrkOutManagementByOutIds" parameterType="String">
-        delete from crk_out_management where out_id in 
+        delete from crk_out_management where out_id in
         <foreach item="outId" collection="array" open="(" separator="," close=")">
             #{outId}
         </foreach>
     </delete>
-    
+
     <delete id="deleteCrkOutDetailsByOutIds" parameterType="String">
-        delete from crk_out_details where out_id in 
+        delete from crk_out_details where out_id in
         <foreach item="outId" collection="array" open="(" separator="," close=")">
             #{outId}
         </foreach>
     </delete>
 
     <delete id="deleteCrkOutDetailsByOutId" parameterType="Long">
-        delete from crk_out_details where out_id = #{outId}
+        delete
+        from crk_out_details
+        where out_id = #{outId}
     </delete>
 
     <insert id="batchCrkOutDetails">
-        insert into crk_out_details( om_id, out_out_id, out_id, order_id, unit, item_quantity, quantity_shipped, undelivered_quantity, curr_out_quantity, batch_number, remark, barcode, create_by, create_time, update_by, update_time, is_delte, sl_id)  values
-		<foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.omId}, #{item.outOutId}, #{item.outId}, #{item.orderId}, #{item.unit}, #{item.itemQuantity}, #{item.quantityShipped}, #{item.undeliveredQuantity}, #{item.currOutQuantity}, #{item.batchNumber}, #{item.remark}, #{item.barcode}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.isDelte}, #{item.slId})
+        insert into crk_out_details( om_id, out_out_id, out_id, order_id, unit, item_quantity, quantity_shipped,
+        undelivered_quantity, curr_out_quantity, batch_number, remark, barcode, create_by, create_time, update_by,
+        update_time, is_delte, sl_id,g_code,g_id,out_bound,not_shipped,money) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.omId}, #{item.outOutId}, #{item.outId}, #{item.orderId}, #{item.unit}, #{item.itemQuantity},
+            #{item.quantityShipped}, #{item.undeliveredQuantity}, #{item.currOutQuantity}, #{item.batchNumber},
+            #{item.remark}, #{item.barcode}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime},
+            #{item.isDelte}, #{item.slId},#{item.gCode},#{item.gId},#{item.outBound},#{item.notShipped},#{item.money})
         </foreach>
     </insert>
 </mapper>

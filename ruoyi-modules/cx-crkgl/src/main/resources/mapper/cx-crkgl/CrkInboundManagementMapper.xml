@@ -91,6 +91,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="specCode"    column="spec_code"    />
     </resultMap>
 
+    <resultMap type="TzStock" id="TzStockResult">
+        <result property="sId"    column="s_id"    />
+        <result property="wId"    column="w_id"    />
+        <result property="slId"    column="sl_id"    />
+        <result property="itemQuantity"    column="item_quantity"    />
+        <result property="numberPlans"    column="number_plans"    />
+        <result property="gId"    column="g_id"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBys"    column="create_bys"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="isDelte"    column="is_delte"    />
+    </resultMap>
+
     <sql id="selectCrkInboundManagementVo">
         select in_id, in_code, in_type, w_id, status, s_id, person_id, contact_details, i_s, w_manager, remark, reviewer, reviewer_time, storage_date, order_id, create_by, create_time, update_by, update_time, is_delte from crk_inbound_management
     </sql>
@@ -99,10 +112,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select in_code from crk_inbound_management order by in_id desc limit 1;
     </select>
 
-    <select id="InventoryQuantity" parameterType="string" resultType="long">
+    <select id="InventoryQuantity" resultType="long">
         SELECT CASE WHEN sum(this_quantity) IS NULL THEN 0 ELSE sum(this_quantity) END AS inventory_quantity
         FROM crk_im_details
-        WHERE g_code = #{gCode}
+        WHERE g_code = #{gCode} and od_id=#{odId}
     </select>
 
     <select id="selectCrkInboundManagementList" parameterType="CrkInboundManagement" resultMap="CrkInboundManagementResult">
@@ -120,6 +133,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="list != null and list.size() > 0">
                 AND in_code IN
+                <foreach item="item" collection="list" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCrkInboundManagementList2" resultMap="CrkInboundManagementResult" >
+        <include refid="selectCrkInboundManagementVo"/>
+        <where>
+            <if test="list != null and list.size() > 0">
+                AND in_id IN
                 <foreach item="item" collection="list" open="(" separator="," close=")">
                     #{item}
                 </foreach>
@@ -186,8 +211,12 @@ d.g_name, d.g_unit, d.spec_code
             <if test="gUnit != null and gUnit != ''">
                 AND b.g_unit = #{gUnit}
             </if>
-            AND c.status = 2
+            AND (c.status = 2 || c.status = 3)
         </where>
+    </select>
+    
+    <select id="QueryInventory" resultMap="TzStockResult">
+        select * from tz_stock where 1=1;
     </select>
 
     <insert id="insertCrkInboundManagement" parameterType="CrkInboundManagement" useGeneratedKeys="true" keyProperty="inId">
@@ -237,6 +266,7 @@ d.g_name, d.g_unit, d.spec_code
             <if test="isDelte != null">#{isDelte},</if>
          </trim>
     </insert>
+    
 
     <update id="updateCrkInboundManagement" parameterType="CrkInboundManagement">
         update crk_inbound_management
@@ -282,22 +312,18 @@ d.g_name, d.g_unit, d.spec_code
     <update id="InventoryReviews">
         <choose>
             <when test="isApproved">
-                <foreach item="item" collection="crkInboundManagement" separator=";">
                     update crk_inbound_management
                     set status = 3,
-                    reviewer = #{item.reviewer},
-                    reviewer_time = #{item.reviewerTime}
-                    where in_id = #{item.inId}
-                </foreach>
+                    reviewer = #{crkInboundManagement.reviewer},
+                    reviewer_time = #{crkInboundManagement.reviewerTime}
+                    where in_id = #{crkInboundManagement.inId}
             </when>
             <otherwise>
-                <foreach item="item" collection="crkInboundManagement" separator=";">
                     update crk_inbound_management
                     set status = 2,
-                    reviewer = #{item.reviewer},
-                    reviewer_time = #{item.reviewerTime}
-                    where in_id = #{item.inId}
-                </foreach>
+                    reviewer = #{crkInboundManagement.reviewer},
+                    reviewer_time = #{crkInboundManagement.reviewerTime}
+                    where in_id = #{crkInboundManagement.inId}
             </otherwise>
         </choose>
     </update>
@@ -310,18 +336,58 @@ d.g_name, d.g_unit, d.spec_code
         </foreach>
     </update>
 
-    <update id="productReviews" >
-        update tz_stock set item_quantity = number_plans  where
-        <foreach item="item" collection="item" open="(" separator="," close=")">
-            g_id = #{item.gId} and sl_id = #{item.slId}
-        </foreach>
+    <update id="purchasingStatus" >
+        update order_purchase_order set status = 4
+        <where>
+            <if test="array != null and array.length > 0">
+                AND po_code IN
+                <foreach item="item" collection="array" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
     </update>
 
-    <update id="reduceReviews" parameterType="String">
-        update tz_stock set item_quantity = 0  where
-        <foreach item="item" collection="item" open="(" separator="," close=")">
-            g_id = #{item.gId} and sl_id = #{item.slId}
-        </foreach>
+    <update id="purchasingStatus1" >
+        update order_purchase_order set status = 3
+        <where>
+            <if test="array != null and array.length > 0">
+                AND po_code IN
+                <foreach item="item" collection="array" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <update id="purchasingStatus2" >
+        update order_purchase_order set status = 2
+        <where>
+            <if test="array != null and array.length > 0">
+                AND po_code IN
+                <foreach item="item" collection="array" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <update id="productReviews" >
+        update tz_stock
+        set item_quantity = item_quantity + #{thisQuantity}
+       where  g_id = #{gId} and sl_id = #{slId}
+    </update>
+
+    <update id="reduceReviews">
+            update tz_stock
+            set item_quantity = item_quantity - #{thisQuantity}
+            where g_id = #{gId} and sl_id = #{slId}
+    </update>
+
+    <update id="reduceReviews1">
+        update tz_stock
+        set number_plans = number_plans - #{thisQuantity}
+        where g_id = #{gId} and sl_id = #{slId}
     </update>
 
     <delete id="deleteCrkInboundManagementByInId" parameterType="Long">
@@ -359,10 +425,26 @@ d.g_name, d.g_unit, d.spec_code
             (#{item.imdId}, #{item.inId}, #{item.gId}, #{item.inCode}, #{item.odId}, #{item.gCode}, #{item.quantityInStock}, #{item.unstockedQuantity}, #{item.slId}, #{item.money}, #{item.thisQuantity}, #{item.productionDate}, #{item.barcode}, #{item.remark}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.isDelte})
         </foreach>
     </insert>
-    <insert id="addInventory">
-        insert into tz_stock(w_id,sl_id,item_quantity,number_plans,g_id,remark,create_bys,create_time)values
-        <foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.wId}, #{item.slId}, #{item.itemQuantity}, #{item.numberPlans}, #{item.gId}, #{item.remark},  #{item.createBys}, #{item.createTime})
-        </foreach>
+
+    <insert id="addInventory" >
+        insert into tz_stock (w_id, sl_id, item_quantity, number_plans, g_id, remark, create_bys, create_time)
+            select #{wId}, #{slId}, #{itemQuantity}, #{numberPlans}, #{gId}, #{remark}, #{createBys}, #{createTime}
+            from dual
+            where not exists (
+            select 1
+            from tz_stock
+            where g_id = #{gId} and sl_id = #{slId}
+            )
     </insert>
+
+    <insert id="addInventory1">
+        insert into tz_stock(w_id,sl_id,item_quantity,number_plans,g_id,remark,create_bys,create_time)values
+            ( #{wId}, #{slId}, #{itemQuantity}, #{numberPlans}, #{gId}, #{remark},  #{createBys}, #{createTime})
+    </insert>
+
+    <update id="updateInventory">
+        update tz_stock
+        set number_plans = number_plans + #{thisQuantity}
+        where g_id = #{gId} and sl_id = #{slId}
+    </update>
 </mapper>

@@ -30,7 +30,7 @@ public interface CrkInboundManagementMapper
      *
      * @param gCode
      */
-    public long InventoryQuantity(String gCode);
+    public long InventoryQuantity(@Param("gCode")String gCode,@Param("odId")String odId);
 
     /**
      * 查询进货明细
@@ -70,6 +70,8 @@ public interface CrkInboundManagementMapper
      * @return 入库管理集合
      */
     public List<CrkInboundManagement> selectCrkInboundManagementList1(List<String> inCodes);
+
+    public List<CrkInboundManagement> selectCrkInboundManagementList2(List<String> inId);
     /**
      * 获取最新的入库编码
      * @return
@@ -116,7 +118,23 @@ public interface CrkInboundManagementMapper
      * @return 结果
      */
     public int deleteCrkImDetailsByInIds(Long[] inIds);
+/*
+* 修改进货状态
+*
+*/
+    public int purchasingStatus(String[] poCd);
 
+    /*
+     * 修改进货状态,部分入库
+     *
+     */
+    public int purchasingStatus1(String[] poCd);
+
+    /*
+     * 修改进货状态
+     *
+     */
+    public int purchasingStatus2(String[] poCd);
     /**
      * 批量删除库存
      *
@@ -136,12 +154,14 @@ public interface CrkInboundManagementMapper
     /**
      * 批量新增库存
      *
-     * @param tzStockList
+     * @param
      * @return 结果
      */
-    public int addInventory(List<TzStock> tzStockList);
+    public int addInventory(TzStock tzStock);
 
+    public int addInventory1(TzStock tzStock);
 
+    public int updateInventory(CrkImDetails crkImDetails);
     /**
      * 审核入库
      *
@@ -155,7 +175,7 @@ public interface CrkInboundManagementMapper
      * @param crkInboundManagement
      * @return 结果
      */
-    public int InventoryReviews(@Param("crkInboundManagement") List<CrkInboundManagement> crkInboundManagement , @Param("isApproved") boolean isApproved);
+    public int InventoryReviews(@Param("crkInboundManagement")CrkInboundManagement crkInboundManagement , @Param("isApproved") boolean isApproved);
 
     /**
      * 批量审核入库,增加库存
@@ -163,7 +183,7 @@ public interface CrkInboundManagementMapper
      * @param
      * @return 结果
      */
-    public int productReviews(@Param("item")List<CrkImDetails> crkImDetailsList);
+    public int productReviews(CrkImDetails crkImDetails);
 
     /**
      * 批量撤销入库,减少库存
@@ -171,7 +191,9 @@ public interface CrkInboundManagementMapper
      * @param
      * @return 结果
      */
-    public int reduceReviews(@Param("item")List<CrkImDetails> crkImDetailsList);
+    public int reduceReviews(CrkImDetails crkImDetails);
+//删除入库，减少计划数量
+    public int reduceReviews1(CrkImDetails crkImDetails);
 
     /**
      * 撤销入库
@@ -195,4 +217,6 @@ public interface CrkInboundManagementMapper
      * @return 结果
      */
     public int deleteCrkImDetailsByInId(Long inId);
+//查询库存表
+    public List<TzStock> QueryInventory();
 }

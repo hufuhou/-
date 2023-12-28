@@ -2,7 +2,7 @@ package com.cx.crkgl.service.impl;
 
 import java.util.List;
 
-import com.cx.crkgl.domain.CrkInboundManagement;
+import com.cx.crkgl.domain.*;
 import com.cx.crkgl.unit.NumberGenerator;
 import com.ruoyi.common.core.utils.DateUtils;
 import com.ruoyi.common.security.utils.SecurityUtils;
@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import com.ruoyi.common.core.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
-import com.cx.crkgl.domain.CrkOutDetails;
 import com.cx.crkgl.mapper.CrkOutManagementMapper;
-import com.cx.crkgl.domain.CrkOutManagement;
 import com.cx.crkgl.service.ICrkOutManagementService;
 
 /**
@@ -73,6 +71,10 @@ public class CrkOutManagementServiceImpl implements ICrkOutManagementService
         crkOutManagement.setOutCode(String.valueOf(num.generateNumber(code)));
         int rows = crkOutManagementMapper.insertCrkOutManagement(crkOutManagement);
         insertCrkOutDetails(crkOutManagement);
+        List<CrkOutDetails> crkOutDetailsList = crkOutManagement.getCrkOutDetailsList();
+        for (CrkOutDetails crkOutDetails : crkOutDetailsList) {
+            crkOutManagementMapper.InventoryOutbound(crkOutDetails);
+        }
         return rows;
     }
 
@@ -87,8 +89,17 @@ public class CrkOutManagementServiceImpl implements ICrkOutManagementService
     public int updateCrkOutManagement(CrkOutManagement crkOutManagement)
     {
         crkOutManagement.setUpdateTime(DateUtils.getNowDate());
+        crkOutManagement.setUpdateBy(String.valueOf(SecurityUtils.getUserId()));
+        List<CrkOutDetails> crkOutDetailsList=crkOutManagementMapper.selectCrkOutDetails2(crkOutManagement.getOutId());
+        for (CrkOutDetails crkOutDetails:crkOutDetailsList){
+            crkOutManagementMapper.InventoryOutbound1(crkOutDetails);
+        }
         crkOutManagementMapper.deleteCrkOutDetailsByOutId(crkOutManagement.getOutId());
         insertCrkOutDetails(crkOutManagement);
+        List<CrkOutDetails> crkOutDetailsList1 = crkOutManagement.getCrkOutDetailsList();
+        for (CrkOutDetails crkOutDetails : crkOutDetailsList1) {
+            crkOutManagementMapper.InventoryOutbound(crkOutDetails);
+        }
         return crkOutManagementMapper.updateCrkOutManagement(crkOutManagement);
     }
 
@@ -102,6 +113,10 @@ public class CrkOutManagementServiceImpl implements ICrkOutManagementService
     @Override
     public int deleteCrkOutManagementByOutIds(Long[] outIds)
     {
+        List<CrkOutDetails> crkOutDetailsList= crkOutManagementMapper.selectCrkOutDetails(outIds);
+        for (CrkOutDetails crkOutDetails:crkOutDetailsList){
+            crkOutManagementMapper.InventoryOutbound2(crkOutDetails);
+        }
         crkOutManagementMapper.deleteCrkOutDetailsByOutIds(outIds);
         return crkOutManagementMapper.deleteCrkOutManagementByOutIds(outIds);
     }
@@ -120,6 +135,90 @@ public class CrkOutManagementServiceImpl implements ICrkOutManagementService
         return crkOutManagementMapper.deleteCrkOutManagementByOutId(outId);
     }
 
+    @Override
+    public List<OrderSalesDetails> selectSalesDetails(OrderSalesDetails orderSalesDetails) {
+        return crkOutManagementMapper.selectSalesDetails(orderSalesDetails);
+    }
+
+    @Override
+    public long currentInventory(Long slId, Long gId) {
+        return crkOutManagementMapper.currentInventory(slId,gId);
+    }
+
+    @Override
+    public List<CrkOutDetails> selectCrkOutDetails(Long[] outId) {
+        return crkOutManagementMapper.selectCrkOutDetails(outId);
+    }
+
+    @Override
+    public List<CrkOutManagement> selectCrkOutManagementList1(List<String> outCodes) {
+        return crkOutManagementMapper.selectCrkOutManagementList1(outCodes);
+    }
+    //审核出库
+    @Transactional
+    @Override
+    public int AuditOutbounds(List<CrkOutManagement> crkOutManagements, List<String> outIds, boolean isApproved) {
+        List<CrkOutManagement> list = new ArrayList<CrkOutManagement>();
+        for (CrkOutManagement crkOutManagement1 : crkOutManagements)
+        {
+            crkOutManagement1.setReviewer(SecurityUtils.getUsername());
+            crkOutManagement1.setReviewerTime(DateUtils.getNowDate());
+            list.add(crkOutManagement1);
+        }
+        if (list.size() > 0)
+        {
+            if (isApproved){
+                List<CrkOutDetails> crkOutDetailsList= crkOutManagementMapper.selectCrkOutDetail(outIds);
+                for (CrkOutDetails crkOutDetails:crkOutDetailsList){
+                    crkOutManagementMapper.reduceReviews(crkOutDetails);
+                }
+                Long cksls= Long.valueOf(0);
+                Long wcksls= Long.valueOf(0);
+                for (CrkOutDetails crkOutDetails : crkOutDetailsList)
+                {
+                    cksls+=crkOutDetails.getOutBound();
+                    wcksls+=crkOutDetails.getNotShipped();
+                }
+                String[] sCode = new String[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    CrkOutManagement crkOutManagement = list.get(i);
+                    sCode[i] = crkOutManagement.getOrderId();
+                }
+                if (cksls == wcksls){
+                    crkOutManagementMapper.saleStatus(sCode);
+                }else {
+                    crkOutManagementMapper.saleStatus1(sCode);
+                }
+
+            }
+            int row=0;
+            for (CrkOutManagement crkOutManagement:list){
+                row+= crkOutManagementMapper.AuditOutbounds(crkOutManagement,isApproved);
+            }
+            return  row;
+        }
+        return 0;
+    }
+/*
+* 撤销出库
+* */
+    @Override
+    @Transactional
+    public int WithdrawalStorages(List<String> outIds) {
+        List<CrkOutDetails> crkOutDetailsList= crkOutManagementMapper.selectCrkOutDetail(outIds);
+        List<CrkOutManagement> list=crkOutManagementMapper.selectCrkOutManagementList2(outIds);
+        String[] sCode = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            CrkOutManagement crkOutManagement = list.get(i);
+            sCode[i] = crkOutManagement.getOrderId();
+        }
+        crkOutManagementMapper.saleStatus2(sCode);
+        for (CrkOutDetails crkOutDetails:crkOutDetailsList){
+            crkOutManagementMapper.productReviews(crkOutDetails);
+        }
+        return crkOutManagementMapper.WithdrawalStorages(outIds);
+    }
+
     /**
      * 新增出库明细
 信息
@@ -135,6 +234,8 @@ public class CrkOutManagementServiceImpl implements ICrkOutManagementService
             List<CrkOutDetails> list = new ArrayList<CrkOutDetails>();
             for (CrkOutDetails crkOutDetails : crkOutDetailsList)
             {
+                crkOutDetails.setCreateBy(String.valueOf(SecurityUtils.getUserId()));
+                crkOutDetails.setCreateTime(DateUtils.getNowDate());
                 crkOutDetails.setOutId(outId);
                 list.add(crkOutDetails);
             }

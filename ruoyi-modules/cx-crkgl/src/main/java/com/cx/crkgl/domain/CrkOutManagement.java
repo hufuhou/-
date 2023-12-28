@@ -31,7 +31,7 @@ public class CrkOutManagement extends BaseEntity
 
     /** 出库状态 */
     @Excel(name = "出库状态")
-    private Integer outStatus;
+    private Integer status;
 
     /** 出库日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -40,7 +40,7 @@ public class CrkOutManagement extends BaseEntity
 
     /** 关联订单 ID */
     @Excel(name = "关联订单 ID")
-    private Long orderId;
+    private String orderId;
 
     /** 客户 ID */
     @Excel(name = "客户 ID")
@@ -48,7 +48,7 @@ public class CrkOutManagement extends BaseEntity
 
     /** 联系人 */
     @Excel(name = "联系人")
-    private Long personId;
+    private String personId;
 
     /** 联系方式 */
     @Excel(name = "联系方式")
@@ -64,7 +64,7 @@ public class CrkOutManagement extends BaseEntity
 
     /** 审核人 */
     @Excel(name = "审核人")
-    private Long reviewer;
+    private String reviewer;
 
     /** 审核时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -105,16 +105,16 @@ public class CrkOutManagement extends BaseEntity
     {
         return outType;
     }
-    public void setOutStatus(Integer outStatus) 
-    {
-        this.outStatus = outStatus;
+
+    public Integer getStatus() {
+        return status;
     }
 
-    public Integer getOutStatus() 
-    {
-        return outStatus;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
-    public void setOutDate(Date outDate) 
+
+    public void setOutDate(Date outDate)
     {
         this.outDate = outDate;
     }
@@ -123,16 +123,16 @@ public class CrkOutManagement extends BaseEntity
     {
         return outDate;
     }
-    public void setOrderId(Long orderId) 
-    {
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 
-    public Long getOrderId() 
-    {
-        return orderId;
-    }
-    public void setcId(Long cId) 
+    public void setcId(Long cId)
     {
         this.cId = cId;
     }
@@ -141,16 +141,16 @@ public class CrkOutManagement extends BaseEntity
     {
         return cId;
     }
-    public void setPersonId(Long personId) 
-    {
+
+    public String getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(String personId) {
         this.personId = personId;
     }
 
-    public Long getPersonId() 
-    {
-        return personId;
-    }
-    public void setContactDetails(String contactDetails) 
+    public void setContactDetails(String contactDetails)
     {
         this.contactDetails = contactDetails;
     }
@@ -177,16 +177,16 @@ public class CrkOutManagement extends BaseEntity
     {
         return wId;
     }
-    public void setReviewer(Long reviewer) 
-    {
+
+    public String getReviewer() {
+        return reviewer;
+    }
+
+    public void setReviewer(String reviewer) {
         this.reviewer = reviewer;
     }
 
-    public Long getReviewer() 
-    {
-        return reviewer;
-    }
-    public void setReviewerTime(Date reviewerTime) 
+    public void setReviewerTime(Date reviewerTime)
     {
         this.reviewerTime = reviewerTime;
     }
@@ -221,7 +221,7 @@ public class CrkOutManagement extends BaseEntity
             .append("outId", getOutId())
             .append("outCode", getOutCode())
             .append("outType", getOutType())
-            .append("outStatus", getOutStatus())
+            .append("status", getStatus())
             .append("outDate", getOutDate())
             .append("orderId", getOrderId())
             .append("cId", getcId())

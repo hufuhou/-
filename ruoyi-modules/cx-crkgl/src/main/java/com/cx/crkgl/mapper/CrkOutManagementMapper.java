@@ -2,10 +2,9 @@ package com.cx.crkgl.mapper;
 
 import java.util.List;
 
-import com.cx.crkgl.domain.CrkInboundManagement;
-import com.cx.crkgl.domain.CrkOutManagement;
-import com.cx.crkgl.domain.CrkOutDetails;
+import com.cx.crkgl.domain.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 出库管理Mapper接口
@@ -98,4 +97,93 @@ public interface CrkOutManagementMapper
      * @return 结果
      */
     public int deleteCrkOutDetailsByOutId(Long outId);
+
+    /**
+     * 查询销售明细
+     *
+     */
+    public List<OrderSalesDetails> selectSalesDetails(OrderSalesDetails orderSalesDetails);
+
+    /**
+     * 查询当前库存数量
+     *
+     * @param
+     */
+    public long currentInventory(@Param("slId")Long slId, @Param("gId")Long gId);
+
+    /**
+     * 批量出库,减少库存
+     *
+     * @param
+     * @return
+     */
+    public int InventoryOutbound(CrkOutDetails crkOutDetails);
+    public int InventoryOutbound1(CrkOutDetails crkOutDetails);
+//删除出库，增加计划数量
+    public int InventoryOutbound2(CrkOutDetails crkOutDetails);
+    /**
+     * 查询货品id
+     *
+     * @param outId 出库管理
+     */
+    public List<CrkOutDetails> selectCrkOutDetails(Long[] outId);
+
+    public List<CrkOutDetails> selectCrkOutDetail(List<String> outIds);
+
+    public List<CrkOutDetails> selectCrkOutDetails2(Long outId);
+    /**
+     * 查询出库管理列表
+     *
+     * @param outCodes 入库管理
+     * @return 入库管理集合
+     */
+    public List<CrkOutManagement> selectCrkOutManagementList1(List<String> outCodes);
+
+    public List<CrkOutManagement> selectCrkOutManagementList2(List<String> outId);
+
+    /**
+     * 批量审核出库
+     *
+     * @param
+     * @return 结果
+     */
+    public int AuditOutbounds(@Param("crkOutManagements") CrkOutManagement crkOutManagements , @Param("isApproved") boolean isApproved);
+
+    /**
+     * 批量审核出库,减少库存
+     *
+     * @param
+     * @return 结果
+     */
+    public int reduceReviews(CrkOutDetails crkOutDetails);
+
+    /*
+     * 修改销售状态
+     *
+     */
+    public int saleStatus(String[] sCode);
+
+    /*
+     * 修改销售状态,部分出库
+     *
+     */
+    public int saleStatus1(String[] sCode);
+
+    public int saleStatus2(String[] sCode);
+
+    /**
+     * 批量撤销出库
+     *
+     * @param outIds 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int WithdrawalStorages(List<String> outIds);
+    /**
+     * 批量撤销出库,增加库存
+     *
+     * @param
+     * @return 结果
+     */
+    public int productReviews(CrkOutDetails crkOutDetails);
+
 }

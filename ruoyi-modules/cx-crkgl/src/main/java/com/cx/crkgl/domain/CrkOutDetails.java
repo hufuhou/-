@@ -27,14 +27,14 @@ public class CrkOutDetails extends BaseEntity
 
     /** 关联单号 */
     @Excel(name = "关联单号")
-    private Long orderId;
+    private String orderId;
 
     /** 单位 */
     @Excel(name = "单位")
     private String unit;
 
     /** 物品数量 */
-    @Excel(name = "物品数量")
+    @Excel(name = "本次出库数量")
     private Long itemQuantity;
 
     /** 已发货数量 */
@@ -60,8 +60,89 @@ public class CrkOutDetails extends BaseEntity
 
     /** 0：存在；1：已删除，不存在 */
     private Integer isDelte;
+    /** 货品编码 */
+    @Excel(name = "货品编码")
+    private String gCode;
 
-    public void setOmId(Long omId) 
+    /** 货品id */
+    @Excel(name = "货品信息")
+    private Long gId;
+    /** 已入库数量 */
+    @Excel(name = "已出库数量")
+    private Long outBound;
+
+    /** 未入库数量 */
+    @Excel(name = "未出库数量")
+    private Long notShipped;
+    /** 入库金额 */
+    @Excel(name = "出库金额")
+    private Long money;
+    /** 库存数量 */
+    @Excel(name = "库存数量")
+    private Long kcsl;
+    @Excel(name = "货品名称")
+    private String gName;
+
+    /** 单位 */
+    @Excel(name = "单位")
+    private Long gUnit;
+
+    /** 规格型号 */
+    @Excel(name = "规格型号")
+    private String specCode;
+
+    /** 销售数量 */
+    @Excel(name = "销售数量")
+    private Long salesVolume;
+    public Long getKcsl() {
+        return kcsl;
+    }
+
+    public void setKcsl(Long kcsl) {
+        this.kcsl = kcsl;
+    }
+
+    public String getgCode() {
+        return gCode;
+    }
+
+    public void setgCode(String gCode) {
+        this.gCode = gCode;
+    }
+
+    public Long getgId() {
+        return gId;
+    }
+
+    public void setgId(Long gId) {
+        this.gId = gId;
+    }
+
+    public Long getOutBound() {
+        return outBound;
+    }
+
+    public void setOutBound(Long outBound) {
+        this.outBound = outBound;
+    }
+
+    public Long getNotShipped() {
+        return notShipped;
+    }
+
+    public void setNotShipped(Long notShipped) {
+        this.notShipped = notShipped;
+    }
+
+    public Long getMoney() {
+        return money;
+    }
+
+    public void setMoney(Long money) {
+        this.money = money;
+    }
+
+    public void setOmId(Long omId)
     {
         this.omId = omId;
     }
@@ -88,16 +169,16 @@ public class CrkOutDetails extends BaseEntity
     {
         return outId;
     }
-    public void setOrderId(Long orderId) 
-    {
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 
-    public Long getOrderId() 
-    {
-        return orderId;
-    }
-    public void setUnit(String unit) 
+    public void setUnit(String unit)
     {
         this.unit = unit;
     }
@@ -106,16 +187,48 @@ public class CrkOutDetails extends BaseEntity
     {
         return unit;
     }
-    public void setItemQuantity(Long itemQuantity) 
-    {
+
+    public Long getItemQuantity() {
+        return itemQuantity;
+    }
+
+    public void setItemQuantity(Long itemQuantity) {
         this.itemQuantity = itemQuantity;
     }
 
-    public Long getItemQuantity() 
-    {
-        return itemQuantity;
+    public String getgName() {
+        return gName;
     }
-    public void setQuantityShipped(Long quantityShipped) 
+
+    public void setgName(String gName) {
+        this.gName = gName;
+    }
+
+    public Long getgUnit() {
+        return gUnit;
+    }
+
+    public void setgUnit(Long gUnit) {
+        this.gUnit = gUnit;
+    }
+
+    public String getSpecCode() {
+        return specCode;
+    }
+
+    public void setSpecCode(String specCode) {
+        this.specCode = specCode;
+    }
+
+    public Long getSalesVolume() {
+        return salesVolume;
+    }
+
+    public void setSalesVolume(Long salesVolume) {
+        this.salesVolume = salesVolume;
+    }
+
+    public void setQuantityShipped(Long quantityShipped)
     {
         this.quantityShipped = quantityShipped;
     }

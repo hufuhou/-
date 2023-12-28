@@ -42,3 +42,48 @@ export function delOutbound(outId) {
     method: 'delete'
   })
 }
+// 查询销售明细
+export function getOutDetail(query) {
+  return request({
+    url: '/cx-crkgl/outbound/mx/',
+    method: 'get',
+    params: query
+  })
+}
+// 查询入库数量
+export function getKcsl(slId,gId) {
+  return request({
+    url: '/cx-crkgl/outbound/kcsl/' + slId+'/'+gId,
+    method: 'get'
+  })
+}
+// 查询出库明细
+export function listOutDetails(outId) {
+  return request({
+    url: '/cx-crkgl/outbound/hp/'+outId,
+    method: 'get',
+  })
+}
+// 审核出库
+export function AuditOutbound(outCode,outIds, isApproved) {
+  const reviewStatus = isApproved ? 'true' : 'false';
+  return request({
+    url: '/cx-crkgl/outbound/sh/',
+    method: 'post',
+    data: {
+      outCode:outCode,
+      outIds:outIds,
+      reviewStatus: reviewStatus
+    }
+  });
+}
+// 撤销出库
+export function RevokeOutbound(outIds) {
+  return request({
+    url: '/cx-crkgl/outbound/zx/',
+    method: 'post',
+    data:{
+      outIds:outIds
+    }
+  });
+}
