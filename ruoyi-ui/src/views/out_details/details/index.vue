@@ -29,87 +29,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="单位" prop="unit">
-        <el-input
-          v-model="queryParams.unit"
-          placeholder="请输入单位"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="物品数" prop="itemQuantity">
-        <el-input
-          v-model="queryParams.itemQuantity"
-          placeholder="请输入物品数量"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="已发数" prop="quantityShipped">
-        <el-input
-          v-model="queryParams.quantityShipped"
-          placeholder="请输入已发货数量"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="未交数" prop="undeliveredQuantity">
-        <el-input
-          v-model="queryParams.undeliveredQuantity"
-          placeholder="请输入未交付数量"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="产出数" prop="currOutQuantity">
-        <el-input
-          v-model="queryParams.currOutQuantity"
-          placeholder="请输入当前产出数"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-        <!--   批号录入     -->
-      </el-form-item>
-      <el-form-item label="批号" prop="batchNumber">
-        <el-input
-          v-model="queryParams.batchNumber"
-          placeholder="请输入批号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="创建人" prop="createBy">
-        <el-input
-          v-model="queryParams.createBy"
-          placeholder="请输入创建人"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker clearable
-                        v-model="queryParams.createTime"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="请选择创建时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="更新人" prop="updateBy">
-        <el-input
-          v-model="queryParams.updateBy"
-          placeholder="请输入更新人"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="更新时间" prop="updateTime">
-        <el-date-picker clearable
-                        v-model="queryParams.updateTime"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        placeholder="请选择更新时间">
-        </el-date-picker>
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -203,24 +122,33 @@
       <el-table-column label="订单ID" align="center" prop="omId"/>
       <el-table-column label="出库编号" align="center" prop="outId"/>
       <el-table-column label="明细 ID" align="center" prop="orderId"/>
-      <el-table-column label="单位" align="center" prop="unit"/>
+<!--      <el-table-column label="单位" align="center" prop="unit"/>-->
       <el-table-column label="物品数" align="center" prop="itemQuantity"/>
-      <el-table-column label="已发数" align="center" prop="quantityShipped"/>
-      <el-table-column label="未交数" align="center" prop="undeliveredQuantity"/>
-      <el-table-column label="产出数" align="center" prop="currOutQuantity"/>
-      <el-table-column label="批号" align="center" prop="batchNumber"/>
-      <el-table-column label="备注" align="center" prop="remark"/>
-      <el-table-column label="条形码" align="center" prop="barcode"/>
+<!--      <el-table-column label="已发数" align="center" prop="quantityShipped"/>-->
+<!--      <el-table-column label="未交数" align="center" prop="undeliveredQuantity"/>-->
+<!--      <el-table-column label="产出数" align="center" prop="currOutQuantity"/>-->
+<!--      <el-table-column label="批号" align="center" prop="batchNumber"/>-->
+      <el-table-column label="备注" align="center" prop="remark">
+        <template slot-scope="scope">
+          {{ scope.row.remark === null || scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="条形码" align="center" prop="barcode"/>-->
       <el-table-column label="创建人" align="center" prop="create_user_name"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新人" align="center" prop="update_user_name"/>
+      <el-table-column label="更新人" align="center" prop="update_user_name">
+        <template slot-scope="scope">
+          {{ scope.row.update_user_name === null ? '未更改' : scope.row.update_user_name }}
+        </template>
+      </el-table-column>
       <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          <span v-if="scope.row.updateTime">{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          <span v-else>未更改</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -427,10 +355,12 @@ export default {
             // 如果是字符串
             this.TodayOrYesterday = response.data;
             resolve(true);
+            this.$modal.msgSuccess("查询" + this.TodayOrYesterday + "数据");
           } else if (Array.isArray(response.data)) {
             // 如果是数组
             this.BeginDay = response.data[0];
             this.EndDay = response.data[1];
+            this.$modal.msgSuccess("查询起始日: " + this.BeginDay + ",结束日: " + this.EndDay + "间数据!");
             resolve(true);
           } else {
             // 处理其他类型的数据，或者抛出错误提示

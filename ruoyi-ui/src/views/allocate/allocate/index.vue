@@ -121,20 +121,63 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="调拨ID" align="center" prop="tId"/>
       <el-table-column label="调拨单号" align="center" prop="tdCode"/>
-      <el-table-column label="单据状态" align="center" prop="docStatus"/>
+      <el-table-column label="单据状态" align="center" prop="docStatus">
+        <template slot-scope="scope">
+          <span v-if="scope.row.docStatus === '1'">待审核</span>
+          <span v-else-if="scope.row.docStatus === '2'">驳回</span>
+          <span v-else-if="scope.row.docStatus === '3'">已完成</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
       <el-table-column label="调拨申请日期" align="center" prop="tDate" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.tDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="调出仓库 ID" align="center" prop="outWId"/>
-      <el-table-column label="调入仓库" align="center" prop="inWId"/>
-      <el-table-column label="出库状态" align="center" prop="outStatus"/>
-      <el-table-column label="数据字典" align="center" prop="tType"/>
-      <el-table-column label="备注" align="center" prop="remark"/>
-      <el-table-column label="入库状态" align="center" prop="inStatus"/>
+      <el-table-column label="调出仓库" align="center" prop="outWId">
+        <template slot-scope="scope">
+          <span v-if="scope.row.outWId === '1'">仓库一</span>
+          <span v-else-if="scope.row.outWId === '2'">仓库二</span>
+          <span v-else-if="scope.row.outWId === '3'">仓库三</span>
+          <span v-else-if="scope.row.outWId === '4'">懒财仓库</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="调入仓库" align="center" prop="inWId">
+        <template slot-scope="scope">
+          <span v-if="scope.row.inWId === '1'">仓库一</span>
+          <span v-else-if="scope.row.inWId === '2'">仓库二</span>
+          <span v-else-if="scope.row.inWId === '3'">仓库三</span>
+          <span v-else-if="scope.row.inWId === '4'">懒财仓库</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="出库状态" align="center" prop="outStatus">
+        <template slot-scope="scope">
+          <span v-if="scope.row.outStatus === 1">已出库</span>
+          <span v-else-if="scope.row.outStatus === 2">部分出库</span>
+          <span v-else-if="scope.row.outStatus === 3">已出库</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="数据字典" align="center" prop="tType"/>-->
+      <el-table-column label="备注" align="center" prop="remark">
+        <template slot-scope="scope">
+          {{ scope.row.remark === null ||  scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
+        </template>
+      </el-table-column>
+      <el-table-column label="入库状态" align="center" prop="inStatus">
+        <template slot-scope="scope">
+          <span v-if="scope.row.inStatus === 0">待审核</span>
+          <span v-else-if="scope.row.inStatus === 1">驳回</span>
+          <span v-else-if="scope.row.inStatus === 2">未入库</span>
+          <span v-else-if="scope.row.inStatus === 3">部分入库</span>
+          <span v-else-if="scope.row.inStatus === 4">已完成</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
       <el-table-column label="调拨负责人" align="center" prop="tManager"/>
-      <el-table-column label="是否存在" align="center" prop="isDelte"/>
+<!--      <el-table-column label="是否存在" align="center" prop="isDelte"/>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -291,12 +334,12 @@ export default {
             // 如果是字符串
             this.TodayOrYesterday = response.data;
             resolve(true);
-            this.$modal.msgSuccess(this.TodayOrYesterday);
+            this.$modal.msgSuccess("查询" + this.TodayOrYesterday + "数据");
           } else if (Array.isArray(response.data)) {
             // 如果是数组
             this.BeginDay = response.data[0];
             this.EndDay = response.data[1];
-            this.$modal.msgSuccess("BeginDay: " + this.BeginDay + ",EndDay : " + this.EndDay);
+            this.$modal.msgSuccess("查询起始日: " + this.BeginDay + ",结束日: " + this.EndDay + "间数据!");
             resolve(true);
           } else {
             // 处理其他类型的数据，或者抛出错误提示
