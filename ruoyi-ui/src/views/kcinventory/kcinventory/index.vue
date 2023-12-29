@@ -800,6 +800,7 @@ export default {
         if (valid) {
           this.form.crkIsDetailsList = this.crkIsDetailsList;
           if (this.form.isId != this.isId) {
+            this.form.isResult = this.crkIsDetailsList.isStatus;
             //this.$modal.msg("updateKcinventory方法!");
             updateKcinventory(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -885,7 +886,7 @@ export default {
       obj.remark = "";
       obj.isDelte = "";
       obj.gCode = "HPXX202311241034001";
-      obj.isDelte = 0;
+      obj.isDelte = 0
       obj.specCode = null;
       obj.unit = null;
       this.crkIsDetailsList.push(obj);
