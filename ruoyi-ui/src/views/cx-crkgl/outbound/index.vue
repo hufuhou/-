@@ -697,7 +697,7 @@ export default {
       form: {},
 
       auditForm: {
-        auditResult: true
+        auditResult: "true"
       },
       // 表单校验
       rules: {
