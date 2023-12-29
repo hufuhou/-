@@ -31,7 +31,7 @@ public class CrkInventorySheetController extends BaseController {
     /**
      * 查询库存盘点列表
      */
-    @RequiresPermissions("kcinventory:kcinventory:list")
+    //@RequiresPermissions("kcinventory:kcinventory:list")
     @GetMapping("/list")
     public TableDataInfo list(CrkInventorySheet crkInventorySheet) {
         startPage();
@@ -175,13 +175,4 @@ public class CrkInventorySheetController extends BaseController {
         //System.out.println("isId:" + isId + "   " + "stateCode:" + stateCode);
         return toAjax(crkInventorySheetService.updateSheetStatus(isId, stateCode));
     }
-
-    /*
-    TODO :
-     明天写
-     1.添加明细时主表盘点结果与明细结果保持一致 添加结果结束后修改主表状态为已完成
-     2.主页index页 入库统计图表
-     3.销售统计报表完善
-     */
-
 }

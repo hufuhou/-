@@ -39,7 +39,7 @@ public class SupplierController extends BaseController {
     /**
      * 查询供应商列表列表
      */
-    @RequiresPermissions("units:supplier:list")
+    //@RequiresPermissions("units:supplier:list")
     @GetMapping("/list")
     public TableDataInfo list(Supplier supplier) {
         startPage();

@@ -77,7 +77,7 @@ public class OrderSalesServiceImpl implements IOrderSalesService {
                 list.add(details);
             }
             if (list.size() > 0) {
-                orderSalesDetailsMapper.insertOrderSalesDetails((OrderSalesDetails) orderSalesDetails);
+                orderSalesDetailsMapper.insertOrderSalesDetails(orderSalesDetails);
             }
         }
         System.out.println(orderSales);

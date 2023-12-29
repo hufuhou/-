@@ -164,7 +164,7 @@
 <!--      <el-table-column label="条形码" align="center" prop="barcode" />-->
       <el-table-column label="备注" align="center" prop="remark">
         <template slot-scope="scope">
-          {{ scope.row.remark === null ||  scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
+          {{ scope.row.remark === null || scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
         </template>
       </el-table-column>
       <el-table-column label="创建人" align="center" prop="create_user_name"/>

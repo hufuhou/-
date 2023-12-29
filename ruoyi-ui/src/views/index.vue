@@ -78,28 +78,28 @@
       <el-col :xs="30" :sm="25" :md="100" :lg="10">
         <el-card class="update-log">
           <div id="main0" style="width: 500px;height:400px;">
-            main0
+            <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
       <el-col :xs="30" :sm="25" :md="100" :lg="10">
         <el-card class="update-log">
           <div id="main1" style="width: 500px;height:400px;">
-            main1
+            <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
       <el-col :xs="30" :sm="25" :md="100" :lg="10">
         <el-card class="update-log">
           <div id="main2" style="width: 500px;height:400px;">
-            main2
+            <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
       <el-col :xs="30" :sm="25" :md="100" :lg="10">
         <el-card class="update-log">
           <div id="main3" style="width: 500px;height:400px;">
-            main3
+            <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
@@ -130,7 +130,7 @@
           <span style="font-size : 18px;font-weight: bold;display: block">各库货品金额占比</span>
           <span style="font-size : 18px;font-weight: bold;display: block">库存货品总金额:{{ allValue }}</span>
           <div id="bin0" style="width: 500px;height:400px;">
-            bin0
+            <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
@@ -139,7 +139,7 @@
           <span style="font-size : 18px;font-weight: bold;display: block">各库货品数量占比</span>
           <span style="font-size : 18px;font-weight: bold;display: block">库存货品数量:{{ allCount }}</span>
           <div id="bin1" style="width: 500px;height:400px;">
-            bin1
+            <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
@@ -377,7 +377,7 @@ export default {
 <style scoped lang="scss">
 .home {
   blockquote {
-    padding: 10px 20px;
+    padding: 10px 21px;
     margin: 0 0 20px;
     font-size: 17.5px;
     border-left: 5px solid #eee;

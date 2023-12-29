@@ -136,13 +136,13 @@ public class CrkInventorySheetServiceImpl implements ICrkInventorySheetService {
      */
     public void insertCrkIsDetails(CrkInventorySheet crkInventorySheet) {
         List<CrkIsDetails> crkIsDetailsList = crkInventorySheet.getCrkIsDetailsList();
-        Integer isResult = 0;
         Long isId = crkInventorySheet.getIsId();
-        isResult = crkIsDetailsList.get(0).getIsStatus();
-        System.out.println("isId:" + isId + "isResult:" + isResult);
-        if (crkInventorySheetMapper.updateIsResult(Math.toIntExact(isId), isResult) > 0) {
-            System.out.println("修改成功!");
-        }
+//        Integer isResult = 0;
+//        isResult = crkIsDetailsList.get(0).getIsStatus();
+//        System.out.println("isId:" + isId + "isResult:" + isResult);
+//        if (crkInventorySheetMapper.updateIsResult(Math.toIntExact(isId), isResult) > 0) {
+//            System.out.println("修改成功!");
+//        }
         if (StringUtils.isNotNull(crkIsDetailsList)) {
             List<CrkIsDetails> list = new ArrayList<CrkIsDetails>();
             for (CrkIsDetails crkIsDetails : crkIsDetailsList) {
