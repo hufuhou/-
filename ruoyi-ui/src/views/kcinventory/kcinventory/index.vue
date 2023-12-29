@@ -794,8 +794,6 @@ export default {
           done();
         })
     },
-
-
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
@@ -803,6 +801,9 @@ export default {
           this.form.crkIsDetailsList = this.crkIsDetailsList;
           if (this.title == "修改库存盘点") {
             this.$modal.msg("updateKcinventory方法!");
+          if (this.form.isId != this.isId) {
+            this.form.isResult = this.crkIsDetailsList.isStatus;
+            //this.$modal.msg("updateKcinventory方法!");
             updateKcinventory(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -810,7 +811,7 @@ export default {
               this.getList();
             });
           } else {
-            this.$modal.msg("addKcinventory方法!");
+            //this.$modal.msg("addKcinventory方法!");
             addKcinventory(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
