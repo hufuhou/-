@@ -65,7 +65,7 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['cx-crkgl:management:edit']"
-        >修改</el-button>
+        >编辑</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -198,7 +198,7 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['cx-crkgl:management:edit']"
-          >修改</el-button>
+          >编辑</el-button>
           <el-button
             size="mini"
             type="text"
@@ -456,16 +456,6 @@
         <el-table :data="crkImDetailsList" :row-class-name="rowCrkImDetailsIndex" @selection-change="handleCrkImDetailsSelectionChange" ref="crkImDetails">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" align="center" prop="index" width="50"/>
-<!--          <el-table-column label="入库单号" prop="inCode" width="150">-->
-<!--            <template slot-scope="scope">-->
-<!--              <el-input v-model="scope.row.inCode" placeholder="请输入入库单号" />-->
-<!--            </template>-->
-<!--          </el-table-column>-->
-<!--          <el-table-column label="关联单号" prop="odId" width="150">-->
-<!--            <template slot-scope="scope">-->
-<!--              <el-input v-model="scope.row.odId" placeholder="关联单号" />-->
-<!--            </template>-->
-<!--          </el-table-column>-->
           <el-table-column label="货品名称" align="center" prop="gName" width="140px">
             <template slot-scope="scope">
               {{ scope.row.gName }}
@@ -539,11 +529,6 @@
               <el-date-picker clearable v-model="scope.row.productionDate" type="date" value-format="yyyy-MM-dd" placeholder="请选择生产日期" />
             </template>
           </el-table-column>
-<!--          <el-table-column label="条形码" prop="barcode" width="150">-->
-<!--            <template slot-scope="scope">-->
-<!--              <el-input v-model="scope.row.barcode" placeholder="请输入条形码" />-->
-<!--            </template>-->
-<!--          </el-table-column>-->
           <el-table-column label="备注" prop="remark" width="150" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" placeholder="请输入备注" />
@@ -560,8 +545,7 @@
     <!--审核对话框-->
     <el-dialog title="审核" :visible.sync="openAudit" append-to-body style="width: 500px; margin: auto"
                @close="closeAudit">
-      <el-form :model="auditForm" ref="queryGoodsForm" size="small" :inline="true" v-show="showSearch"
-               label-width="68px">
+      <el-form :model="auditForm" ref="queryGoodsForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
         <el-form-item label="审核结果" prop="auditResult">
           <el-col :span="24">
             <el-radio-group v-model="auditForm.auditResult">
@@ -570,13 +554,14 @@
             </el-radio-group>
           </el-col>
         </el-form-item>
+        <el-form-item label="审核意见" prop="auditOpinion">
+          <el-col :span="24">
+            <el-input v-model="auditForm.auditOpinion" type="textarea" :rows="4" placeholder="请输入审核意见"></el-input>
+          </el-col>
+        </el-form-item>
       </el-form>
-      <div slot="footer">
-        <el-button @click="closeAudit">关 闭</el-button>
-        <el-button type="primary" @click="auditSubmit">确 定
-        </el-button>
-      </div>
-    </el-dialog>
+
+      <div slot="footer"> <el-button @click="closeAudit">关 闭</el-button> <el-button type="primary" @click="auditSubmit">确 定 </el-button> </div> </el-dialog>
 
   </div>
 </template>
@@ -698,7 +683,8 @@ export default {
       // 表单参数
       form: {},
       auditForm: {
-        auditResult: "true"
+        auditResult: "true",
+        auditOpinion: null
       },
       // 表单校验
       rules: {
@@ -818,7 +804,7 @@ export default {
     /** 查询仓库管理列表 */
     getWList() {
       listWarehouse().then(response => {
-        this.warehouseList = response.rows;
+        this.warehouseList = response.rows.filter(item => item.wStatus === 0);
       });
     },
     /** 查询供应商列表列表 */
@@ -893,10 +879,10 @@ export default {
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.inId)
       this.in_code=selection.map(item=> item.inCode)
-      this.single = selection.length!==1 || selection.some(item => item.status !== 1);
+      this.single = selection.length!==1 || selection.some(item => item.status === 3);
       this.multiple = !selection.length || selection.some(item => item.status !== 1);
-      this.examine = selection.some(item => item.status !== 1);
-      this.revoke = selection.some(item => item.status !==3);
+      this.examine = !selection.length ||selection.some(item => item.status !== 1);
+      this.revoke = !selection.length ||selection.some(item => item.status !==3);
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -909,8 +895,8 @@ export default {
       const inId = row.inId || this.ids;
 // 使用 filter 方法筛选出入库状态为待审核的项
       const managementList = this.managementList.filter(item => item.inId === inId);
-      if (managementList.some(item => item.status !== 1)) {
-        this.$message.warning('待审核状态才能进行编辑！');
+      if (managementList.some(item => item.status ===3)) {
+        this.$message.warning('已完成的单号不能进行编辑！');
         return;
       }
       this.reset();
@@ -1226,6 +1212,13 @@ export default {
   border-color: #e1f3d8;
   color: #67c23a;
   border-radius: 4px;
+}
+
+.el-table::before {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 0px;
 }
 </style>
 

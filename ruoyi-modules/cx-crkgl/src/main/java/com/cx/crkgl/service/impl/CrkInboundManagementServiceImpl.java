@@ -125,6 +125,9 @@ public class CrkInboundManagementServiceImpl implements ICrkInboundManagementSer
         crkInboundManagementMapper.deleteCrkImDetailsByInId(crkInboundManagement.getInId());
         insertCrkImDetails(crkInboundManagement);
         insertTzStock(crkInboundManagement);
+        crkInboundManagement.setReviewer(null);
+        crkInboundManagement.setReviewerTime(null);
+        crkInboundManagement.setStatus(1);
         return crkInboundManagementMapper.updateCrkInboundManagement(crkInboundManagement);
     }
 

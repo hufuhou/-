@@ -100,6 +100,9 @@ public class CrkOutManagementServiceImpl implements ICrkOutManagementService
         for (CrkOutDetails crkOutDetails : crkOutDetailsList1) {
             crkOutManagementMapper.InventoryOutbound(crkOutDetails);
         }
+        crkOutManagement.setReviewer(null);
+        crkOutManagement.setReviewerTime(null);
+        crkOutManagement.setStatus(1);
         return crkOutManagementMapper.updateCrkOutManagement(crkOutManagement);
     }
 
