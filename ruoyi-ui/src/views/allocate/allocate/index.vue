@@ -103,7 +103,7 @@
 
     <el-table v-loading="loading" :data="allocateList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="调拨ID" align="center" prop="tId"/>
+<!--      <el-table-column label="调拨编码" align="center" prop="tId"/>-->
       <el-table-column label="调拨单号" align="center" prop="tdCode"/>
       <el-table-column label="单据状态" align="center" prop="docStatus">
         <template slot-scope="scope">
@@ -120,9 +120,9 @@
       </el-table-column>
       <el-table-column label="调出仓库" align="center" prop="outWId">
         <template slot-scope="scope">
-          <span v-if="scope.row.outWId === '1'">仓库一</span>
-          <span v-else-if="scope.row.outWId === '2'">仓库二</span>
-          <span v-else-if="scope.row.outWId === '3'">仓库三</span>
+          <span v-if="scope.row.outWId === '1'">玲露仓库</span>
+          <span v-else-if="scope.row.outWId === '2'">鸿衡仓库</span>
+          <span v-else-if="scope.row.outWId === '3'">易腾仓库</span>
           <span v-else-if="scope.row.outWId === '4'">懒财仓库</span>
           <span v-else>未知状态</span>
         </template>
@@ -160,7 +160,7 @@
           <span v-else>未知状态</span>
         </template>
       </el-table-column>
-      <el-table-column label="调拨负责人" align="center" prop="tManager"/>
+      <el-table-column label="调拨负责人" align="center" prop="manager"/>
 <!--      <el-table-column label="是否存在" align="center" prop="isDelte"/>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">

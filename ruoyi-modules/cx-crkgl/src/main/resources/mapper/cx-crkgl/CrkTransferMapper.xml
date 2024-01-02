@@ -1,73 +1,120 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cx.crkgl.mapper.CrkTransferMapper">
 
     <resultMap type="CrkTransfer" id="CrkTransferResult">
-        <result property="tId"    column="t_id"    />
-        <result property="tdCode"    column="td_code"    />
-        <result property="docStatus"    column="doc_status"    />
-        <result property="tDate"    column="t_date"    />
-        <result property="outWId"    column="out_w_id"    />
-        <result property="inWId"    column="in_w_id"    />
-        <result property="outStatus"    column="out_status"    />
-        <result property="tType"    column="t_type"    />
-        <result property="remark"    column="remark"    />
-        <result property="inStatus"    column="in_status"    />
-        <result property="tManager"    column="t_manager"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="isDelte"    column="is_delte"    />
+        <result property="tId" column="t_id"/>
+        <result property="tdCode" column="td_code"/>
+        <result property="docStatus" column="doc_status"/>
+        <result property="tDate" column="t_date"/>
+        <result property="outWId" column="out_w_id"/>
+        <result property="inWId" column="in_w_id"/>
+        <result property="outStatus" column="out_status"/>
+        <result property="tType" column="t_type"/>
+        <result property="remark" column="remark"/>
+        <result property="inStatus" column="in_status"/>
+        <result property="tManager" column="t_manager"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDelte" column="is_delte"/>
     </resultMap>
 
     <resultMap id="CrkTransferCrkTransferDetailsResult" type="CrkTransfer" extends="CrkTransferResult">
-        <collection property="crkTransferDetailsList" notNullColumn="sub_td_id" javaType="java.util.List" resultMap="CrkTransferDetailsResult" />
+        <collection property="crkTransferDetailsList" notNullColumn="sub_td_id" javaType="java.util.List"
+                    resultMap="CrkTransferDetailsResult"/>
     </resultMap>
 
     <resultMap type="CrkTransferDetails" id="CrkTransferDetailsResult">
-        <result property="tdId"    column="sub_td_id"    />
-        <result property="tId"    column="sub_t_id"    />
-        <result property="tdCode"    column="sub_td_code"    />
-        <result property="specCode"    column="sub_spec_code"    />
-        <result property="unit"    column="sub_unit"    />
-        <result property="tQuantity"    column="sub_t_quantity"    />
-        <result property="iuPrice"    column="sub_iu_price"    />
-        <result property="tAmount"    column="sub_t_amount"    />
-        <result property="goodsId"    column="sub_goods_id"    />
-        <result property="remark"    column="sub_remark"    />
-        <result property="createBy"    column="sub_create_by"    />
-        <result property="createTime"    column="sub_create_time"    />
-        <result property="updateBy"    column="sub_update_by"    />
-        <result property="updateTime"    column="sub_update_time"    />
-        <result property="isDelte"    column="sub_is_delte"    />
-        <result property="inSlid"    column="sub_in_slid"    />
+        <result property="tdId" column="sub_td_id"/>
+        <result property="tId" column="sub_t_id"/>
+        <result property="tdCode" column="sub_td_code"/>
+        <result property="specCode" column="sub_spec_code"/>
+        <result property="unit" column="sub_unit"/>
+        <result property="tQuantity" column="sub_t_quantity"/>
+        <result property="iuPrice" column="sub_iu_price"/>
+        <result property="tAmount" column="sub_t_amount"/>
+        <result property="goodsId" column="sub_goods_id"/>
+        <result property="remark" column="sub_remark"/>
+        <result property="createBy" column="sub_create_by"/>
+        <result property="createTime" column="sub_create_time"/>
+        <result property="updateBy" column="sub_update_by"/>
+        <result property="updateTime" column="sub_update_time"/>
+        <result property="isDelte" column="sub_is_delte"/>
+        <result property="inSlid" column="sub_in_slid"/>
     </resultMap>
     <sql id="selectCrkTransferVo">
-        select t_id, td_code, doc_status, t_date, out_w_id, in_w_id, out_status, t_type, remark, in_status, t_manager, create_by, create_time, update_by, update_time, is_delte from crk_transfer
+        select t_id,
+               td_code,
+               doc_status,
+               t_date,
+               out_w_id,
+               in_w_id,
+               out_status,
+               t_type,
+               remark,
+               in_status,
+               t_manager,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               is_delte
+        from crk_transfer
     </sql>
 
     <select id="selectCrkTransferList" parameterType="CrkTransfer" resultMap="CrkTransferResult">
         <include refid="selectCrkTransferVo"/>
         <where>
-            <if test="tdCode != null  and tdCode != ''"> and td_code = #{tdCode}</if>
-            <if test="docStatus != null "> and doc_status = #{docStatus}</if>
-            <if test="tDate != null "> and t_date = #{tDate}</if>
-            <if test="outWId != null  and outWId != ''"> and out_w_id = #{outWId}</if>
-            <if test="inWId != null  and inWId != ''"> and in_w_id = #{inWId}</if>
-            <if test="outStatus != null "> and out_status = #{outStatus}</if>
-            <if test="tType != null "> and t_type = #{tType}</if>
-            <if test="inStatus != null "> and in_status = #{inStatus}</if>
-            <if test="tManager != null  and tManager != ''"> and t_manager = #{tManager}</if>
-            <if test="isDelte != null "> and is_delte = #{isDelte}</if>
+            <if test="tdCode != null  and tdCode != ''">and td_code = #{tdCode}</if>
+            <if test="docStatus != null ">and doc_status = #{docStatus}</if>
+            <if test="tDate != null ">and t_date = #{tDate}</if>
+            <if test="outWId != null  and outWId != ''">and out_w_id = #{outWId}</if>
+            <if test="inWId != null  and inWId != ''">and in_w_id = #{inWId}</if>
+            <if test="outStatus != null ">and out_status = #{outStatus}</if>
+            <if test="tType != null ">and t_type = #{tType}</if>
+            <if test="inStatus != null ">and in_status = #{inStatus}</if>
+            <if test="tManager != null  and tManager != ''">and t_manager = #{tManager}</if>
+            <if test="isDelte != null ">and is_delte = #{isDelte}</if>
         </where>
     </select>
 
     <select id="selectCrkTransferByTId" parameterType="Long" resultMap="CrkTransferCrkTransferDetailsResult">
-        select a.t_id, a.td_code, a.doc_status, a.t_date, a.out_w_id, a.in_w_id, a.out_status, a.t_type, a.remark, a.in_status, a.t_manager, a.create_by, a.create_time, a.update_by, a.update_time, a.is_delte,
-               b.td_id as sub_td_id, b.t_id as sub_t_id, b.td_code as sub_td_code, b.spec_code as sub_spec_code, b.unit as sub_unit, b.t_quantity as sub_t_quantity, b.iu_price as sub_iu_price, b.t_amount as sub_t_amount, b.goods_id as sub_goods_id, b.remark as sub_remark, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.is_delte as sub_is_delte, b.in_slid as sub_in_slid
+        select a.t_id,
+               a.td_code,
+               a.doc_status,
+               a.t_date,
+               a.out_w_id,
+               a.in_w_id,
+               a.out_status,
+               a.t_type,
+               a.remark,
+               a.in_status,
+               a.t_manager,
+               a.create_by,
+               a.create_time,
+               a.update_by,
+               a.update_time,
+               a.is_delte,
+               b.td_id       as sub_td_id,
+               b.t_id        as sub_t_id,
+               b.td_code     as sub_td_code,
+               b.spec_code   as sub_spec_code,
+               b.unit        as sub_unit,
+               b.t_quantity  as sub_t_quantity,
+               b.iu_price    as sub_iu_price,
+               b.t_amount    as sub_t_amount,
+               b.goods_id    as sub_goods_id,
+               b.remark      as sub_remark,
+               b.create_by   as sub_create_by,
+               b.create_time as sub_create_time,
+               b.update_by   as sub_update_by,
+               b.update_time as sub_update_time,
+               b.is_delte    as sub_is_delte,
+               b.in_slid     as sub_in_slid
         from crk_transfer a
                  left join crk_transfer_details b on b.t_id = a.t_id
         where a.t_id = #{tId}
@@ -136,7 +183,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteCrkTransferByTId" parameterType="Long">
-        delete from crk_transfer where t_id = #{tId}
+        delete
+        from crk_transfer
+        where t_id = #{tId}
     </delete>
 
     <delete id="deleteCrkTransferByTIds" parameterType="String">
@@ -154,21 +203,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteCrkTransferDetailsByTId" parameterType="Long">
-        delete from crk_transfer_details where t_id = #{tId}
+        delete
+        from crk_transfer_details
+        where t_id = #{tId}
     </delete>
 
     <insert id="batchCrkTransferDetails">
-        insert into crk_transfer_details( td_id, t_id, td_code, spec_code, unit, t_quantity, iu_price, t_amount, goods_id, remark, create_by, create_time, update_by, update_time, is_delte, in_slid) values
+        insert into crk_transfer_details( td_id, t_id, td_code, spec_code, unit, t_quantity, iu_price, t_amount,
+        goods_id, remark, create_by, create_time, update_by, update_time, is_delte, in_slid) values
         <foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.tdId}, #{item.tId}, #{item.tdCode}, #{item.specCode}, #{item.unit}, #{item.tQuantity}, #{item.iuPrice}, #{item.tAmount}, #{item.goodsId}, #{item.remark}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.isDelte}, #{item.inSlid})
+            ( #{item.tdId}, #{item.tId}, #{item.tdCode}, #{item.specCode}, #{item.unit}, #{item.tQuantity},
+            #{item.iuPrice}, #{item.tAmount}, #{item.goodsId}, #{item.remark}, #{item.createBy}, #{item.createTime},
+            #{item.updateBy}, #{item.updateTime}, #{item.isDelte}, #{item.inSlid})
         </foreach>
     </insert>
 
-     <select id="getTranCode" resultMap="CrkTransferResult">
-         SELECT * FROM `crk_transfer` ORDER BY t_id DESC LIMIT 1
-     </select>
+    <select id="getTranCode" resultMap="CrkTransferResult">
+        SELECT *
+        FROM `crk_transfer`
+        ORDER BY t_id DESC
+        LIMIT 1
+    </select>
 
     <update id="updateNumberofPlans" parameterType="Long">
-        UPDATE tz_stock set number_plans+=#{tQuantity} where g_id=#{goodsId} and w_id=#{wId}
+        UPDATE tz_stock
+        set number_plans+=#{tQuantity}
+        where g_id=#{goodsId}
+          and w_id=#{wId}
     </update>
 </mapper>

@@ -1,230 +1,354 @@
 package com.cx.wms.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.annotation.Excel;
 import com.ruoyi.common.core.web.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 /**
  * 出库明细
  * 对象 crk_out_details
  *
- * @author XRC
- * @date 2023-11-20
+ * @author hfh
+ * @date 2023-12-20
  */
 public class CrkOutDetails extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 订单ID
-     */
+    // 出库管理ID
     private Long omId;
 
-    //创建人用户名
-    private String create_user_name;
-    //更新人用户名
-    private String update_user_name;
-
-    /**
-     * ?
-     */
-    @Excel(name = "?")
-    private String outOutId;
-
-    /**
-     * 出库编号
-     */
-    @Excel(name = "出库编号")
+    // 出库单ID
     private Long outId;
 
-    /**
-     * 进货退货明细 ID 或销售订单 ID
-     */
-    @Excel(name = "进货退货明细 ID 或销售订单 ID")
+    // 订单ID
     private String orderId;
 
-    /**
-     * 单位
-     */
-    @Excel(name = "单位")
+    // 外部出库ID
+    private Long outOutId;
+
+    // 删除标志，1表示已删除，0表示未删除
+    private Integer isDelete;
+
+    // 计量单位
     private String unit;
 
-    /**
-     * 物品数量
-     */
-    @Excel(name = "物品数量")
-    private Long itemQuantity;
-
-    /**
-     * 已发货数量
-     */
-    @Excel(name = "已发货数量")
-    private Long quantityShipped;
-
-    /**
-     * 未交付数量
-     */
-    @Excel(name = "未交付数量")
-    private Long undeliveredQuantity;
-
-    /**
-     * 当前产出数量
-     */
-    @Excel(name = "当前产出数量")
-    private Long currOutQuantity;
-
-    /**
-     * 批号
-     */
-    @Excel(name = "批号")
-    private Integer batchNumber;
-
-    /**
-     * 条形码
-     */
-    @Excel(name = "条形码")
-    private String barcode;
-
-    /**
-     * 0：存在；1：已删除，不存在
-     */
-    @Excel(name = "0：存在；1：已删除，不存在")
     private Integer isDelte;
 
-    public void setOmId(Long omId) {
-        this.omId = omId;
-    }
+    // 商品数量
+    private Integer itemQuantity;
 
-    public Long getOmId() {
-        return omId;
-    }
+    // 已发货数量
+    private Integer quantityShipped;
 
-    public void setOutOutId(String outOutId) {
-        this.outOutId = outOutId;
-    }
+    // 未交付数量
+    private Integer undeliveredQuantity;
 
-    public String getOutOutId() {
-        return outOutId;
-    }
+    // 当前出库数量
+    private Integer currOutQuantity;
 
-    public void setOutId(Long outId) {
-        this.outId = outId;
-    }
+    // 批次号
+    private String batchNumber;
 
-    public Long getOutId() {
-        return outId;
-    }
+    // 出库详情备注
+    private String odRemark;
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
+    // 商品条码
+    private String barcode;
 
-    public String getOrderId() {
-        return orderId;
-    }
+    // 创建者ID
+    private Long odCreateBy;
 
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
+    // 创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date odCreateTime;
 
-    public String getUnit() {
-        return unit;
-    }
+    // 更新者ID
+    private Long odUpdateBy;
 
-    public void setItemQuantity(Long itemQuantity) {
-        this.itemQuantity = itemQuantity;
-    }
+    // 更新时间
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date odUpdateTime;
 
-    public Long getItemQuantity() {
-        return itemQuantity;
-    }
+    // 删除标志，false表示未删除，true表示已删除
+    private Boolean odIsDelete;
 
-    public void setQuantityShipped(Long quantityShipped) {
-        this.quantityShipped = quantityShipped;
-    }
+    // 销售单ID
+    private Long slId;
 
-    public Long getQuantityShipped() {
-        return quantityShipped;
-    }
+    // 商品编码
+    private String gCode;
 
-    public void setUndeliveredQuantity(Long undeliveredQuantity) {
-        this.undeliveredQuantity = undeliveredQuantity;
-    }
+    // 商品ID
+    private Long gId;
 
-    public Long getUndeliveredQuantity() {
-        return undeliveredQuantity;
-    }
+    // 出库类型
+    private Integer outBound;
 
-    public void setCurrOutQuantity(Long currOutQuantity) {
-        this.currOutQuantity = currOutQuantity;
-    }
+    // 未发货数量
+    private Integer notShipped;
 
-    public Long getCurrOutQuantity() {
-        return currOutQuantity;
-    }
+    // 金额
+    private BigDecimal money;
 
-    public void setBatchNumber(Integer batchNumber) {
-        this.batchNumber = batchNumber;
-    }
+    // 创建者用户名
+    private String createUser;
 
-    public Integer getBatchNumber() {
-        return batchNumber;
-    }
+    // 更新者用户名
+    private String updateUser;
 
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
-    }
+    // 商品名称
+    private String goods;
 
-    public String getBarcode() {
-        return barcode;
+    // 仓库名称
+    private String warehouse;
+
+
+    public Integer getIsDelte() {
+        return isDelte;
     }
 
     public void setIsDelte(Integer isDelte) {
         this.isDelte = isDelte;
     }
 
-    public Integer getIsDelte() {
-        return isDelte;
+    public Long getOutOutId() {
+        return outOutId;
+    }
+
+    public void setOutOutId(Long outOutId) {
+        this.outOutId = outOutId;
+    }
+
+    public Long getOmId() {
+        return omId;
+    }
+
+    public void setOmId(Long omId) {
+        this.omId = omId;
+    }
+
+    public Long getOutId() {
+        return outId;
+    }
+
+    public void setOutId(Long outId) {
+        this.outId = outId;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public Integer getItemQuantity() {
+        return itemQuantity;
+    }
+
+    public void setItemQuantity(Integer itemQuantity) {
+        this.itemQuantity = itemQuantity;
+    }
+
+    public Integer getQuantityShipped() {
+        return quantityShipped;
+    }
+
+    public void setQuantityShipped(Integer quantityShipped) {
+        this.quantityShipped = quantityShipped;
+    }
+
+    public Integer getUndeliveredQuantity() {
+        return undeliveredQuantity;
+    }
+
+    public void setUndeliveredQuantity(Integer undeliveredQuantity) {
+        this.undeliveredQuantity = undeliveredQuantity;
+    }
+
+    public Integer getCurrOutQuantity() {
+        return currOutQuantity;
+    }
+
+    public void setCurrOutQuantity(Integer currOutQuantity) {
+        this.currOutQuantity = currOutQuantity;
+    }
+
+    public String getBatchNumber() {
+        return batchNumber;
+    }
+
+    public void setBatchNumber(String batchNumber) {
+        this.batchNumber = batchNumber;
+    }
+
+    public String getOdRemark() {
+        return odRemark;
+    }
+
+    public void setOdRemark(String odRemark) {
+        this.odRemark = odRemark;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public Long getOdCreateBy() {
+        return odCreateBy;
+    }
+
+    public void setOdCreateBy(Long odCreateBy) {
+        this.odCreateBy = odCreateBy;
+    }
+
+    public Date getOdCreateTime() {
+        return odCreateTime;
+    }
+
+    public void setOdCreateTime(Date odCreateTime) {
+        this.odCreateTime = odCreateTime;
+    }
+
+    public Long getOdUpdateBy() {
+        return odUpdateBy;
+    }
+
+    public void setOdUpdateBy(Long odUpdateBy) {
+        this.odUpdateBy = odUpdateBy;
+    }
+
+    public Date getOdUpdateTime() {
+        return odUpdateTime;
+    }
+
+    public void setOdUpdateTime(Date odUpdateTime) {
+        this.odUpdateTime = odUpdateTime;
+    }
+
+    public Boolean getOdIsDelete() {
+        return odIsDelete;
+    }
+
+    public void setOdIsDelete(Boolean odIsDelete) {
+        this.odIsDelete = odIsDelete;
+    }
+
+    public Long getSlId() {
+        return slId;
+    }
+
+    public void setSlId(Long slId) {
+        this.slId = slId;
+    }
+
+    public String getgCode() {
+        return gCode;
+    }
+
+    public void setgCode(String gCode) {
+        this.gCode = gCode;
+    }
+
+    public Long getgId() {
+        return gId;
+    }
+
+    public void setgId(Long gId) {
+        this.gId = gId;
+    }
+
+    public Integer getOutBound() {
+        return outBound;
+    }
+
+    public void setOutBound(Integer outBound) {
+        this.outBound = outBound;
+    }
+
+    public Integer getNotShipped() {
+        return notShipped;
+    }
+
+    public void setNotShipped(Integer notShipped) {
+        this.notShipped = notShipped;
+    }
+
+    public BigDecimal getMoney() {
+        return money;
+    }
+
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
+
+    public String getGoods() {
+        return goods;
+    }
+
+    public void setGoods(String goods) {
+        this.goods = goods;
+    }
+
+    public String getWarehouse() {
+        return warehouse;
+    }
+
+    public void setWarehouse(String warehouse) {
+        this.warehouse = warehouse;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("omId", getOmId())
-                .append("outOutId", getOutOutId())
+                .append("outOutId", getOutId())
                 .append("outId", getOutId())
                 .append("orderId", getOrderId())
                 .append("unit", getUnit())
-                .append("itemQuantity", getItemQuantity())
-                .append("quantityShipped", getQuantityShipped())
-                .append("undeliveredQuantity", getUndeliveredQuantity())
-                .append("currOutQuantity", getCurrOutQuantity())
-                .append("batchNumber", getBatchNumber())
                 .append("remark", getRemark())
-                .append("barcode", getBarcode())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())
-                .append("updateBy", getUpdateBy())
+                .append("CreateUser", getCreateUser())
                 .append("updateTime", getUpdateTime())
-                .append("isDelte", getIsDelte())
-                .append("update_user_name", getUpdate_user_name())
-                .append("create_user_name", getCreate_user_name())
+                .append("updateUserName", getUpdateUser())
+                .append("UpdateUser", getUpdateUser())
+                .append("sCode", getgCode())
+                .append("isDelte", getOdIsDelete())
                 .toString();
-    }
-
-    public String getCreate_user_name() {
-        return create_user_name;
-    }
-
-    public void setCreate_user_name(String create_user_name) {
-        this.create_user_name = create_user_name;
-    }
-
-    public String getUpdate_user_name() {
-        return update_user_name;
-    }
-
-    public void setUpdate_user_name(String update_user_name) {
-        this.update_user_name = update_user_name;
     }
 }

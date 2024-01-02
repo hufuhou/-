@@ -121,8 +121,8 @@
       <el-table-column label="入库仓库" align="center" prop="warehouseName" />
       <el-table-column label="入库仓位" align="center" prop="location" />
       <el-table-column label="本次入库数" align="center" prop="thisQuantity" />
-      <el-table-column label="已入库数" align="center" prop="quantityInStock" />
-      <el-table-column label="未入库数" align="center" prop="unstockedQuantity" />
+<!--      <el-table-column label="已入库数" align="center" prop="quantityInStock" />-->
+<!--      <el-table-column label="未入库数" align="center" prop="unstockedQuantity" />-->
       <el-table-column label="货品" align="center" prop="goods_name"/>
       <el-table-column label="生产日期" align="center" prop="productionDate" width="180">
         <template slot-scope="scope">

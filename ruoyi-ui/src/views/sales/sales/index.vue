@@ -13,10 +13,10 @@
       </el-form-item>
     </el-form>
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="售单id" prop="sId">
+      <el-form-item label="售单编码" prop="sId">
         <el-input
           v-model="queryParams.sId"
-          placeholder="请输入销售订单id"
+          placeholder="请输入销售订单编码"
           clearable
           @keyup.enter.native="handleQuery"
         />

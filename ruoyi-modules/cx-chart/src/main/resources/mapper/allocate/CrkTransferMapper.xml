@@ -20,27 +20,16 @@
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
+        <result property="Manager" column="manager"/>
         <result property="isDelte" column="is_delte"/>
     </resultMap>
 
     <sql id="selectCrkTransferVo">
-        select t_id,
-               td_code,
-               doc_status,
-               t_date,
-               out_w_id,
-               in_w_id,
-               out_status,
-               t_type,
-               remark,
-               in_status,
-               t_manager,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               is_delte
-        from crk_transfer
+        SELECT crk_transfer.*,
+               sys_user.nick_name AS manager
+        FROM
+            crk_transfer
+                LEFT JOIN sys_user ON crk_transfer.t_manager = sys_user.user_id
     </sql>
 
     <select id="selectCrkTransferList" parameterType="CrkTransfer" resultMap="CrkTransferResult">

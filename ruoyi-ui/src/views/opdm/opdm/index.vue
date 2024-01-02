@@ -126,7 +126,7 @@
 
     <el-table v-loading="loading" :data="opdmList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="进货明细单id" align="center" prop="pdId"/>
+<!--      <el-table-column label="进货明细单id" align="center" prop="pdId"/>-->
       <el-table-column label="进货单号" align="center" prop="poCode"/>
       <el-table-column label="货品" align="center" prop="goods_name"/>
       <el-table-column label="进货数量" align="center" prop="purchaseQuantity"/>

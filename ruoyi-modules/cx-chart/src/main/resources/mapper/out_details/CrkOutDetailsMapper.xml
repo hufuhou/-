@@ -5,8 +5,9 @@
 <mapper namespace="com.cx.wms.mapper.CrkOutDetailsMapper">
 
     <resultMap type="CrkOutDetails" id="CrkOutDetailsResult">
-        <result property="omId" column="om_id"/>
-        <result property="outOutId" column="out_out_id"/>
+        <!-- 映射主键 -->
+        <id property="omId" column="om_id"/>
+        <!-- 其他字段映射 -->
         <result property="outId" column="out_id"/>
         <result property="orderId" column="order_id"/>
         <result property="unit" column="unit"/>
@@ -15,69 +16,93 @@
         <result property="undeliveredQuantity" column="undelivered_quantity"/>
         <result property="currOutQuantity" column="curr_out_quantity"/>
         <result property="batchNumber" column="batch_number"/>
-        <result property="remark" column="remark"/>
+        <result property="odRemark" column="od_remark"/>
         <result property="barcode" column="barcode"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="isDelte" column="is_delte"/>
+        <result property="odCreateBy" column="od_create_by"/>
+        <result property="odCreateTime" column="od_create_time"/>
+        <result property="odUpdateBy" column="od_update_by"/>
+        <result property="odUpdateTime" column="od_update_time"/>
+        <result property="odIsDelete" column="od_is_delete"/>
+        <result property="slId" column="sl_id"/>
+        <result property="gCode" column="g_code"/>
+        <result property="gId" column="g_id"/>
+        <result property="outBound" column="out_bound"/>
+        <result property="notShipped" column="not_shipped"/>
+        <result property="money" column="money"/>
+        <!-- 字符串类型的关联字段 -->
+        <result property="createUser" column="create_username"/>
+        <result property="updateUser" column="update_username"/>
+        <result property="goods" column="g_name"/>
+        <result property="warehouse" column="warehouse_name"/>
     </resultMap>
 
-    <resultMap id="combinedResultMap" type="CrkOutDetails">
-        <id property="omId" column="om_id" />
-        <result property="outOutId" column="out_out_id"/>
-        <result property="outId" column="out_id"/>
-        <result property="orderId" column="order_id"/>
-        <result property="unit" column="unit"/>
-        <result property="itemQuantity" column="item_quantity"/>
-        <result property="quantityShipped" column="quantity_shipped"/>
-        <result property="undeliveredQuantity" column="undelivered_quantity"/>
-        <result property="currOutQuantity" column="curr_out_quantity"/>
-        <result property="batchNumber" column="batch_number"/>
-        <result property="remark" column="remark"/>
-        <result property="barcode" column="barcode"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createTime" column="create_time"/>
-        <result property="create_user_name" column="create_user_name"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="update_user_name" column="update_user_name"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="isDelte" column="is_delte"/>
-    </resultMap>
 
-    <select id="selectAllWithUser" resultMap="combinedResultMap">
+    <select id="selectAllWithUser" resultMap="CrkOutDetailsResult">
         SELECT
-            crk_out_details.*,
-            sys_user.nick_name AS create_user_name,
-            sys_user2.nick_name AS update_user_name
+            od.om_id,
+            od.out_id,
+            od.order_id,
+            od.unit,
+            od.item_quantity,
+            od.quantity_shipped,
+            od.undelivered_quantity,
+            od.curr_out_quantity,
+            od.batch_number,
+            od.remark AS od_remark,
+            od.barcode,
+            od.create_by AS od_create_by,
+            od.create_time AS od_create_time,
+            od.update_by AS od_update_by,
+            od.update_time AS od_update_time,
+            od.is_delte AS od_is_delete,
+            od.sl_id,
+            od.g_code,
+            od.g_id,
+            od.out_bound,
+            od.not_shipped,
+            od.money,
+            u1.user_name AS create_username,
+            u2.user_name AS update_username,
+            hg.g_name,
+            wm.w_name AS warehouse_name
         FROM
-            crk_out_details
-                LEFT JOIN
-            sys_user ON crk_out_details.create_by = sys_user.user_id
-                LEFT JOIN
-            sys_user AS sys_user2 ON crk_out_details.update_by = sys_user2.user_id
+            crk_out_details od
+                LEFT JOIN sys_user u1 ON od.create_by = u1.user_id
+                LEFT JOIN sys_user u2 ON od.update_by = u2.user_id
+                LEFT JOIN hp_goods hg ON od.g_id = hg.g_id
+                LEFT JOIN crk_out_management om ON od.out_id = om.out_id
+                LEFT JOIN warehouse wm ON om.w_id = wm.w_id
     </select>
 
     <sql id="selectCrkOutDetailsVo">
-        select om_id,
-               out_out_id,
-               out_id,
-               order_id,
-               unit,
-               item_quantity,
-               quantity_shipped,
-               undelivered_quantity,
-               curr_out_quantity,
-               batch_number,
-               remark,
-               barcode,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               is_delte
-        from crk_out_details
+        SELECT
+            od.om_id,
+            od.item_quantity,
+            od.out_id,
+            od.order_id,
+            od.remark AS od_remark,
+            od.create_by AS od_create_by,
+            od.create_time AS od_create_time,
+            od.update_by AS od_update_by,
+            od.update_time AS od_update_time,
+            od.is_delte AS od_is_delete,
+            od.sl_id,
+            od.g_code,
+            od.g_id,
+            od.out_bound,
+            od.not_shipped,
+            od.money,
+            u1.nick_name AS create_username,
+            u2.nick_name AS update_username,
+            hg.g_name,
+            wm.w_name AS warehouse_name
+        FROM
+            crk_out_details od
+                LEFT JOIN sys_user u1 ON od.create_by = u1.user_id
+                LEFT JOIN sys_user u2 ON od.update_by = u2.user_id
+                LEFT JOIN hp_goods hg ON od.g_id = hg.g_id
+                LEFT JOIN crk_out_management om ON od.out_id = om.out_id
+                LEFT JOIN warehouse wm ON om.w_id = wm.w_id
     </sql>
 
     <select id="selectCrkOutDetailsList" parameterType="CrkOutDetails" resultMap="CrkOutDetailsResult">
@@ -181,6 +206,9 @@
     </delete>
 
     <select id="findCrkOutNumber">
-        SELECT COUNT(*) FROM crk_out_details WHERE is_delte = 0;
+        SELECT COUNT(*)
+        FROM crk_out_details
     </select>
+
+
 </mapper>

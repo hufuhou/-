@@ -112,7 +112,7 @@
       <!--      <el-table-column label="货品code" align="center" prop="g_code"/>-->
       <el-table-column label="备注" align="center" prop="remark">
         <template slot-scope="scope">
-          {{ scope.row.remark === null || scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
+          {{ scope.row.remark === null || scope.row.remark == " " ? '暂无备注' : scope.row.remark }}
         </template>
       </el-table-column>
 

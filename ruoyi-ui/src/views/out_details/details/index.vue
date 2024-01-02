@@ -50,7 +50,9 @@
         <!-- 第二个板块 -->
         <el-card shadow="hover">
           <div>
-            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ "$" + (outDetailNumber).toFixed(2) }}</p>
+            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{
+                "￥" + (outDetailMoney / 10000).toFixed(2) + "W"
+              }}</p>
             <p>出库货品金额</p>
           </div>
         </el-card>
@@ -59,7 +61,7 @@
         <!-- 第三个板块 -->
         <el-card shadow="hover">
           <div>
-            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ outDetailNumber }}</p>
+            <p style="color: #00afff;font-size: 35px;line-height: 1px">{{ outDetailCount }}</p>
             <p>出库货品总数</p>
           </div>
         </el-card>
@@ -118,37 +120,31 @@
     </el-row>
 
     <el-table v-loading="loading" :data="detailsList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="订单ID" align="center" prop="omId"/>
-      <el-table-column label="出库编号" align="center" prop="outId"/>
-      <el-table-column label="明细 ID" align="center" prop="orderId"/>
-<!--      <el-table-column label="单位" align="center" prop="unit"/>-->
-      <el-table-column label="物品数" align="center" prop="itemQuantity"/>
-<!--      <el-table-column label="已发数" align="center" prop="quantityShipped"/>-->
-<!--      <el-table-column label="未交数" align="center" prop="undeliveredQuantity"/>-->
-<!--      <el-table-column label="产出数" align="center" prop="currOutQuantity"/>-->
-<!--      <el-table-column label="批号" align="center" prop="batchNumber"/>-->
-      <el-table-column label="备注" align="center" prop="remark">
+      <el-table-column type="selection" width="60" align="center"/>
+      <el-table-column label="相关单号" align="center" prop="orderId"/>
+      <el-table-column label="货品" align="center" prop="goods"/>
+      <el-table-column label="出库仓库" align="center" prop="warehouse"/>
+      <el-table-column label="出库额" align="center" prop="money"/>
+      <el-table-column label="创建人" align="center" prop="createUser"/>
+      <el-table-column label="创建时间" align="center" prop="odCreateTime" width="180">
         <template slot-scope="scope">
-          {{ scope.row.remark === null || scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
+          <span>{{ parseTime(scope.row.odCreateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="条形码" align="center" prop="barcode"/>-->
-      <el-table-column label="创建人" align="center" prop="create_user_name"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="更新人" align="center" prop="updateUser">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          {{ scope.row.updateUser === null ? '未更改' : scope.row.updateUser }}
         </template>
       </el-table-column>
-      <el-table-column label="更新人" align="center" prop="update_user_name">
+      <el-table-column label="更新时间" align="center" prop="odUpdateTime" width="180">
         <template slot-scope="scope">
-          {{ scope.row.update_user_name === null ? '未更改' : scope.row.update_user_name }}
-        </template>
-      </el-table-column>
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
-        <template slot-scope="scope">
-          <span v-if="scope.row.updateTime">{{ parseTime(scope.row.updateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          <span v-if="scope.row.odUpdateTime">{{ parseTime(scope.row.odUpdateTime, '{y}-{m}-{d} {h}:{i}') }}</span>
           <span v-else>未更改</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" prop="odRemark">
+        <template slot-scope="scope">
+          {{ scope.row.odRemark === null || scope.row.odRemark == "" ? '暂无备注' : scope.row.odRemark }}
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -184,38 +180,38 @@
     <!-- 添加或修改出库明细
 对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-<!--      <el-form ref="form" :model="form" :rules="rules" label-width="80px">-->
-<!--        <el-form-item label="出库编号" prop="outId">-->
-<!--          <el-input v-model="form.outId" placeholder="请输入出库编号"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="明细ID" prop="orderId">-->
-<!--          <el-input v-model="form.orderId" placeholder="请输入明细 ID"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="单位" prop="unit">-->
-<!--          <el-input v-model="form.unit" placeholder="请输入单位"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="物品数" prop="itemQuantity">-->
-<!--          <el-input v-model="form.itemQuantity" placeholder="请输入物品数"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="已发量" prop="quantityShipped">-->
-<!--          <el-input v-model="form.quantityShipped" placeholder="请输入已发数量"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="未交数" prop="undeliveredQuantity">-->
-<!--          <el-input v-model="form.undeliveredQuantity" placeholder="请输入未交付数量"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="产出数" prop="currOutQuantity">-->
-<!--          <el-input v-model="form.currOutQuantity" placeholder="请输入当前产出数量"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="批号" prop="batchNumber">-->
-<!--          <el-input v-model="form.batchNumber" placeholder="请输入批号"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="备注" prop="remark">-->
-<!--          <el-input v-model="form.remark" placeholder="请输入备注"/>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="条形码" prop="barcode">-->
-<!--          <el-input v-model="form.barcode" placeholder="请输入条形码"/>-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
+      <!--      <el-form ref="form" :model="form" :rules="rules" label-width="80px">-->
+      <!--        <el-form-item label="出库编号" prop="outId">-->
+      <!--          <el-input v-model="form.outId" placeholder="请输入出库编号"/>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="明细ID" prop="orderId">-->
+      <!--          <el-input v-model="form.orderId" placeholder="请输入明细 ID"/>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="单位" prop="unit">-->
+      <!--          <el-input v-model="form.unit" placeholder="请输入单位"/>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="物品数" prop="itemQuantity">-->
+      <!--          <el-input v-model="form.itemQuantity" placeholder="请输入物品数"/>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="已发量" prop="quantityShipped">-->
+      <!--          <el-input v-model="form.quantityShipped" placeholder="请输入已发数量"/>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="未交数" prop="undeliveredQuantity">-->
+      <!--          <el-input v-model="form.undeliveredQuantity" placeholder="请输入未交付数量"/>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="产出数" prop="currOutQuantity">-->
+      <!--          <el-input v-model="form.currOutQuantity" placeholder="请输入当前产出数量"/>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="批号" prop="batchNumber">-->
+      <!--          <el-input v-model="form.batchNumber" placeholder="请输入批号"/>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="备注" prop="remark">-->
+      <!--          <el-input v-model="form.remark" placeholder="请输入备注"/>-->
+      <!--        </el-form-item>-->
+      <!--        <el-form-item label="条形码" prop="barcode">-->
+      <!--          <el-input v-model="form.barcode" placeholder="请输入条形码"/>-->
+      <!--        </el-form-item>-->
+      <!--      </el-form>-->
       <h1>绝赞开发中！</h1>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm" disabled="disabled">确 定</el-button>
@@ -226,15 +222,9 @@
 </template>
 
 <script>
-import {
-  addDetails,
-  delDetails,
-  getDetails,
-  getNumber,
-  listDetailsWithUser,
-  updateDetails
-} from "@/api/out_details/details";
+import {addDetails, delDetails, getDetails, getNumber, listDetails, updateDetails} from "@/api/out_details/details";
 import {selectDataParam} from "@/api/opdm/opdm";
+import {parseTime} from "../../../utils/ruoyi";
 
 export default {
   name: "Details",
@@ -248,6 +238,10 @@ export default {
       EndDay: "",
       //出库单量
       outDetailNumber: 0,
+      //出库额
+      outDetailMoney: 0,
+      //出库货品数量
+      outDetailCount: 0,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -343,6 +337,7 @@ export default {
     this.getOutNumber();
   },
   methods: {
+    parseTime,
 
     /**
      * 获取时间参数
@@ -400,9 +395,26 @@ export default {
     /** 查询出库明细列表 */
     getList() {
       this.loading = true;
-      listDetailsWithUser(this.queryParams).then(response => {
+      listDetails(this.queryParams).then(response => {
         this.detailsList = response.rows;
+        // 使用 reduce 方法计算总额
+        const totalMoney = this.detailsList.reduce((accumulator, item) => {
+          // 确保 money 存在且为数字
+          const money = item.money && !isNaN(item.money) ? parseFloat(item.money) : 0;
+          // 累加总额
+          return accumulator + money;
+        }, 0);
+
+        // 使用 reduce 方法计算总额
+        const totalQuantity = this.detailsList.reduce((accumulator, item) => {
+          // 确保 itemQuantity 存在且为数字
+          const itemQuantity = item.itemQuantity && !isNaN(item.itemQuantity) ? parseFloat(item.itemQuantity) : 0;
+          // 累加总额
+          return accumulator + itemQuantity;
+        }, 0);
         this.total = response.total;
+        this.outDetailMoney = totalMoney;
+        this.outDetailCount = totalQuantity;
         this.loading = false;
       });
     },
