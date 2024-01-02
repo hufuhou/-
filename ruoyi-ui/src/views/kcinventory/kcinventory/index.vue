@@ -19,16 +19,16 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="仓库 ID" prop="wId">
+      <el-form-item label="仓库编码" prop="wId">
         <el-input
           v-model="queryParams.wId"
-          placeholder="请输入仓库 ID"
+          placeholder="请输入仓库编码"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="盘点类型" prop="isType">
-        <el-select v-model="queryParams.isType" placeholder="请选择来自数据字典" clearable>
+        <el-select v-model="queryParams.isType" placeholder="请选择盘点类型" clearable>
           <el-option
             v-for="dict in dict.type.is_type"
             :key="dict.value"
@@ -37,18 +37,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="开始时间">
-        <el-date-picker
-          v-model="daterangeIsStartTime"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </el-form-item>
-      <el-form-item label="结束时间">
+      <el-form-item label="盘点时间">
         <el-date-picker
           v-model="daterangeIsEndTime"
           style="width: 240px"
@@ -179,7 +168,11 @@
           <dict-tag :options="dict.type.in_status" :value="scope.row.inStatus"/>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark"/>
+      <el-table-column label="备注" align="center" prop="remark">
+        <template slot-scope="scope">
+          {{ scope.row.remark === null || scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
+        </template>
+      </el-table-column>
       <el-table-column label="经办人" align="center" prop="manager"/>
       <!--      <el-table-column label="0：存在；1：已删除，不存在" align="center" prop="isDelte" />-->
       <!--      <el-table-column label="货品code" align="center" prop="gCode"/>-->
@@ -213,257 +206,201 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改库存盘点对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="550px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="盘点ID" prop="isId">
-          <el-input v-model="form.isId" placeholder="盘点id" disabled="disabled"/>
-        </el-form-item>
-        <el-form-item label="盘点单号" prop="isCode">
-          <el-input v-model="form.isCode" placeholder="请输入盘点单号" disabled="disabled"/>
-        </el-form-item>
-        <el-form-item label="盘点结果" prop="isResult">
-          <el-select v-model="form.isResult" placeholder="请选择盘点结果"
-                     :disabled="this.title === '添加库存盘点'">
-            <el-option
-              v-for="dict in dict.type.is_result"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="仓库" prop="wId">
-          <el-select v-model="form.wId" placeholder="请选择仓库" filterable>
-            <el-option
-              v-for="warehouse in WareHouse"
-              :key="warehouse.w_id"
-              :label="warehouse.w_name"
-              :value="warehouse.w_id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="盘点类型" prop="isType">
-          <el-select v-model="form.isType" placeholder="请选择盘点类型">
-            <el-option
-              v-for="dict in dict.type.is_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="盘点开始时间" prop="isStartTime">
-          <el-date-picker clearable
-                          v-model="form.isStartTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择盘点开始时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="盘点结束时间" prop="isEndTime">
-          <el-date-picker clearable
-                          v-model="form.isEndTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择盘点结束时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注"/>
-        </el-form-item>
-        <el-form-item label="经办人" prop="isManager">
-          <el-select v-model="form.isManager" placeholder="请选择经办人">
-            <el-option
-              v-for="user in allUser"
-              :key="user.user_id"
-              :label="user.nick_name"
-              :value="user.user_id"
-            />
-          </el-select>
-
-        </el-form-item>
-        <el-form-item label="出库状态" prop="outStatus">
-          <el-select v-model="form.outStatus" placeholder="请选择出库状态">
-            <el-option
-              v-for="dict in dict.type.out_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="入库状态" prop="inStatus">
-          <el-select v-model="form.inStatus" placeholder="请选择入库状态">
-            <el-option
-              v-for="dict in dict.type.in_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-divider content-position="center">盘点明细信息</el-divider>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="openDetailDialog">添加</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="">删除
-            </el-button>
-          </el-col>
-        </el-row>
-        <el-dialog title="添加盘点明细信息" :visible.sync="openDetail" width="800px" append-to-body>
-          <el-row :gutter="10" class="mb8">
-            <el-col :span="1.5">
-              <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddCrkIsDetails">添加</el-button>
-            </el-col>
-            <el-col :span="1.5">
-              <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteCrkIsDetails">删除
-              </el-button>
-            </el-col>
-          </el-row>
-          <el-table :data="crkIsDetailsList" :row-class-name="rowCrkIsDetailsIndex"
-                    @selection-change="handleCrkIsDetailsSelectionChange" ref="crkIsDetails">
-            <el-table-column type="selection" width="50" align="center"/>
-            <el-table-column label="序号" align="center" prop="index" width="50"/>
-            <el-table-column label="单号ID" align="center" prop="isId" width="100"/>
-            <el-table-column label="盘点单号" prop="isCode" width="150">
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.isCode" placeholder="请输入盘点单号"/>
-              </template>
-            </el-table-column>
-            <el-table-column label="相关订单ID" prop="orderId" width="150">
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.orderId" placeholder="请输入相关订单ID"/>
-              </template>
-            </el-table-column>
-            <el-table-column label="盘点数量" prop="countQuantity" width="210">
-              <template slot-scope="scope">
-                <el-input-number v-model="scope.row.countQuantity" placeholder="请输入盘点数量"/>
-              </template>
-            </el-table-column>
-            <el-table-column label="盈亏数量" prop="profitLossQuantity" width="210">
-              <template slot-scope="scope">
-                <el-input-number v-model="scope.row.profitLossQuantity" placeholder="请输入盈亏数量"/>
-              </template>
-            </el-table-column>
-            <el-table-column label="盘点状态" prop="isStatus" width="210">
-              <template slot-scope="scope">
-                <el-select v-model="scope.row.isStatus" placeholder="请选择盘点状态">
-                  <el-option
-                    v-for="dict in dict.type.inventory_status"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                  ></el-option>
-                </el-select>
-              </template>
-            </el-table-column>
-            <el-table-column label="盘点金额" prop="countAmount" width="210">
-              <template slot-scope="scope">
-                <el-input-number v-model="scope.row.countAmount" placeholder="请输入盘点金额"/>
-              </template>
-            </el-table-column>
-            <el-table-column label="入库单价" prop="iuPrice" width="210">
-              <template slot-scope="scope">
-                <el-input-number v-model="scope.row.iuPrice" placeholder="请输入入库单价"/>
-              </template>
-            </el-table-column>
-            <el-table-column label="备注" prop="remark" width="150">
-              <template slot-scope="scope">
-                <el-input v-model="scope.row.remark" placeholder="请输入备注"/>
-              </template>
-            </el-table-column>
-            <el-table-column label="货品" prop="gCode" width="210">
-              <template slot-scope="scope">
-                <el-select v-model="scope.row.gCode" placeholder="请选择货品">
-                  <el-option
-                    v-for="good in allHpGoods"
-                    :key="good.g_code"
-                    :label="good.g_name"
-                    :value="good.g_code"
-                  ></el-option>
-                </el-select>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="submitForm">确 定</el-button>
-            <el-button @click="Detailcancel">取 消</el-button>
-          </div>
-        </el-dialog>
-      </el-form>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+      <el-row :gutter="30">
+        <!-- 左侧列 -->
+        <el-col :span="12">
+          <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+            <el-form-item label="盘点ID" prop="isId">
+              <el-input v-model="form.isId" placeholder="盘点编码" disabled="disabled" style="width: 220px"/>
+            </el-form-item>
+            <el-form-item label="盘点单号" prop="isCode">
+              <el-input v-model="form.isCode" placeholder="请输入盘点单号" disabled="disabled" style="width: 220px"/>
+            </el-form-item>
+            <el-form-item label="盘点结果" prop="isResult">
+              <el-select v-model="form.isResult" placeholder="请选择盘点结果"
+                         :disabled="this.title === '添加库存盘点'">
+                <el-option
+                  v-for="dict in dict.type.is_result"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="parseInt(dict.value)"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="仓库" prop="wId">
+              <el-select v-model="form.wId" placeholder="请选择仓库" filterable>
+                <el-option
+                  v-for="warehouse in WareHouse"
+                  :key="warehouse.w_id"
+                  :label="warehouse.w_name"
+                  :value="warehouse.w_id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="盘点类型" prop="isType">
+              <el-select v-model="form.isType" placeholder="请选择盘点类型">
+                <el-option
+                  v-for="dict in dict.type.is_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <!-- 右侧列 -->
+        <el-col :span="12">
+          <!-- 盘点时间、备注、经办人 -->
+          <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+            <el-form-item label="开始时间" prop="isStartTime">
+              <el-date-picker clearable
+                              v-model="form.isStartTime"
+                              type="date"
+                              value-format="yyyy-MM-dd"
+                              placeholder="请选择盘点开始时间">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="结束时间" prop="isEndTime">
+              <el-date-picker clearable
+                              v-model="form.isEndTime"
+                              type="date"
+                              value-format="yyyy-MM-dd"
+                              placeholder="请选择盘点结束时间">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="form.remark" placeholder="请输入备注" style="width: 220px"/>
+            </el-form-item>
+            <el-form-item label="经办人" prop="isManager">
+              <el-select v-model="form.isManager" placeholder="请选择经办人">
+                <el-option
+                  v-for="user in allUser"
+                  :key="user.user_id"
+                  :label="user.nick_name"
+                  :value="user.user_id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="注意事项">
+              <el-input v-model="form.remark" placeholder="注意事项" style="width: 220px"/>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      </el-row>
+      <!-- 盘点明细信息 -->
+      <el-divider content-position="center">盘点明细信息</el-divider>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button type="primary" icon="el-icon-plus" size="mini" @click="openDetailDialog">添加</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="">删除</el-button>
+        </el-col>
+      </el-row>
+      <!-- 盘点明细信息的表格 -->
+      <el-table :data="crkIsDetailsList" :row-class-name="rowCrkIsDetailsIndex"
+                @selection-change="handleCrkIsDetailsSelectionChange" ref="crkIsDetails">
+        <!-- 表格列配置，具体配置请根据需要添加 -->
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
 
+    <!--        <el-form-item label="出库状态" prop="outStatus">-->
+    <!--          <el-select v-model="form.outStatus" placeholder="请选择出库状态" :disabled="true">-->
+    <!--            <el-option-->
+    <!--              v-for="dict in dict.type.out_status"-->
+    <!--              :key="dict.value"-->
+    <!--              :label="dict.label"-->
+    <!--              :value="parseInt(dict.value)"-->
+    <!--            ></el-option>-->
+    <!--          </el-select>-->
+    <!--        </el-form-item>-->
+    <!--        <el-form-item label="入库状态" prop="inStatus">-->
+    <!--          <el-select v-model="form.inStatus" placeholder="请选择入库状态" :disabled="true">-->
+    <!--            <el-option-->
+    <!--              v-for="dict in dict.type.in_status"-->
+    <!--              :key="dict.value"-->
+    <!--              :label="dict.label"-->
+    <!--              :value="parseInt(dict.value)"-->
+    <!--            ></el-option>-->
+    <!--          </el-select>-->
+    <!--        </el-form-item>-->
+
     <!--  抽屉区  -->
     <el-drawer
       title="库存盘点审核"
       :visible.sync="drawer"
       :direction="direction"
-      :before-close="handleClose">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="盘点ID" prop="isId">
-          <el-input v-model="form.isId" placeholder="盘点id" disabled="disabled"/>
-        </el-form-item>
-        <el-form-item label="盘点单号" prop="isCode">
-          <el-input v-model="form.isCode" placeholder="请输入盘点单号"/>
-        </el-form-item>
-        <el-form-item label="仓库" prop="wId">
-          <el-select v-model="form.wId" placeholder="请选择仓库" filterable>
-            <el-option
-              v-for="warehouse in WareHouse"
-              :key="warehouse.w_id"
-              :label="warehouse.w_name"
-              :value="warehouse.w_id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="盘点类型" prop="isType">
-          <el-select v-model="form.isType" placeholder="请选择盘点类型">
-            <el-option
-              v-for="dict in dict.type.is_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="盘点开始时间" prop="isStartTime">
-          <el-date-picker clearable
-                          v-model="form.isStartTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择盘点开始时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="盘点结束时间" prop="isEndTime">
-          <el-date-picker clearable
-                          v-model="form.isEndTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择盘点结束时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注"/>
-        </el-form-item>
-        <el-form-item label="经办人" prop="isManager">
-          <el-select v-model="form.isManager" placeholder="请选择经办人">
-            <el-option
-              v-for="user in allUser"
-              :key="user.user_id"
-              :label="user.nick_name"
-              :value="user.user_id"
-            />
-          </el-select>
-        </el-form-item>
+      :before-close="handleClose"
+    >
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px" style="width: 500px;">
+        <div style="position: relative;left:15px">
+          <el-form-item label="盘点ID" prop="isId">
+            <el-input v-model="form.isId" placeholder="盘点编码" disabled="disabled" style="width: 350px"/>
+          </el-form-item>
+          <el-form-item label="盘点单号" prop="isCode">
+            <el-input v-model="form.isCode" placeholder="请输入盘点单号" style="width: 350px"/>
+          </el-form-item>
+          <el-form-item label="仓库" prop="wId">
+            <el-select v-model="form.wId" placeholder="请选择仓库" filterable style="width: 350px">
+              <el-option
+                v-for="warehouse in WareHouse"
+                :key="warehouse.w_id"
+                :label="warehouse.w_name"
+                :value="warehouse.w_id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="盘点类型" prop="isType">
+            <el-select v-model="form.isType" placeholder="请选择盘点类型" style="width: 350px">
+              <el-option
+                v-for="dict in dict.type.is_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="开始时间" prop="isStartTime">
+            <el-date-picker clearable
+                            v-model="form.isStartTime"
+                            type="date"
+                            value-format="yyyy-MM-dd"
+                            placeholder="请选择盘点开始时间" style="width: 350px">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="结束时间" prop="isEndTime">
+            <el-date-picker clearable
+                            v-model="form.isEndTime"
+                            type="date"
+                            value-format="yyyy-MM-dd"
+                            placeholder="请选择盘点结束时间" style="width: 350px">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="备注" prop="remark">
+            <el-input v-model="form.remark" placeholder="请输入备注" style="width: 350px"/>
+          </el-form-item>
+          <el-form-item label="经办人" prop="isManager">
+            <el-select v-model="form.isManager" placeholder="请选择经办人" style="width: 350px">
+              <el-option
+                v-for="user in allUser"
+                :key="user.user_id"
+                :label="user.nick_name"
+                :value="user.user_id"
+              />
+            </el-select>
+          </el-form-item>
+        </div>
         <el-divider content-position="center">盘点审批信息</el-divider>
         <center>
+          <div>
+            <el-input style="width: 350px;" placeholder="可以在此处提出意见或建议"/>
+          </div>
           <div style="margin: 30px">
             <el-button type="primary" @click="approved(form.isId)" style="position: relative; left: -30px">通 过
             </el-button>
@@ -799,11 +736,9 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           this.form.crkIsDetailsList = this.crkIsDetailsList;
+          console.log(this.form.isResult);
           if (this.title == "修改库存盘点") {
-            this.$modal.msg("updateKcinventory方法!");
-          if (this.form.isId != this.isId) {
-            this.form.isResult = this.crkIsDetailsList.isStatus;
-            //this.$modal.msg("updateKcinventory方法!");
+            this.form.isResult = parseInt(this.crkIsDetailsList[0].isStatus);
             updateKcinventory(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -820,7 +755,7 @@ export default {
             });
           }
         }
-      });
+      })
     },
 
     Detailcancel() {

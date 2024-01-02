@@ -21,10 +21,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="明细ID" prop="orderId">
+      <el-form-item label="明细编码" prop="orderId">
         <el-input
           v-model="queryParams.orderId"
-          placeholder="请输入ID"
+          placeholder="请输入明细编码"
           clearable
           @keyup.enter.native="handleQuery"
         />

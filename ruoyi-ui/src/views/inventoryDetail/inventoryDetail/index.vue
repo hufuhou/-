@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="主表id" prop="isId">
+      <el-form-item label="主表编码" prop="isId">
         <el-input
           v-model="queryParams.isId"
-          placeholder="请输入盘点主表id"
+          placeholder="请输入盘点主表编码"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -17,10 +17,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="相关订单" prop="orderId">
+      <el-form-item label="仓库" prop="orderId">
         <el-input
           v-model="queryParams.orderId"
-          placeholder="请输入相关订单ID"
+          placeholder="请输入仓库编码"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -32,18 +32,18 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-plus"-->
-<!--          size="mini"-->
-<!--          @click="handleAdd"-->
-<!--          v-hasPermi="['cx-kcinventory:inventoryDetail:add']"-->
-<!--          disabled="disabled"-->
-<!--        >新增-->
-<!--        </el-button>-->
-<!--      </el-col>-->
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--          type="primary"-->
+      <!--          plain-->
+      <!--          icon="el-icon-plus"-->
+      <!--          size="mini"-->
+      <!--          @click="handleAdd"-->
+      <!--          v-hasPermi="['cx-kcinventory:inventoryDetail:add']"-->
+      <!--          disabled="disabled"-->
+      <!--        >新增-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -84,13 +84,20 @@
 
     <el-table v-loading="loading" :data="inventoryDetailList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-<!--      <el-table-column label="盘点明细ID" align="center" prop="isdId"/>-->
-<!--      <el-table-column label="盘点主表id" align="center" prop="isId"/>-->
+      <!--      <el-table-column label="盘点明细ID" align="center" prop="isdId"/>-->
+      <!--      <el-table-column label="盘点主表id" align="center" prop="isId"/>-->
       <el-table-column label="盘点单号" align="center" prop="isCode"/>
-      <el-table-column label="相关订单" align="center" prop="orderId"/>
+      <el-table-column label="仓库" align="center" prop="orderId">
+        <template slot-scope="scope">
+          <span v-if="scope.row.orderId === 1">玲露仓库</span>
+          <span v-else-if="scope.row.orderId === 2">鸿衡仓库</span>
+          <span v-else-if="scope.row.orderId === 3">易腾仓库</span>
+          <span v-else-if="scope.row.orderId === 4">懒财仓库</span>
+          <span v-else>未知状态</span>
+        </template>
+      </el-table-column>
       <el-table-column label="货品信息" align="center" prop="goods_name"/>
       <el-table-column label="盘点数量" align="center" prop="countQuantity"/>
-      <el-table-column label="盈亏数量" align="center" prop="profitLossQuantity"/>
       <el-table-column label="盘点状态" align="center" prop="isStatus">
         <template slot-scope="scope">
           <span v-if="scope.row.isStatus === 0">无盈亏</span>
@@ -99,10 +106,15 @@
           <span v-else>未知状态</span>
         </template>
       </el-table-column>
+      <el-table-column label="盈亏数量" align="center" prop="profitLossQuantity"/>
       <el-table-column label="盘点金额" align="center" prop="countAmount"/>
       <el-table-column label="入库单价" align="center" prop="iuPrice"/>
-<!--      <el-table-column label="货品code" align="center" prop="g_code"/>-->
-      <el-table-column label="备注" align="center" prop="remark"/>
+      <!--      <el-table-column label="货品code" align="center" prop="g_code"/>-->
+      <el-table-column label="备注" align="center" prop="remark">
+        <template slot-scope="scope">
+          {{ scope.row.remark === null || scope.row.remark === " " ? '暂无备注' : scope.row.remark }}
+        </template>
+      </el-table-column>
 
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -137,36 +149,43 @@
     <!-- 添加或修改盘点明细对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="主表id" prop="isId">
-          <el-input v-model="form.isId" placeholder="请输入盘点主表id" :disabled="isDisable"/>
+        <el-form-item label="主表编码" prop="isId">
+          <el-input v-model="form.isId" placeholder="请输入盘点主表编码" :disabled="isDisable" style="width: 350px"/>
         </el-form-item>
         <el-form-item label="盘点单号" prop="isCode">
-          <el-input v-model="form.isCode" placeholder="请输入盘点单号" :disabled="isDisable"/>
+          <el-input v-model="form.isCode" placeholder="请输入盘点单号" :disabled="isDisable" style="width: 350px"/>
         </el-form-item>
-        <el-form-item label="订单ID" prop="orderId">
-          <el-input v-model="form.orderId" placeholder="请输入相关订单ID"/>
+        <el-form-item label="仓库" prop="orderId">
+          <el-select v-model="form.orderId" placeholder="请选择仓库" filterable style="width: 350px">
+            <el-option
+              v-for="warehouse in WareHouse"
+              :key="warehouse.w_id"
+              :label="warehouse.w_name"
+              :value="warehouse.w_id"
+            />
+          </el-select>
         </el-form-item>
-<!--        <el-form-item label="规格型号" prop="specCode">-->
-<!--          <el-input v-model="form.specCode" placeholder="请输入规格型号"/>-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="规格型号" prop="specCode">-->
+        <!--          <el-input v-model="form.specCode" placeholder="请输入规格型号"/>-->
+        <!--        </el-form-item>-->
         <el-form-item label="盘点数量" prop="countQuantity">
-          <el-input-number v-model="form.countQuantity" placeholder="请输入盘点数量"/>
+          <el-input-number v-model="form.countQuantity" placeholder="请输入盘点数量" style="width: 350px"/>
         </el-form-item>
         <el-form-item label="盈亏数量" prop="profitLossQuantity">
-          <el-input-number v-model="form.profitLossQuantity" placeholder="请输入盈亏数量"/>
+          <el-input-number v-model="form.profitLossQuantity" placeholder="请输入盈亏数量" style="width: 350px"/>
         </el-form-item>
         <el-form-item label="盘点金额" prop="countAmount">
-          <el-input-number v-model="form.countAmount" placeholder="请输入盘点金额"/>
+          <el-input-number v-model="form.countAmount" placeholder="请输入盘点金额" style="width: 350px"/>
         </el-form-item>
         <el-form-item label="入库单价" prop="iuPrice">
-          <el-input-number v-model="form.iuPrice" placeholder="请输入入库单价"/>
+          <el-input-number v-model="form.iuPrice" placeholder="请输入入库单价" style="width: 350px"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注"/>
+          <el-input v-model="form.remark" placeholder="请输入备注" style="width: 350px"/>
         </el-form-item>
         <el-form-item label="货品" prop="gCode">
           <template slot-scope="scope">
-            <el-select v-model="form.gCode" placeholder="请选择货品">
+            <el-select v-model="form.gCode" placeholder="请选择货品" style="width: 350px">
               <el-option
                 v-for="good in allHpGoods"
                 :key="good.g_code"
@@ -194,15 +213,15 @@ import {
   updateInventoryDetail
 } from "@/api/inventoryDetail/inventoryDetail";
 import dict from "@/utils/dict";
-import {findAllHpGoods, genIsCode} from "@/api/kcinventory/kcinventory";
+import {findAllHpGoods, findWareHouse, genIsCode} from "@/api/kcinventory/kcinventory";
 
 export default {
   name: "InventoryDetail",
   data() {
     return {
-      isDisable : false,
+      isDisable: false,
       //货品信息
-      allHpGoods : [],
+      allHpGoods: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -217,6 +236,8 @@ export default {
       total: 0,
       // 盘点明细表格数据
       inventoryDetailList: [],
+      //仓库
+      WareHouse: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -273,6 +294,7 @@ export default {
   },
   mounted() {
     this.findAllHpGoods();
+    this.findWareHouse();
   },
   methods: {
     dict,
@@ -319,7 +341,7 @@ export default {
         updateBy: null,
         updateTime: null,
         isDelte: null,
-        gCode : null
+        gCode: null
       };
       this.resetForm("form");
     },
@@ -343,7 +365,7 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      genIsCode().then(response =>{
+      genIsCode().then(response => {
         console.info(response);
       });
       this.reset();
@@ -358,11 +380,17 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改盘点明细";
-        if (this.title === "修改盘点明细"){
+        if (this.title === "修改盘点明细") {
           this.isDisable = true;
         }
       });
-
+    },
+    // 获取仓库信息
+    findWareHouse() {
+      findWareHouse().then(response => {
+        //console.info(response);
+        this.WareHouse = response.data;
+      })
     },
     /** 提交按钮 */
     submitForm() {

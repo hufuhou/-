@@ -14,10 +14,10 @@
       </el-form-item>
     </el-form>
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="进货单id" prop="poId">
+      <el-form-item label="进货单编码" prop="poId">
         <el-input
           v-model="queryParams.poId"
-          placeholder="请输入进货订单id"
+          placeholder="请输入进货订单编码"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -30,26 +30,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="货品id" prop="goodsId">
+      <el-form-item label="货品编码" prop="goodsId">
         <el-input
           v-model="queryParams.goodsId"
-          placeholder="请输入货品id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="规格型号" prop="specCode">
-        <el-input
-          v-model="queryParams.specCode"
-          placeholder="请输入规格型号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="单位" prop="unit">
-        <el-input
-          v-model="queryParams.unit"
-          placeholder="请输入单位"
+          placeholder="请输入货品编码"
           clearable
           @keyup.enter.native="handleQuery"
         />

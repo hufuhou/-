@@ -29,10 +29,10 @@
                         placeholder="请选择调拨申请日期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="仓库ID" prop="outWId">
+      <el-form-item label="调出仓库" prop="outWId">
         <el-input
           v-model="queryParams.outWId"
-          placeholder="请输入调出仓库 ID"
+          placeholder="请输入调出仓库编码"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -40,23 +40,7 @@
       <el-form-item label="调入仓库" prop="inWId">
         <el-input
           v-model="queryParams.inWId"
-          placeholder="请输入调入仓库"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="用户id" prop="tManager">
-        <el-input
-          v-model="queryParams.tManager"
-          placeholder="请输入外键，关联用户表"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="是否存在" prop="isDelte">
-        <el-input
-          v-model="queryParams.isDelte"
-          placeholder="0：存在；1：已删除，不存在"
+          placeholder="请输入调入仓库编码"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -145,9 +129,9 @@
       </el-table-column>
       <el-table-column label="调入仓库" align="center" prop="inWId">
         <template slot-scope="scope">
-          <span v-if="scope.row.inWId === '1'">仓库一</span>
-          <span v-else-if="scope.row.inWId === '2'">仓库二</span>
-          <span v-else-if="scope.row.inWId === '3'">仓库三</span>
+          <span v-if="scope.row.inWId === '1'">玲露仓库</span>
+          <span v-else-if="scope.row.inWId === '2'">鸿衡仓库</span>
+          <span v-else-if="scope.row.inWId === '3'">易腾仓库</span>
           <span v-else-if="scope.row.inWId === '4'">懒财仓库</span>
           <span v-else>未知状态</span>
         </template>

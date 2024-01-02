@@ -61,25 +61,7 @@
     </select>
 
     <sql id="selectOrderDSalesVo">
-        select sd_id,
-               srd_id,
-               s_id,
-               s_code,
-               goods_number,
-               spec_code,
-               unit,
-               goods_type,
-               purchase_quantity,
-               ai_stock,
-               su_price,
-               sales_amount,
-               sales_volume,
-               remark,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               is_delte
+        select *
         from order_d_sales
     </sql>
 
