@@ -74,38 +74,41 @@
       </el-col>
     </el-row>
     <el-divider/>
-    <el-row :gutter="30">
+
+
+    <el-row :gutter="30" class="scrollable-row">
       <el-col :xs="30" :sm="25" :md="100" :lg="10">
-        <el-card class="update-log">
-          <div id="main0" style="width: 500px;height:400px;">
+        <el-card class="update-log" style="height: 100%;">
+          <div id="main0" style="width: 100%; height: 400px;" class="chart-container">
             <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
       <el-col :xs="30" :sm="25" :md="100" :lg="10">
-        <el-card class="update-log">
-          <div id="main1" style="width: 500px;height:400px;">
+        <el-card class="update-log" style="height: 100%;">
+          <div id="main1" style="width: 100%; height: 400px;" class="chart-container">
             <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
       <el-col :xs="30" :sm="25" :md="100" :lg="10">
-        <el-card class="update-log">
-          <div id="main2" style="width: 500px;height:400px;">
+        <el-card class="update-log" style="height: 100%;">
+          <div id="main2" style="width: 100%; height: 400px;" class="chart-container">
             <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
       <el-col :xs="30" :sm="25" :md="100" :lg="10">
-        <el-card class="update-log">
-          <div id="main3" style="width: 500px;height:400px;">
+        <el-card class="update-log" style="height: 100%;">
+          <div id="main3" style="width: 100%; height: 400px" class="chart-container">
             <el-skeleton :rows="6" animated />
           </div>
         </el-card>
       </el-col>
     </el-row>
 
-<!--    <el-row :gutter="30">-->
+
+    <!--    <el-row :gutter="30">-->
 <!--      <el-card style="width: 1315px; height: 400px; position: relative; left: 15px">-->
 <!--        <el-card v-for="sv in WareHouseStockValue" :key="sv.warehouseId" shadow="hover">-->
 <!--          <div>-->
@@ -447,6 +450,16 @@ export default {
     font-size: 18px;
     font-weight: bold;
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace
+  }
+
+  .scrollable-row {
+    overflow-x: auto;
+  }
+
+  .chart-container {
+    width: 1200px; /* 设置图表宽度，超过容器宽度时启用滚动 */
+    height: 400px;
+    white-space: nowrap; /* 防止文本换行 */
   }
 }
 </style>

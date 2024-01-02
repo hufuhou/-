@@ -299,6 +299,93 @@
           <el-button type="danger" icon="el-icon-delete" size="mini" @click="">删除</el-button>
         </el-col>
       </el-row>
+      <el-dialog title="添加盘点明细信息" :visible.sync="openDetail" width="800px" append-to-body>
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddCrkIsDetails">添加</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteCrkIsDetails">删除
+            </el-button>
+          </el-col>
+        </el-row>
+        <el-table :data="crkIsDetailsList" :row-class-name="rowCrkIsDetailsIndex"
+                  @selection-change="handleCrkIsDetailsSelectionChange" ref="crkIsDetails">
+          <el-table-column type="selection" width="50" align="center"/>
+          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="单号编码" align="center" prop="isId" width="100"/>
+          <el-table-column label="盘点单号" prop="isCode" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.isCode" placeholder="请输入盘点单号"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="仓库" prop="orderId" width="150">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.orderId" placeholder="请选择仓库" filterable>
+                <el-option
+                  v-for="warehouse in WareHouse"
+                  :key="warehouse.w_id"
+                  :label="warehouse.w_name"
+                  :value="warehouse.w_id"
+                />
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="盘点数量" prop="countQuantity" width="210">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.countQuantity" placeholder="请输入盘点数量"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="盈亏数量" prop="profitLossQuantity" width="210">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.profitLossQuantity" placeholder="请输入盈亏数量"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="盘点状态" prop="isStatus" width="210">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.isStatus" placeholder="请选择盘点状态">
+                <el-option
+                  v-for="dict in dict.type.inventory_status"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="盘点金额" prop="countAmount" width="210">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.countAmount" placeholder="请输入盘点金额"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="入库单价" prop="iuPrice" width="210">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.iuPrice" placeholder="请输入入库单价"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="备注" prop="remark" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.remark" placeholder="请输入备注"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="货品" prop="gCode" width="210">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.gCode" placeholder="请选择货品">
+                <el-option
+                  v-for="good in allHpGoods"
+                  :key="good.g_code"
+                  :label="good.g_name"
+                  :value="good.g_code"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="Detailcancel">取 消</el-button>
+        </div>
+      </el-dialog>
       <!-- 盘点明细信息的表格 -->
       <el-table :data="crkIsDetailsList" :row-class-name="rowCrkIsDetailsIndex"
                 @selection-change="handleCrkIsDetailsSelectionChange" ref="crkIsDetails">
@@ -340,7 +427,7 @@
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" style="width: 500px;">
         <div style="position: relative;left:15px">
-          <el-form-item label="盘点ID" prop="isId">
+          <el-form-item label="盘点编码" prop="isId">
             <el-input v-model="form.isId" placeholder="盘点编码" disabled="disabled" style="width: 350px"/>
           </el-form-item>
           <el-form-item label="盘点单号" prop="isCode">
