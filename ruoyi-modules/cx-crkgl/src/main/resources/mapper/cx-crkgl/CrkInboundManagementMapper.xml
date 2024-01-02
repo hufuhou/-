@@ -281,8 +281,8 @@ d.g_name, d.g_unit, d.spec_code
             <if test="iS != null">i_s = #{iS},</if>
             <if test="wManager != null">w_manager = #{wManager},</if>
             <if test="remark != null">remark = #{remark},</if>
-            <if test="reviewer != null">reviewer = #{reviewer},</if>
-            <if test="reviewerTime != null">reviewer_time = #{reviewerTime},</if>
+            <if test="reviewer != ''">reviewer = #{reviewer},</if>
+            <if test="reviewerTime != ''">reviewer_time = #{reviewerTime},</if>
             <if test="storageDate != null">storage_date = #{storageDate},</if>
             <if test="orderId != null">order_id = #{orderId},</if>
             <if test="createBy != null">create_by = #{createBy},</if>

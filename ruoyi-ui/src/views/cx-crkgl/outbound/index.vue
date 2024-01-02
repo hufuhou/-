@@ -65,7 +65,7 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['cx-crkgl:outbound:edit']"
-        >修改</el-button>
+        >编辑</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -78,17 +78,17 @@
           v-hasPermi="['cx-crkgl:outbound:examine']"
         >审核</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="danger"-->
-<!--          plain-->
-<!--          icon="el-icon-connection"-->
-<!--          size="mini"-->
-<!--          :disabled="revoke"-->
-<!--          @click="handleRevoke"-->
-<!--          v-hasPermi="['cx-crkgl:outbound:revoke']"-->
-<!--        >撤销</el-button>-->
-<!--      </el-col>-->
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-connection"
+          size="mini"
+          :disabled="revoke"
+          @click="handleRevoke"
+          v-hasPermi="['cx-crkgl:outbound:revoke']"
+        >撤销</el-button>
+      </el-col>
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -203,7 +203,7 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['cx-crkgl:outbound:edit']"
-          >修改</el-button>
+          >编辑</el-button>
           <el-button
             size="mini"
             type="text"
@@ -547,8 +547,7 @@
     <!--审核对话框-->
     <el-dialog title="审核" :visible.sync="openAudit" append-to-body style="width: 500px; margin: auto"
                @close="closeAudit">
-      <el-form :model="auditForm" ref="queryGoodsForm" size="small" :inline="true" v-show="showSearch"
-               label-width="68px">
+      <el-form :model="auditForm" ref="queryGoodsForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
         <el-form-item label="审核结果" prop="auditResult">
           <el-col :span="24">
             <el-radio-group v-model="auditForm.auditResult">
@@ -557,13 +556,14 @@
             </el-radio-group>
           </el-col>
         </el-form-item>
+        <el-form-item label="审核意见" prop="auditOpinion">
+          <el-col :span="24">
+            <el-input v-model="auditForm.auditOpinion" type="textarea" :rows="4" placeholder="请输入审核意见"></el-input>
+          </el-col>
+        </el-form-item>
       </el-form>
-      <div slot="footer">
-        <el-button @click="closeAudit">关 闭</el-button>
-        <el-button type="primary" @click="auditSubmit">确 定
-        </el-button>
-      </div>
-    </el-dialog>
+
+      <div slot="footer"> <el-button @click="closeAudit">关 闭</el-button> <el-button type="primary" @click="auditSubmit">确 定 </el-button> </div> </el-dialog>
 
   </div>
 </template>
@@ -697,7 +697,8 @@ export default {
       form: {},
 
       auditForm: {
-        auditResult: "true"
+        auditResult: "true",
+        auditOpinion: null
       },
       // 表单校验
       rules: {
@@ -782,7 +783,7 @@ export default {
     /** 查询仓库管理列表 */
     getWList() {
       listWarehouse().then(response => {
-        this.warehouseList = response.rows;
+        this.warehouseList = response.rows.filter(item => item.wStatus === 0);
       });
     },
     /** 查询仓库详情列表 */
@@ -885,10 +886,10 @@ export default {
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.outId)
       this.outCode=selection.map(item=> item.outCode)
-      this.single = selection.length!==1 || selection.some(item => item.status !== 1);
+      this.single = selection.length!==1 || selection.some(item => item.status === 3);
       this.multiple = !selection.length || selection.some(item => item.status !== 1);
-      this.examine = selection.some(item => item.status !== 1);
-      this.revoke = selection.some(item => item.status !==3);
+      this.examine = !selection.length ||selection.some(item => item.status !== 1);
+      this.revoke = !selection.length ||selection.some(item => item.status !==3);
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -901,8 +902,8 @@ export default {
       const outId = row.outId || this.ids
       // 使用 filter 方法筛选出入库状态为待审核的项
       const outboundList = this.outboundList.filter(item => item.outId === outId);
-      if (outboundList.some(item => item.status !== 1)) {
-        this.$message.warning('待审核状态才能进行编辑！');
+      if (outboundList.some(item => item.status === 3)) {
+        this.$message.warning('已完成的单号不能进行编辑！');
         return;
       }
       this.reset();

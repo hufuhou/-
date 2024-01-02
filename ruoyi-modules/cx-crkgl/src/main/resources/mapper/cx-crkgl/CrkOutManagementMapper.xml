@@ -402,8 +402,8 @@
             <if test="remark != null">remark = #{remark},</if>
             <if test="outManager != null">out_manager = #{outManager},</if>
             <if test="wId != null">w_id = #{wId},</if>
-            <if test="reviewer != null">reviewer = #{reviewer},</if>
-            <if test="reviewerTime != null">reviewer_time = #{reviewerTime},</if>
+            <if test="reviewer !=' ' " >reviewer = #{reviewer},</if>
+            <if test="reviewerTime != ' '">reviewer_time = #{reviewerTime},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

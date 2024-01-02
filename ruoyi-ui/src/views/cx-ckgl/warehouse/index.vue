@@ -227,16 +227,16 @@
         <el-form-item label="排序" prop="sort">
           <el-input v-model="form.sort" placeholder="请输入排序"/>
         </el-form-item>
-        <el-form-item label="状态" prop="wStatus">
-          <el-radio-group v-model="form.wStatus">
-            <el-radio
-              v-for="dict in dict.type.w_status"
-              :key="dict.value"
-              :label="parseInt(dict.value)"
-            >{{ dict.label }}
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
+<!--        <el-form-item label="状态" prop="wStatus">-->
+<!--          <el-radio-group v-model="form.wStatus">-->
+<!--            <el-radio-->
+<!--              v-for="dict in dict.type.w_status"-->
+<!--              :key="dict.value"-->
+<!--              :label="parseInt(dict.value)"-->
+<!--            >{{ dict.label }}-->
+<!--            </el-radio>-->
+<!--          </el-radio-group>-->
+<!--        </el-form-item>-->
         <el-form-item label="仓库地址" prop="wAddress">
           <el-input v-model="form.wAddress" placeholder="请输入仓库地址"/>
         </el-form-item>

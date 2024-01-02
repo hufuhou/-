@@ -94,7 +94,7 @@
 
     <el-table v-loading="loading" :data="sortedDataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="货品类型" align="center" prop="gtId" >
+      <el-table-column label="货品类型" align="center" prop="gtId" width="120px">
         <template slot-scope="scope">
           <span v-for="item in goodsType">
             <template v-if="scope.row.gtId===item.gtId">
@@ -103,7 +103,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="货品编码" align="center" prop="gCode" width="250" />
+      <el-table-column label="货品编码" align="center" prop="gCode" width="230" />
       <el-table-column label="货品名称" align="center" prop="gName" width="180px"/>
       <el-table-column label="单位" align="center" prop="gUnit">
         <template slot-scope="scope">
